@@ -1,12 +1,26 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { detectPackageManager, PackageManager, scriptCommandLine } from './packageManager';
+import { NpmConfigData, npmCommandLine, parseEnv } from './runConfigLogic';
 
 export { scriptCommandLine };
 
 /** A runnable thing, like an IntelliJ run configuration. */
 export type RunConfiguration =
-  | { kind: 'npm'; id: string; name: string; script: string; command: string; packageJson: vscode.Uri; folder: vscode.WorkspaceFolder; packageManager: PackageManager }
+  | {
+      kind: 'npm';
+      id: string;
+      name: string;
+      script: string;
+      command: string;
+      packageJson: vscode.Uri;
+      folder: vscode.WorkspaceFolder;
+      packageManager: PackageManager;
+      /** Set for configurations saved in Edit Configurations (detected scripts have none). */
+      args?: string;
+      env?: string;
+      saved?: boolean;
+    }
   | { kind: 'launch'; id: string; name: string; folder: vscode.WorkspaceFolder | undefined; type: string };
 
 
@@ -48,9 +62,29 @@ export async function findPackageScripts(): Promise<PackageScripts[]> {
   return results;
 }
 
-export async function collectRunConfigurations(): Promise<RunConfiguration[]> {
+/** Saved configurations first (IntelliJ order), then every package.json script, then launch.json. */
+export async function collectRunConfigurations(saved: readonly NpmConfigData[] = []): Promise<RunConfiguration[]> {
   const configurations: RunConfiguration[] = [];
-  const multiPackage = (await findPackageScripts()).map((p, _, all) => ({ ...p, prefix: all.length > 1 ? `${p.label} › ` : '' }));
+  const packages = await findPackageScripts();
+  for (const config of saved) {
+    const pkg = packages.find((p) => p.packageJson.toString() === config.packageJson);
+    if (pkg) {
+      configurations.push({
+        kind: 'npm',
+        id: config.id,
+        name: config.name,
+        script: config.script,
+        command: pkg.scripts.find((s) => s.name === config.script)?.command ?? '',
+        packageJson: pkg.packageJson,
+        folder: pkg.folder,
+        packageManager: pkg.packageManager,
+        args: config.args,
+        env: config.env,
+        saved: true,
+      });
+    }
+  }
+  const multiPackage = packages.map((p, _, all) => ({ ...p, prefix: all.length > 1 ? `${p.label} › ` : '' }));
   for (const pkg of multiPackage) {
     for (const script of pkg.scripts) {
       configurations.push({
@@ -83,18 +117,19 @@ export async function startConfiguration(configuration: RunConfiguration, debug:
     return undefined;
   }
   const cwd = path.dirname(configuration.packageJson.fsPath);
-  const commandLine = scriptCommandLine(configuration.packageManager, configuration.script);
+  const commandLine = npmCommandLine(configuration.packageManager, configuration.script, configuration.args);
+  const env = parseEnv(configuration.env ?? '');
   if (debug) {
     // JavaScript Debug Terminal from VS Code's built-in js-debug.
-    await vscode.debug.startDebugging(configuration.folder, { type: 'node-terminal', request: 'launch', name: configuration.name, command: commandLine, cwd });
+    await vscode.debug.startDebugging(configuration.folder, { type: 'node-terminal', request: 'launch', name: configuration.name, command: commandLine, cwd, env });
     return undefined;
   }
   const task = new vscode.Task(
-    { type: 'unintellij-npm', script: configuration.script, path: configuration.packageJson.fsPath },
+    { type: 'unintellij-npm', script: configuration.script, path: configuration.packageJson.fsPath, ...(configuration.args ? { args: configuration.args } : {}) },
     configuration.folder,
     configuration.name,
     configuration.packageManager,
-    new vscode.ShellExecution(commandLine, { cwd }),
+    new vscode.ShellExecution(commandLine, { cwd, env }),
   );
   task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Dedicated, clear: true };
   return vscode.tasks.executeTask(task);

@@ -71,6 +71,7 @@ export const TASK_DEFINITIONS = [
     properties: {
       script: { type: 'string', description: 'Script name in package.json' },
       path: { type: 'string', description: 'Path of the package.json' },
+      args: { type: 'string', description: 'Extra arguments passed to the script' },
     },
   },
 ];

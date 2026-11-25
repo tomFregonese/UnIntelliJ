@@ -1,0 +1,41 @@
+/* Run/Debug Configurations window: layout from settings.css, plus the tree toolbar. */
+.toolbar {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+button.tool {
+  background: transparent;
+  color: var(--vscode-icon-foreground);
+  border: none;
+  padding: 3px 4px;
+  border-radius: 4px;
+}
+
+button.tool:hover:not(:disabled) {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.tree li.group-label {
+  font-weight: 600;
+  cursor: default;
+}
+
+.tree li.group-label:hover {
+  background: none;
+}
+
+.tree .icon {
+  font-size: 14px;
+}
+
+.content .row {
+  grid-template-columns: 120px minmax(200px, 480px);
+}
+
+.content input[type='text'],
+.content select {
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -23,7 +23,7 @@ const extension = {
 /** Webview scripts run in the browser. */
 /** @type {import('esbuild').BuildOptions} */
 const webviews = {
-  entryPoints: { settings: 'src/webview/settings.ts', commit: 'src/webview/commit.ts', gitLog: 'src/webview/gitLog.ts' },
+  entryPoints: { settings: 'src/webview/settings.ts', commit: 'src/webview/commit.ts', gitLog: 'src/webview/gitLog.ts', runConfigs: 'src/webview/runConfigs.ts' },
   bundle: true,
   outdir: 'dist/webview',
   format: 'iife',

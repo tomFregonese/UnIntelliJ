@@ -308,6 +308,11 @@
         "icon": "$(play)"
       },
       {
+        "command": "unintellij.run.editConfigurations",
+        "title": "Edit Configurations…",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.debug",
         "title": "Debug",
         "category": "UnIntelliJ",
@@ -2023,6 +2028,10 @@
           "path": {
             "type": "string",
             "description": "Path of the package.json"
+          },
+          "args": {
+            "type": "string",
+            "description": "Extra arguments passed to the script"
           }
         }
       }

@@ -37,6 +37,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.applyRecommendedSettings', title: 'Set Up IntelliJ-like Settings (Theme, Fonts)…' },
   // Run
   { command: 'unintellij.run', title: 'Run', icon: '$(play)' },
+  { command: 'unintellij.run.editConfigurations', title: 'Edit Configurations…' },
   { command: 'unintellij.debug', title: 'Debug', icon: '$(debug-alt)' },
   { command: 'unintellij.stop', title: 'Stop', icon: '$(debug-stop)' },
   { command: 'unintellij.runAnything', title: 'Run…' },

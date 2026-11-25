@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { shortcutFor } from '../search/actions';
 import { collectRunConfigurations, configurationIcon, RunConfiguration, startConfiguration } from './configurations';
+import { EditConfigurationsPanel, SavedConfigurations } from './editConfigurations';
 
 const SELECTED_KEY = 'run.selectedConfiguration';
 
@@ -17,7 +18,15 @@ export class RunWidget implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
   private selected: RunConfiguration | undefined;
 
-  constructor(private readonly state: vscode.Memento) {
+  private readonly saved: SavedConfigurations;
+  private readonly editor: EditConfigurationsPanel;
+
+  constructor(
+    private readonly state: vscode.Memento,
+    extensionUri: vscode.Uri,
+  ) {
+    this.saved = new SavedConfigurations(state);
+    this.editor = new EditConfigurationsPanel(extensionUri, this.saved);
     const item = (id: string, priority: number) => vscode.window.createStatusBarItem(`unintellij.run.${id}`, vscode.StatusBarAlignment.Left, priority);
     this.selector = item('selector', 103);
     this.runButton = item('run', 102);
@@ -41,7 +50,11 @@ export class RunWidget implements vscode.Disposable {
       this.runButton,
       this.debugButton,
       this.stopButton,
+      this.saved,
+      this.editor,
+      this.saved.onDidChange(() => void this.restoreSelection()),
       vscode.commands.registerCommand('unintellij.run.selectConfiguration', () => this.pick('select')),
+      vscode.commands.registerCommand('unintellij.run.editConfigurations', () => this.editor.show(this.selected?.id)),
       vscode.commands.registerCommand('unintellij.run', () => this.start(false)),
       vscode.commands.registerCommand('unintellij.debug', () => this.start(true)),
       vscode.commands.registerCommand('unintellij.runAnything', () => this.pick('run')),
@@ -64,7 +77,7 @@ export class RunWidget implements vscode.Disposable {
 
   private async restoreSelection(): Promise<void> {
     const id = this.state.get<string>(SELECTED_KEY);
-    const configurations = await collectRunConfigurations();
+    const configurations = await collectRunConfigurations(this.saved.all);
     this.selected = configurations.find((c) => c.id === id) ?? configurations.find((c) => c.kind === 'npm' && c.script === 'start') ?? configurations[0];
     this.render();
   }
@@ -95,13 +108,17 @@ export class RunWidget implements vscode.Disposable {
   }
 
   private async pick(then: 'select' | 'run' | 'debug'): Promise<void> {
-    const configurations = await collectRunConfigurations();
+    const configurations = await collectRunConfigurations(this.saved.all);
     type Item = vscode.QuickPickItem & { configuration?: RunConfiguration };
     const items: Item[] = [];
-    for (const kind of ['npm', 'launch'] as const) {
-      const group = configurations.filter((c) => c.kind === kind);
+    const groups: [string, RunConfiguration[]][] = [
+      ['npm', configurations.filter((c) => c.kind === 'npm' && c.saved)],
+      ['npm scripts', configurations.filter((c) => c.kind === 'npm' && !c.saved)],
+      ['Launch Configurations', configurations.filter((c) => c.kind === 'launch')],
+    ];
+    for (const [label, group] of groups) {
       if (group.length > 0) {
-        items.push({ label: kind === 'npm' ? 'npm' : 'Launch Configurations', kind: vscode.QuickPickItemKind.Separator });
+        items.push({ label, kind: vscode.QuickPickItemKind.Separator });
         items.push(
           ...group.map((c) => ({
             label: `$(${configurationIcon(c).id}) ${c.name}`,
@@ -112,13 +129,13 @@ export class RunWidget implements vscode.Disposable {
         );
       }
     }
-    items.push({ label: '', kind: vscode.QuickPickItemKind.Separator }, { label: '$(edit) Edit Configurations…', description: 'launch.json' });
+    items.push({ label: '', kind: vscode.QuickPickItemKind.Separator }, { label: '$(edit) Edit Configurations…' });
     const picked = await vscode.window.showQuickPick(items, { title: then === 'select' ? 'Run/Debug Configurations' : then === 'run' ? 'Run' : 'Debug', placeHolder: 'Type to filter' });
     if (!picked) {
       return;
     }
     if (!picked.configuration) {
-      await vscode.commands.executeCommand('workbench.action.debug.configure');
+      this.editor.show(this.selected?.id);
       return;
     }
     await this.select(picked.configuration);

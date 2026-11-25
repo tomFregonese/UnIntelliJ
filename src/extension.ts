@@ -60,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     ...vcs.disposables,
     syncDisabledActions(),
     userKeybindings,
-    new RunWidget(context.workspaceState),
+    new RunWidget(context.workspaceState, context.extensionUri),
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);
