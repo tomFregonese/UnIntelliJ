@@ -2,7 +2,7 @@
   "name": "unintellij",
   "displayName": "UnIntelliJ",
   "description": "Make VS Code look and behave like IntelliJ IDEA (New UI / Islands).",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "unintellij",
   "license": "MIT",
   "private": true,
@@ -2194,5 +2194,10 @@
   "bugs": {
     "url": "https://github.com/tomFregonese/UnIntelliJ/issues"
   },
-  "homepage": "https://github.com/tomFregonese/UnIntelliJ#readme"
+  "homepage": "https://github.com/tomFregonese/UnIntelliJ#readme",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#131417",
+    "theme": "dark"
+  }
 }

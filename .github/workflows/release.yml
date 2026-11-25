@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check:generated
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:unit
+      - name: Check tag matches package.json version
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm run package
+      - name: Create GitHub release with the .vsix
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk "/^## ${GITHUB_REF_NAME#v} /{flag=1; next} /^## /{flag=0} flag" CHANGELOG.md > notes.md
+          gh release create "$GITHUB_REF_NAME" ./*.vsix --title "UnIntelliJ ${GITHUB_REF_NAME#v}" --notes-file notes.md

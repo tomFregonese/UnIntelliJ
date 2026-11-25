@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-11-25
 
 - Project scaffold: esbuild bundle, lint, unit and integration tests, CI on Windows, macOS and Linux.
 - Settings catalog (`unintellij.*`) generated from a single typed schema.

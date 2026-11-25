@@ -1,6 +1,6 @@
 # UnIntelliJ — Cahier des charges
 
-> Statut : **brouillon v0.1 — à valider** · 2026-11-25
+> Statut : **v1 implémentée (0.1.0)** · 2026-11-25 — écarts en §13, points à revoir dans `docs/SUIVI.md`
 
 ## 1. Objectif
 
@@ -211,3 +211,15 @@ Tout est livré ensemble, mais construit par lots indépendants et testables :
 - [ ] Droits admin au travail, ou passage à la « user setup » autorisé ? (conditionne Islands+)
 - [ ] Extensions effectivement autorisées au travail
 - [ ] Nom public pour le Marketplace (plus tard)
+
+## 13. Écarts par rapport au cahier des charges (v0.1.0)
+
+| Prévu | Réalisé | Raison |
+|---|---|---|
+| Webviews en Preact | DOM natif typé, sans framework | Interfaces simples ; bundle plus léger (~10 Ko par webview) |
+| Popup Find in Files à confirmer | Pas de popup : Search Everywhere › Text + vue Search native | Décidé ensemble (§6.2) |
+| Widgets Projet / Branche / Run dans la barre de titre | Barre d'état ; barre de titre avec Islands+ | Barre de titre non extensible par l'API |
+| Onglets de Search Everywhere | Affichés dans le titre du popup, `Tab` pour changer | Pas d'API d'onglets dans les popups |
+| Options de Structure en boutons bascule | Menu « … » de la vue avec ✓ | Pas de boutons bascule pour les extensions |
+| Shelve (v1.1) | Stash via VCS Operations | Équivalent Git le plus proche |
+| Keymap : réassigner un raccourci | Activer / désactiver par action | Écrire dans `keybindings.json` de l'utilisateur reste à décider |

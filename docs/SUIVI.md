@@ -83,3 +83,9 @@ Cocher et dater quand c'est réglé.
 - [ ] **Limites assumées** : pas de changement de hauteur des onglets/lignes d'arbre (VS Code calcule ces tailles en JS) ; police Inter seulement si installée.
 - [ ] **Après chaque mise à jour de VS Code** : ré-application automatique au démarrage + demande de rechargement de la fenêtre.
 - [ ] Des fichiers `*.unintellij-backup` restent à côté de `workbench.html` / `product.json` (filet de sécurité) : les supprimer à la désactivation ?
+
+## Lot 11 — Documentation et packaging
+
+- [ ] **Release GitHub** : le `.vsix` est publié automatiquement à chaque tag `v*` (workflow Release). Première version : 0.1.0.
+- [ ] **Icône de l'extension** dessinée pour l'occasion (îles + couleurs Islands) : à remplacer si tu préfères autre chose.
+- [ ] **Publication sur le Marketplace** : non faite (nom public sans « IntelliJ », vrai `publisher`, compte Azure DevOps) — cf. lot 1.
