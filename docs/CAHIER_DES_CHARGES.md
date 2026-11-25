@@ -278,6 +278,47 @@ Disposition IntelliJ de Tom : **en haut à gauche** Project puis Commit, et rien
 
 ### 14.7 Questions encore ouvertes
 
-- [ ] Où mettre Structure (panneau du bas, barre latérale droite, ou sous Project) ?
+- [x] Structure : **pas utilisée** → retirée de la barre d'activité (le popup File Structure `Ctrl+F12` reste).
 - [ ] Faut-il garder une entrée de menu pour Recherche / Extensions une fois masquées (ex. dans Search Everywhere › Actions) ?
-- [ ] Captures IntelliJ de référence sur le poste Windows pour calibrer police et couleurs (si IntelliJ est encore accessible).
+- [x] Captures de référence reçues (IntelliJ et VS Code sur le poste de travail). Elles contiennent des informations internes : **jamais versionnées**, constats résumés en §15.
+
+## 15. Itération 2 — précisions après comparaison avec IntelliJ (2026-11-25)
+
+Constats sur la capture d'IntelliJ au travail (non versionnée : informations internes) :
+
+- Thème **Islands Light** (pas Dark) → calibrer d'abord **Islands Light** ; le thème par défaut doit suivre celui que Tom utilise.
+- Police d'interface Inter ~13 px, éditeur JetBrains Mono : nettement plus grands et nets que dans VS Code (Segoe UI / Consolas petits).
+- Barre de titre : logo, menu hamburger, **widget projet** (carré coloré avec l'initiale du projet + nom + ▾), **widget branche** (icône + nom ▾), à droite **widget Run** (icône + nom de la configuration ▾, ▶ vert, 🐞, ⋮), puis assistant IA, loupe (Search Everywhere), engrenage (Settings).
+- Barre de gauche — haut : **Project**, **Commit**, `…` ; bas : **Services/Run**, **Terminal**, **Problems**, **Git**. Barre de droite : Notifications, Database, Maven.
+- Barre d'état : **barre de navigation** (fil d'Ariane `module › src › main › … › fichier`) en bas à gauche ; à droite position `ligne:colonne`, fins de ligne, encodage, indentation, verrou lecture seule.
+- Éditeur : widget d'inspection en haut à droite (nombre d'avertissements / validations, flèches haut/bas).
+
+### 15.1 Vue Project avec sélecteur de vue (priorité 1)
+
+Le titre de la tool window est un menu **« Project ▾ »** qui change la façon de voir le projet, comme IntelliJ :
+
+- **Project** : arbre par module, chemin du module en gris à côté du nom, icônes de module, dossiers sources / ressources / tests / exclus colorés.
+- **Packages** (Java) : arborescence par packages (via jdtls si présent, sinon analyse de `src/main/java`).
+- **Project Files** : arbre brut des fichiers.
+- **Open Files** et **Changed Files**.
+- Implémentation : vue arbre UnIntelliJ « Project » qui remplace l'Explorateur de VS Code (même logique que Commit / Source Control : l'Explorateur natif est masqué). À conserver : renommer, créer, supprimer, glisser-déposer, copier les chemins, « Select Opened File », double-clic pour ouvrir.
+
+### 15.2 Barre de gauche exactement comme IntelliJ (priorité 1)
+
+- En haut : **Project** (icône dossier), puis **Commit** (icône « trait avec un rond »).
+- **Git** (icône branche Git d'IntelliJ, onglet séparé) : log des branches, recherche de commit, graphe, détail du commit au clic, affiché **en bas** comme dans IntelliJ. Si VS Code ne permet pas d'icône en bas à gauche sans injection, l'icône Git va **sous Commit en haut à gauche**.
+- Run / Terminal / Problems : onglets du panneau du bas, comme les tool windows du bas d'IntelliJ.
+- Retirer de la barre : Structure, npm et les entrées natives (Recherche, Exécuter et déboguer, Extensions…) — cf. §14.6.
+
+### 15.3 Proposer automatiquement les réglages IntelliJ (priorité 1)
+
+- Au premier lancement (et quand une nouvelle version modifie le préréglage) : notification « Appliquer les réglages IntelliJ ? » avec **Appliquer** / Plus tard / Voir le détail.
+- Vérifier que **JetBrains Mono** est installée ; sinon proposer le lien et expliquer l'installation « pour moi » (sans admin).
+- Choisir Islands Light ou Dark à ce moment-là.
+
+### 15.4 Détails d'interface à reproduire (priorité 2)
+
+- Barre de navigation (fil d'Ariane cliquable) en bas à gauche de la barre d'état.
+- Barre d'état à droite : uniquement position, fins de ligne, encodage, indentation, lecture seule.
+- Widget d'inspection de l'éditeur (avertissements / erreurs, navigation) : au plus près (barre de titre de l'éditeur ou barre d'état).
+- Onglets d'éditeur : onglet actif encadré bleu arrondi (thème Light), icônes de type de fichier.

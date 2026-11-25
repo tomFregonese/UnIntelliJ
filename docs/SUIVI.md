@@ -106,3 +106,8 @@ Cocher et dater quand c'est réglé.
 - [ ] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4
 - [ ] Widget Run unique + fenêtre Edit Configurations, suppression de la tool window npm — §14.5
 - [ ] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6
+- [ ] Vue Project avec sélecteur « Project ▾ » (Project / Packages / Project Files / Open Files / Changed Files), remplace l'Explorateur — §15.1
+- [ ] Barre de gauche : Project, Commit, Git séparé (en bas si possible, sinon sous Commit) ; Structure et npm retirés — §15.2
+- [ ] Proposition automatique des réglages IntelliJ + vérification JetBrains Mono + choix Light/Dark au premier lancement — §15.3
+- [ ] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
+- [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
