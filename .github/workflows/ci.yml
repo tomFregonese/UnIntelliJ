@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check:config
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:unit
+
+  integration:
+    name: Integration (${{ matrix.os }}, VS Code ${{ matrix.vscode }})
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        vscode: [stable]
+        include:
+          # Minimum version from engines.vscode.
+          - os: ubuntu-latest
+            vscode: 1.100.0
+    runs-on: ${{ matrix.os }}
+    env:
+      VSCODE_TEST_VERSION: ${{ matrix.vscode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Integration tests
+        if: runner.os != 'Linux'
+        run: npm run test:integration
+      - name: Integration tests (xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:integration
+
+  package:
+    name: Package .vsix
+    needs: integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unintellij-vsix
+          path: '*.vsix'

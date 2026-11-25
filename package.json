@@ -1,0 +1,205 @@
+{
+  "name": "unintellij",
+  "displayName": "UnIntelliJ",
+  "description": "Make VS Code look and behave like IntelliJ IDEA (New UI / Islands).",
+  "version": "0.0.1",
+  "publisher": "unintellij",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Themes",
+    "Keymaps",
+    "Other"
+  ],
+  "keywords": [
+    "intellij",
+    "jetbrains",
+    "islands",
+    "keymap",
+    "search everywhere"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": [
+      {
+        "id": "unintellij.appearance",
+        "title": "Appearance & Behavior",
+        "order": 1,
+        "properties": {
+          "unintellij.appearance.theme": {
+            "type": "string",
+            "default": "islandsDark",
+            "enum": [
+              "islandsDark",
+              "islandsLight"
+            ],
+            "enumDescriptions": [
+              "Islands Dark",
+              "Islands Light"
+            ],
+            "markdownDescription": "Color theme, as in IntelliJ **Settings › Appearance › Theme**. Ignored when `#unintellij.appearance.syncWithOs#` is enabled.",
+            "order": 1
+          },
+          "unintellij.appearance.syncWithOs": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Follow the operating system's light/dark mode, using `#unintellij.appearance.preferredDarkTheme#` and `#unintellij.appearance.preferredLightTheme#`.",
+            "order": 2
+          },
+          "unintellij.appearance.preferredDarkTheme": {
+            "type": "string",
+            "default": "islandsDark",
+            "enum": [
+              "islandsDark",
+              "islandsLight"
+            ],
+            "enumDescriptions": [
+              "Islands Dark",
+              "Islands Light"
+            ],
+            "markdownDescription": "Theme used when the OS is in dark mode and `#unintellij.appearance.syncWithOs#` is enabled.",
+            "order": 3
+          },
+          "unintellij.appearance.preferredLightTheme": {
+            "type": "string",
+            "default": "islandsLight",
+            "enum": [
+              "islandsDark",
+              "islandsLight"
+            ],
+            "enumDescriptions": [
+              "Islands Dark",
+              "Islands Light"
+            ],
+            "markdownDescription": "Theme used when the OS is in light mode and `#unintellij.appearance.syncWithOs#` is enabled.",
+            "order": 4
+          },
+          "unintellij.appearance.islandsPlus.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "**Islands+** (experimental): patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets. Modifies VS Code installation files and requires write access to them.",
+            "order": 5
+          }
+        }
+      },
+      {
+        "id": "unintellij.keymap",
+        "title": "Keymap",
+        "order": 2,
+        "properties": {
+          "unintellij.keymap.layout": {
+            "type": "string",
+            "default": "auto",
+            "enum": [
+              "auto",
+              "windows",
+              "macos"
+            ],
+            "enumDescriptions": [
+              "IntelliJ default keymap for the current operating system",
+              "IntelliJ \"Windows\" default keymap",
+              "IntelliJ \"macOS\" default keymap"
+            ],
+            "markdownDescription": "Which IntelliJ default keymap to emulate.",
+            "order": 1
+          },
+          "unintellij.keymap.disabledActions": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true,
+            "markdownDescription": "IntelliJ action IDs whose shortcut should be disabled (e.g. `SearchEverywhere`).",
+            "order": 2
+          }
+        }
+      },
+      {
+        "id": "unintellij.searchEverywhere",
+        "title": "Search Everywhere",
+        "order": 3,
+        "properties": {
+          "unintellij.searchEverywhere.includeNonProjectItems": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Also search libraries and excluded files (e.g. `node_modules`) by default, like IntelliJ's **Include non-project items** checkbox.",
+            "order": 1
+          },
+          "unintellij.searchEverywhere.excludePatterns": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true,
+            "markdownDescription": "Additional glob patterns excluded from Search Everywhere, on top of `#files.exclude#` and `#search.exclude#`.",
+            "order": 2
+          }
+        }
+      },
+      {
+        "id": "unintellij.vcs",
+        "title": "Version Control",
+        "order": 4,
+        "properties": {
+          "unintellij.vcs.updateMethod": {
+            "type": "string",
+            "default": "merge",
+            "enum": [
+              "merge",
+              "rebase"
+            ],
+            "enumDescriptions": [
+              "Merge incoming changes into the current branch",
+              "Rebase the current branch on top of incoming changes"
+            ],
+            "markdownDescription": "How **Update Project** integrates incoming changes.",
+            "order": 1
+          },
+          "unintellij.vcs.changelists.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Enable changelists in the Commit tool window.",
+            "order": 2
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "test:unit": "vitest run",
+    "compile:integration": "tsc -p tsconfig.integration.json",
+    "test:integration": "npm run build && npm run compile:integration && vscode-test",
+    "gen:config": "tsx scripts/generate-config.ts",
+    "check:config": "tsx scripts/generate-config.ts --check",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "node esbuild.mjs --production"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "1.100.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "mocha": "^12.0.3",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.74.0",
+    "vitest": "^5.1.1"
+  }
+}

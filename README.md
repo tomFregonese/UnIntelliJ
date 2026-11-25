@@ -1,0 +1,39 @@
+# UnIntelliJ
+
+Make VS Code look and behave like IntelliJ IDEA (New UI / Islands): themes, icons, keymap,
+Search Everywhere (double Shift), tool windows, Git and an IntelliJ-style Settings window.
+
+> Work in progress — see `docs/CAHIER_DES_CHARGES.md` in the repository for the specification.
+
+## Install from a `.vsix`
+
+```sh
+npm ci
+npm run package
+code --install-extension unintellij-*.vsix
+```
+
+On Windows without the `code` command: **Extensions** view › `…` › **Install from VSIX…**.
+
+## Development
+
+| Command | What it does |
+|---|---|
+| `npm run build` / `npm run watch` | Bundle `src/` into `dist/extension.js` |
+| `F5` in VS Code | Launch an Extension Development Host |
+| `npm run typecheck` · `npm run lint` | Static checks |
+| `npm run test:unit` | Unit tests (Vitest, no VS Code needed) |
+| `npm run test:integration` | Integration tests in a downloaded VS Code (`VSCODE_TEST_VERSION` to pick a version) |
+| `npm run gen:config` | Regenerate `contributes.configuration` from `src/config/schema.ts` |
+| `npm run package` | Build the `.vsix` |
+
+### Settings
+
+All settings live under `unintellij.*` and are declared **once** in `src/config/schema.ts`.
+After changing it, run `npm run gen:config`; CI fails if `package.json` is out of date.
+Read them with `getSetting()` from `src/config/settings.ts`, which falls back to the default for invalid values.
+
+### Optional integrations
+
+UnIntelliJ never requires another extension. `src/integrations.ts` lists the ones it can use
+(Git, Java, Java debugger, Angular); features must check that an integration is active and degrade gracefully otherwise.
