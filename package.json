@@ -292,7 +292,7 @@
       },
       {
         "command": "unintellij.applyRecommendedSettings",
-        "title": "Apply IntelliJ-like VS Code Settings…",
+        "title": "Set Up IntelliJ-like Settings (Theme, Fonts)…",
         "category": "UnIntelliJ"
       },
       {
@@ -2207,7 +2207,14 @@
           "highContrastLight": "#338555"
         }
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "scm.diffDecorationsGutterPattern": {
+        "added": false,
+        "modified": false
+      },
+      "scm.diffDecorationsGutterWidth": 3
+    }
   },
   "scripts": {
     "build": "node esbuild.mjs",

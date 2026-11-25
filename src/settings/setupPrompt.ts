@@ -1,0 +1,96 @@
+import * as vscode from 'vscode';
+import { getSetting } from '../config/settings';
+import { hasJetBrainsMono, installJetBrainsMono } from '../appearance/fonts';
+import { applyPreset, appliedPresetVersion, PRESET_VERSION } from './preset';
+
+/** Set when the user answered "Don't ask again" for this preset version. */
+const DISMISSED_KEY = 'settings.setupDismissedVersion';
+
+/**
+ * IntelliJ-like first run: offers to apply the IntelliJ-like VS Code settings (again when a new
+ * version changes them), lets the user pick Islands Light or Dark, and makes sure JetBrains Mono
+ * is installed.
+ */
+export class SetupPrompt {
+  constructor(
+    private readonly context: vscode.ExtensionContext,
+    private readonly log: vscode.LogOutputChannel,
+  ) {}
+
+  /** Called on activation: asks only when the preset was never applied or has changed. */
+  async maybeAsk(): Promise<void> {
+    const state = this.context.globalState;
+    if (appliedPresetVersion(state) >= PRESET_VERSION || state.get<number>(DISMISSED_KEY) === PRESET_VERSION) {
+      return;
+    }
+    const isUpdate = appliedPresetVersion(state) > 0;
+    const apply = 'Apply';
+    const details = 'See Details';
+    const never = "Don't Ask Again";
+    const answer = await vscode.window.showInformationMessage(
+      isUpdate
+        ? 'UnIntelliJ: the IntelliJ-like settings were updated (fonts, sizes). Apply them?'
+        : 'UnIntelliJ: apply IntelliJ-like settings (JetBrains Mono, font sizes, autosave, Islands theme…)?',
+      apply,
+      details,
+      'Later',
+      never,
+    );
+    if (answer === apply) {
+      await this.run();
+    } else if (answer === details) {
+      await vscode.commands.executeCommand('unintellij.showSettings', 'editorGeneral');
+    } else if (answer === never) {
+      await state.update(DISMISSED_KEY, PRESET_VERSION);
+    }
+  }
+
+  /** Full setup: theme choice, settings, font. Also available as a command. */
+  async run(): Promise<void> {
+    const current = getSetting('appearance.theme');
+    const theme = await vscode.window.showQuickPick(
+      [
+        { label: 'Islands Light', id: 'islandsLight' as const, picked: current === 'islandsLight' },
+        { label: 'Islands Dark', id: 'islandsDark' as const, picked: current === 'islandsDark' },
+      ].sort((a) => (a.picked ? -1 : 1)),
+      { title: 'UnIntelliJ: Theme', placeHolder: 'Choose the IntelliJ theme' },
+    );
+    if (!theme) {
+      return;
+    }
+    await vscode.workspace.getConfiguration('unintellij').update('appearance.syncWithOs', false, vscode.ConfigurationTarget.Global);
+    await vscode.workspace.getConfiguration('unintellij').update('appearance.theme', theme.id, vscode.ConfigurationTarget.Global);
+    await applyPreset(this.context.globalState);
+    this.log.info(`Setup: preset v${PRESET_VERSION} applied with ${theme.label}`);
+    await this.checkFont();
+  }
+
+  /** Offers to install the bundled JetBrains Mono for the current user when it is missing. */
+  async checkFont(): Promise<void> {
+    if (await hasJetBrainsMono()) {
+      return;
+    }
+    const install = 'Install for Me';
+    const download = 'Download Page';
+    const answer = await vscode.window.showWarningMessage(
+      'JetBrains Mono, the IntelliJ editor font, is not installed. UnIntelliJ can install it for your user account only (no admin rights needed).',
+      install,
+      download,
+    );
+    if (answer === download) {
+      await vscode.env.openExternal(vscode.Uri.parse('https://www.jetbrains.com/lp/mono/'));
+    } else if (answer === install) {
+      try {
+        await installJetBrainsMono(this.context.extensionUri, this.log);
+      } catch (error) {
+        this.log.error(`Could not install JetBrains Mono: ${String(error)}`);
+        void vscode.window.showErrorMessage(`Could not install JetBrains Mono: ${String(error)}`);
+        return;
+      }
+      const reload = 'Restart Now';
+      if ((await vscode.window.showInformationMessage('JetBrains Mono installed. Restart VS Code to use it.', reload)) === reload) {
+        await vscode.commands.executeCommand('workbench.action.quit');
+      }
+    }
+  }
+}

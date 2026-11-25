@@ -15,7 +15,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { buildCommandContribution, buildCommandPaletteMenu } from '../src/commands/catalog';
 import { MENUS, TASK_DEFINITIONS, VIEW_CONTAINERS, VIEWS } from '../src/commands/contributions';
-import { buildConfigurationContribution } from '../src/config/schema';
+import { buildConfigurationContribution, CONFIGURATION_DEFAULTS } from '../src/config/schema';
 import { buildKeybindings, buildKeymapMarkdown } from '../src/keymap/keymap';
 import { buildColorContribution, buildColorTheme, themeFileName } from '../src/theme/build';
 import { ISLANDS_DARK, ISLANDS_LIGHT, PALETTES } from '../src/theme/palettes';
@@ -49,6 +49,7 @@ pkg.contributes.views = VIEWS;
 pkg.contributes.taskDefinitions = TASK_DEFINITIONS;
 pkg.contributes.keybindings = buildKeybindings();
 pkg.contributes.colors = buildColorContribution(ISLANDS_DARK, ISLANDS_LIGHT);
+pkg.contributes.configurationDefaults = CONFIGURATION_DEFAULTS;
 emit(packagePath, json(pkg));
 
 // Keymap reference

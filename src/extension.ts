@@ -9,6 +9,7 @@ import { IslandsPlus } from './islandsPlus/islandsPlus';
 import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
+import { SetupPrompt } from './settings/setupPrompt';
 import { applyPreset, revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
 import { RunWidget } from './run/runWidget';
@@ -55,10 +56,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   void userKeybindings.sync();
   const navigation = registerNavigationCommands(context, log);
   const vcs = registerVcsCommands(context, log);
+  const setup = new SetupPrompt(context, log);
   context.subscriptions.push(
     ...navigation.disposables,
     ...registerEditorCommands(),
-    ...registerSettingsCommands(context, log),
+    ...registerSettingsCommands(context, log, setup),
     ...vcs.disposables,
     syncDisabledActions(),
     userKeybindings,
@@ -75,6 +77,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   context.subscriptions.push(themeSync);
   await themeSync.initialize();
   await initializeIconThemes(context.globalState, log);
+  // Not awaited: the notification stays until the user answers. Skipped in extension tests.
+  if (context.extensionMode !== vscode.ExtensionMode.Test) {
+    void setup.maybeAsk();
+  }
 
   return {
     integrations: detectIntegrations,

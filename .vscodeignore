@@ -16,3 +16,5 @@
 !media/islands-plus/*
 !media/icon.png
 !icons/symbols/*.svg
+!fonts/*.ttf
+!fonts/OFL.txt

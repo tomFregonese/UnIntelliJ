@@ -4,10 +4,22 @@ import * as vscode from 'vscode';
  * "IntelliJ-like VS Code settings": VS Code options whose defaults differ from IntelliJ's.
  * Applied on demand from Settings › Editor › General; previous values are kept for Revert.
  */
+/** Bumped when entries change, so that users who applied an older preset are offered the new one. */
+export const PRESET_VERSION = 2;
+
+const EDITOR_FONT = "'JetBrains Mono', Consolas, 'Courier New', monospace";
+/** IntelliJ's 13 pt renders larger on Windows/Linux than VS Code's 13 px. */
+const EDITOR_FONT_SIZE = process.platform === 'darwin' ? 13 : 14;
+
 export const PRESET: readonly { key: string; value: unknown; reason: string }[] = [
-  { key: 'editor.fontFamily', value: "'JetBrains Mono', Consolas, 'Courier New', monospace", reason: 'IntelliJ default editor font' },
-  { key: 'editor.fontSize', value: 13, reason: 'IntelliJ default size' },
+  { key: 'editor.fontFamily', value: EDITOR_FONT, reason: 'IntelliJ default editor font' },
+  { key: 'editor.fontSize', value: EDITOR_FONT_SIZE, reason: 'IntelliJ default size (13 pt)' },
   { key: 'editor.lineHeight', value: 1.4, reason: 'IntelliJ line spacing' },
+  { key: 'editor.fontLigatures', value: false, reason: 'Ligatures off, IntelliJ default' },
+  { key: 'editor.fontWeight', value: 'normal', reason: 'Regular weight' },
+  { key: 'terminal.integrated.fontFamily', value: EDITOR_FONT, reason: 'Terminal uses the editor font' },
+  { key: 'terminal.integrated.fontSize', value: EDITOR_FONT_SIZE, reason: 'Terminal font size' },
+  { key: 'debug.console.fontFamily', value: EDITOR_FONT, reason: 'Console uses the editor font' },
   { key: 'editor.minimap.enabled', value: false, reason: 'IntelliJ has no minimap' },
   { key: 'editor.renderWhitespace', value: 'none', reason: 'Whitespaces hidden' },
   { key: 'editor.rulers', value: [120], reason: 'Hard wrap guide at 120' },
@@ -28,6 +40,12 @@ export const PRESET: readonly { key: string; value: unknown; reason: string }[] 
 ];
 
 const BACKUP_KEY = 'settings.presetBackup';
+const VERSION_KEY = 'settings.presetVersion';
+
+/** Version of the preset last applied, 0 when never applied. */
+export function appliedPresetVersion(state: vscode.Memento): number {
+  return state.get<number>(VERSION_KEY) ?? (presetApplied(state) ? 1 : 0);
+}
 
 export function presetApplied(state: vscode.Memento): boolean {
   return state.get(BACKUP_KEY) !== undefined;
@@ -44,6 +62,7 @@ export async function applyPreset(state: vscode.Memento): Promise<void> {
     await config.update(key, value, vscode.ConfigurationTarget.Global);
   }
   await state.update(BACKUP_KEY, backup);
+  await state.update(VERSION_KEY, PRESET_VERSION);
 }
 
 export async function revertPreset(state: vscode.Memento): Promise<void> {

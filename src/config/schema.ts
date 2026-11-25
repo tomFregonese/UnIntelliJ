@@ -220,3 +220,13 @@ export function buildConfigurationContribution(): unknown[] {
     };
   });
 }
+
+/**
+ * Defaults of VS Code settings changed for everyone using UnIntelliJ (`contributes.configurationDefaults`):
+ * only harmless look-alike tweaks; the user's own values still win.
+ */
+export const CONFIGURATION_DEFAULTS: Record<string, unknown> = {
+  // IntelliJ change markers are solid bars, VS Code's are hatched for added/modified lines.
+  'scm.diffDecorationsGutterPattern': { added: false, modified: false },
+  'scm.diffDecorationsGutterWidth': 3,
+};

@@ -15,3 +15,9 @@ The color values in src/theme/palettes.ts (and the generated themes/*.json) are
 copied from the IntelliJ Platform themes and editor color schemes,
 platform/platform-resources/src/themes (islands/ManyIslands*.theme.json,
 islands/IslandSchemeDark.xml, expUI/expUI_lightScheme.xml), same license.
+
+fonts/JetBrainsMono-*.ttf are JetBrains Mono 2.304,
+https://github.com/JetBrains/JetBrainsMono, Copyright 2020 The JetBrains Mono
+Project Authors, licensed under the SIL Open Font License 1.1 (fonts/OFL.txt).
+They are bundled unmodified so that UnIntelliJ can install the font for the
+current user.

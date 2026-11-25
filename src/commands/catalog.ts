@@ -34,7 +34,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   // Settings
   { command: 'unintellij.showSettings', title: 'Settings…' },
   { command: 'unintellij.showKeymapSettings', title: 'Settings: Keymap' },
-  { command: 'unintellij.applyRecommendedSettings', title: 'Apply IntelliJ-like VS Code Settings…' },
+  { command: 'unintellij.applyRecommendedSettings', title: 'Set Up IntelliJ-like Settings (Theme, Fonts)…' },
   // Run
   { command: 'unintellij.run', title: 'Run', icon: '$(play)' },
   { command: 'unintellij.debug', title: 'Debug', icon: '$(debug-alt)' },
