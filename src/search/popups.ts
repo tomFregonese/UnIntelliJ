@@ -3,19 +3,20 @@ import { KEYMAP } from '../keymap/keymap';
 import { shortcutFor } from './actions';
 import { fileIconPath } from './fileIcons';
 import { NavigationHistory } from './history';
-import { openLocation, SearchItem, symbolIcon } from './searchEverywhere';
+import { openLocation, SearchItem } from './searchEverywhere';
+import { symbolIconPath } from './symbolIcons';
 
 /** Tool windows listed in the left column of IntelliJ's Recent Files popup. */
-const TOOL_WINDOW_ACTIONS = [
-  'ActivateProjectToolWindow',
-  'ActivateCommitToolWindow',
-  'ActivateVersionControlToolWindow',
-  'ActivateStructureToolWindow',
-  'ActivateProblemsViewToolWindow',
-  'ActivateTerminalToolWindow',
-  'ActivateDebugToolWindow',
-  'ActivateFindToolWindow',
-];
+const TOOL_WINDOW_ICONS: Record<string, string> = {
+  ActivateProjectToolWindow: 'explorer-view-icon',
+  ActivateCommitToolWindow: 'source-control-view-icon',
+  ActivateVersionControlToolWindow: 'git-branch',
+  ActivateStructureToolWindow: 'outline-view-icon',
+  ActivateProblemsViewToolWindow: 'markers-view-icon',
+  ActivateTerminalToolWindow: 'terminal',
+  ActivateDebugToolWindow: 'run-view-icon',
+  ActivateFindToolWindow: 'search-view-icon',
+};
 
 function runQuickPick(quickPick: vscode.QuickPick<SearchItem>): void {
   quickPick.matchOnDescription = true;
@@ -76,10 +77,10 @@ export class RecentPopups {
       if (files.length > 1 && this.history.files(editedOnly)[0]?.uri === current) {
         files.push(files.shift()!);
       }
-      const toolWindows: SearchItem[] = KEYMAP.filter((a) => TOOL_WINDOW_ACTIONS.includes(a.id)).map((a) => ({
+      const toolWindows: SearchItem[] = KEYMAP.filter((a) => a.id in TOOL_WINDOW_ICONS).map((a) => ({
         label: a.name,
         description: shortcutFor(a.command, a.args),
-        iconPath: new vscode.ThemeIcon('window'),
+        iconPath: new vscode.ThemeIcon(TOOL_WINDOW_ICONS[a.id]),
         open: () => vscode.commands.executeCommand(a.command, ...(a.args !== undefined ? [a.args] : [])),
       }));
       quickPick.items = [...files, { label: 'Tool Windows', kind: vscode.QuickPickItemKind.Separator }, ...toolWindows];
@@ -138,7 +139,7 @@ function flatten(symbols: readonly vscode.DocumentSymbol[], depth = 0, out: Flat
 }
 
 /** IntelliJ's File Structure popup (Ctrl+F12): the current file's symbols, in source order. */
-export async function showFileStructure(): Promise<void> {
+export async function showFileStructure(extensionUri: vscode.Uri): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -157,7 +158,7 @@ export async function showFileStructure(): Promise<void> {
   const items: SearchItem[] = flat.map(({ symbol, depth }) => ({
     label: `${' '.repeat(depth)}${symbol.name}`,
     description: symbol.detail,
-    iconPath: symbolIcon(symbol.kind),
+    iconPath: symbolIconPath(extensionUri, symbol.kind),
     open: async () => {
       const position = symbol.selectionRange.start;
       editor.selection = new vscode.Selection(position, position);

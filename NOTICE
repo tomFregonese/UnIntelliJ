@@ -6,7 +6,7 @@ https://github.com/JetBrains/intellij-community, platform/icons/src/expui:
   Copyright 2000-2025 JetBrains s.r.o. and contributors.
   Licensed under the Apache License, Version 2.0
   (https://www.apache.org/licenses/LICENSE-2.0).
-The SVG files in icons/files/, media/settings-*.svg, media/structure.svg, media/commit.svg and media/git.svg are unmodified copies. The glyphs in
+The SVG files in icons/files/, icons/symbols/, media/settings-*.svg, media/structure.svg and media/git.svg are unmodified copies. The glyphs in
 icons/product-icons.woff are derived from them (converted to monochrome
 outlines). IntelliJ and JetBrains are trademarks of JetBrains s.r.o.;
 this project is not affiliated with or endorsed by JetBrains.

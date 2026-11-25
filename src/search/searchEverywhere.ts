@@ -7,6 +7,7 @@ import { FileIndex, IndexedFile } from './fileIndex';
 import { NavigationHistory } from './history';
 import { matchFile, matchName, parseQuery, ParsedQuery, rank } from './matcher';
 import { searchText } from './ripgrep';
+import { symbolIconPath } from './symbolIcons';
 
 export const TABS = ['all', 'classes', 'files', 'symbols', 'actions', 'text'] as const;
 export type TabId = (typeof TABS)[number];
@@ -22,29 +23,6 @@ export interface SearchItem extends vscode.QuickPickItem {
 }
 
 const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: 'Open to the Side' };
-
-export function symbolIcon(kind: vscode.SymbolKind): vscode.ThemeIcon {
-  const map: Partial<Record<vscode.SymbolKind, [string, string]>> = {
-    [vscode.SymbolKind.Class]: ['symbol-class', 'symbolIcon.classForeground'],
-    [vscode.SymbolKind.Interface]: ['symbol-interface', 'symbolIcon.interfaceForeground'],
-    [vscode.SymbolKind.Enum]: ['symbol-enum', 'symbolIcon.enumeratorForeground'],
-    [vscode.SymbolKind.EnumMember]: ['symbol-enum-member', 'symbolIcon.enumeratorMemberForeground'],
-    [vscode.SymbolKind.Struct]: ['symbol-structure', 'symbolIcon.structForeground'],
-    [vscode.SymbolKind.Method]: ['symbol-method', 'symbolIcon.methodForeground'],
-    [vscode.SymbolKind.Constructor]: ['symbol-method', 'symbolIcon.constructorForeground'],
-    [vscode.SymbolKind.Function]: ['symbol-function', 'symbolIcon.functionForeground'],
-    [vscode.SymbolKind.Field]: ['symbol-field', 'symbolIcon.fieldForeground'],
-    [vscode.SymbolKind.Property]: ['symbol-property', 'symbolIcon.propertyForeground'],
-    [vscode.SymbolKind.Variable]: ['symbol-variable', 'symbolIcon.variableForeground'],
-    [vscode.SymbolKind.Constant]: ['symbol-constant', 'symbolIcon.constantForeground'],
-    [vscode.SymbolKind.TypeParameter]: ['symbol-type-parameter', 'symbolIcon.typeParameterForeground'],
-    [vscode.SymbolKind.Module]: ['symbol-module', 'symbolIcon.moduleForeground'],
-    [vscode.SymbolKind.Namespace]: ['symbol-namespace', 'symbolIcon.namespaceForeground'],
-    [vscode.SymbolKind.Package]: ['symbol-package', 'symbolIcon.packageForeground'],
-  };
-  const [icon, color] = map[kind] ?? ['symbol-misc', 'foreground'];
-  return new vscode.ThemeIcon(icon, new vscode.ThemeColor(color));
-}
 
 /** Opens `uri`, optionally at a position, in the active or side editor group. */
 export async function openLocation(uri: vscode.Uri, toSide: boolean, position?: vscode.Position, length = 0): Promise<void> {
@@ -304,7 +282,7 @@ export class SearchEverywhere implements vscode.Disposable {
     return ranked.map((s) => ({
       label: s.name,
       description: [s.containerName, vscode.workspace.asRelativePath(s.location.uri, multiRoot)].filter(Boolean).join(' — '),
-      iconPath: symbolIcon(s.kind),
+      iconPath: symbolIconPath(this.extensionUri, s.kind),
       buttons: [OPEN_TO_SIDE],
       open: (toSide) => openLocation(s.location.uri, toSide, s.location.range.start),
     }));

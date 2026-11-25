@@ -583,5 +583,27 @@
     "symbolIcon.moduleForeground": "nodes/module",
     "symbolIcon.structForeground": "nodes/record",
     "symbolIcon.eventForeground": "nodes/lambda"
+  },
+  "symbolIcons": {
+    "class": "nodes/class",
+    "interface": "nodes/interface",
+    "enum": "nodes/enum",
+    "enumMember": "nodes/constant",
+    "struct": "nodes/record",
+    "method": "nodes/method",
+    "constructor": "nodes/method",
+    "function": "nodes/function",
+    "field": "nodes/field",
+    "property": "nodes/property",
+    "variable": "nodes/variable",
+    "constant": "nodes/constant",
+    "parameter": "nodes/parameter",
+    "typeParameter": "nodes/type",
+    "module": "nodes/module",
+    "namespace": "nodes/package",
+    "package": "nodes/package",
+    "event": "nodes/lambda",
+    "annotation": "nodes/annotation",
+    "misc": "nodes/unknown"
   }
 }

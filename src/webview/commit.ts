@@ -166,6 +166,8 @@ function renderFile(file: FileItem, section: RowContext['webviewSection']): HTML
       onDblclick: () => vscode.postMessage({ type: 'diff', path: file.path }),
     },
     box,
+    file.icon && h('img', { className: 'file-icon dark', src: file.icon.dark, alt: '' }),
+    file.icon && h('img', { className: 'file-icon light', src: file.icon.light, alt: '' }),
     h('span', { className: `name status-${file.status}` }, file.name),
     file.dir && h('span', { className: 'dir' }, file.dir),
   );

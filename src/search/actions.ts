@@ -33,14 +33,22 @@ export function currentKeymapOs(): KeymapOs {
 /** Shortcut of an IntelliJ action in the active keymap, formatted like IntelliJ. */
 export function shortcutFor(command: string, args?: unknown): string | undefined {
   const os = currentKeymapOs();
-  const disabled = new Set(getSetting('keymap.disabledActions'));
-  const action = KEYMAP.find((a) => a.command === command && JSON.stringify(a.args) === JSON.stringify(args) && !disabled.has(a.id) && a[os]);
-  return action ? formatKey(action[os]!, os) : undefined;
+  const action = KEYMAP.find((a) => a.command === command && JSON.stringify(a.args) === JSON.stringify(args) && actionKey(a.id, a[os]));
+  const key = action && actionKey(action.id, action[os]);
+  return key ? formatKey(key, os) : undefined;
+}
+
+/** Effective shortcut of an action: reassigned, default, or none when disabled. */
+function actionKey(id: string, defaultKey: string | undefined): string | undefined {
+  const custom = getSetting('keymap.customShortcuts')[id];
+  if (custom) {
+    return custom;
+  }
+  return getSetting('keymap.disabledActions').includes(id) ? undefined : defaultKey;
 }
 
 export function collectActions(): ActionEntry[] {
   const os = currentKeymapOs();
-  const disabled = new Set(getSetting('keymap.disabledActions'));
   const entries: ActionEntry[] = [];
   const seen = new Set<string>();
 
@@ -51,10 +59,10 @@ export function collectActions(): ActionEntry[] {
       continue;
     }
     seen.add(id);
-    const key = action[os];
+    const key = actionKey(action.id, action[os]);
     entries.push({
       label: action.name,
-      description: key && !disabled.has(action.id) ? formatKey(key, os) : undefined,
+      description: key ? formatKey(key, os) : undefined,
       detail: undefined,
       searchText: `${action.name} ${action.category}`,
       run: () => vscode.commands.executeCommand(action.command, ...(action.args !== undefined ? [action.args] : [])),

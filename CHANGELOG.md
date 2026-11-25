@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — 2026-11-25
+
+- **Commit tool window replaces VS Code's Source Control**: it lives in the Source Control container and VS Code's own Changes and Graph views are hidden (command to show them again). Alt+0 focuses it.
+- **Reassign shortcuts** in Settings › Keymap (✎ then press the keys; Backspace resets): written to your keybindings.json, your own entries and comments are untouched.
+- Colored IntelliJ symbol icons in Search Everywhere, File Structure and Structure; file type icons in the Commit tool window; tool window icons in Recent Files.
+- IntelliJ-like preset: continuous autosave, file names keep their VCS color when they contain errors.
+- Islands+ deletes its safety copies when disabled.
+- Fixed: the extension failed to activate when bundling jsonc-parser's UMD build.
+
 ## 0.1.0 — 2026-11-25
 
 - Project scaffold: esbuild bundle, lint, unit and integration tests, CI on Windows, macOS and Linux.

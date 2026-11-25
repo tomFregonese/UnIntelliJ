@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { COMMANDS } from '../../src/commands/catalog';
-import { buildKeybindings, buildKeymapBindings, buildKeymapMarkdown, CATEGORIES, formatKey, KEYMAP, KeymapOs, ownCommands } from '../../src/keymap/keymap';
+import { buildKeybindings, buildKeymapBindings, buildKeymapMarkdown, customKeybindings, keyFromEvent, CATEGORIES, formatKey, KEYMAP, KeymapOs, ownCommands } from '../../src/keymap/keymap';
 
 const root = join(__dirname, '..', '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
@@ -117,5 +117,33 @@ describe('docs/KEYMAP.md', () => {
 describe('commands', () => {
   it('are all contributed in package.json', () => {
     expect(pkg.contributes.commands.map((c: { command: string }) => c.command)).toEqual(COMMANDS.map((c) => c.command));
+  });
+});
+
+describe('keyFromEvent', () => {
+  const event = (code: string, mods: Partial<Record<'ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey', boolean>> = {}) => ({ code, ctrlKey: false, shiftKey: false, altKey: false, metaKey: false, ...mods });
+
+  it('builds VS Code keys from physical keys', () => {
+    expect(keyFromEvent(event('KeyN', { ctrlKey: true, shiftKey: true }), 'windows')).toBe('ctrl+shift+n');
+    expect(keyFromEvent(event('Digit1', { altKey: true }), 'windows')).toBe('alt+1');
+    expect(keyFromEvent(event('F12', { ctrlKey: true }), 'windows')).toBe('ctrl+f12');
+    expect(keyFromEvent(event('ArrowUp', { altKey: true, shiftKey: true }), 'windows')).toBe('shift+alt+up');
+    expect(keyFromEvent(event('Slash', { ctrlKey: true }), 'windows')).toBe('ctrl+/');
+  });
+
+  it('names the meta key per OS and ignores modifier-only presses', () => {
+    expect(keyFromEvent(event('KeyO', { metaKey: true }), 'macos')).toBe('cmd+o');
+    expect(keyFromEvent(event('KeyO', { metaKey: true }), 'windows')).toBe('meta+o');
+    expect(keyFromEvent(event('ShiftLeft', { shiftKey: true }), 'windows')).toBeUndefined();
+  });
+});
+
+describe('customKeybindings', () => {
+  it('rebinds the action and its variants on the new key', () => {
+    expect(customKeybindings({ ReformatCode: 'ctrl+shift+l', ActivateProjectToolWindow: 'f1' })).toEqual([
+      { key: 'ctrl+shift+l', command: 'editor.action.formatDocument', when: 'editorTextFocus && !editorReadonly && !editorHasSelection' },
+      { key: 'f1', command: 'workbench.view.explorer' },
+      { key: 'f1', command: 'workbench.action.closeSidebar', when: "sideBarFocus && activeViewlet == 'workbench.view.explorer'" },
+    ]);
   });
 });

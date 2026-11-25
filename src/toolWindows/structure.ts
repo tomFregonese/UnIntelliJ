@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { symbolIcon } from '../search/searchEverywhere';
+import { symbolIconPath } from '../search/symbolIcons';
 
 export const STRUCTURE_VIEW = 'unintellij.structure';
 
@@ -33,7 +33,10 @@ export class StructureView implements vscode.TreeDataProvider<StructureNode>, vs
   private refreshTimer: ReturnType<typeof setTimeout> | undefined;
   private loaded: Promise<void> = Promise.resolve();
 
-  constructor(private readonly state: vscode.Memento) {
+  constructor(
+    private readonly state: vscode.Memento,
+    private readonly extensionUri: vscode.Uri,
+  ) {
     this.options = { ...DEFAULT_OPTIONS, ...state.get<Partial<StructureOptions>>(OPTIONS_KEY) };
     this.view = vscode.window.createTreeView(STRUCTURE_VIEW, { treeDataProvider: this, showCollapseAll: true });
     this.disposables.push(
@@ -66,7 +69,7 @@ export class StructureView implements vscode.TreeDataProvider<StructureNode>, vs
     const children = this.visibleChildren(node);
     const item = new vscode.TreeItem(node.symbol.name, children.length > 0 ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
     item.description = node.symbol.detail;
-    item.iconPath = symbolIcon(node.symbol.kind);
+    item.iconPath = symbolIconPath(this.extensionUri, node.symbol.kind);
     item.tooltip = `${vscode.SymbolKind[node.symbol.kind]} ${node.symbol.name}${node.symbol.detail ? ` ${node.symbol.detail}` : ''}`;
     item.command = { command: 'unintellij.structure.reveal', title: 'Navigate', arguments: [node] };
     item.id = idOf(node);

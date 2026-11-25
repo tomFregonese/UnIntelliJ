@@ -27,7 +27,8 @@ describe('Settings pages', () => {
   });
 
   it('expose every user-facing UnIntelliJ setting', () => {
-    const exposed = new Set([...fieldKeys(), 'unintellij.keymap.disabledActions']);
+    // The Keymap page edits these two through its shortcut list.
+    const exposed = new Set([...fieldKeys(), 'unintellij.keymap.disabledActions', 'unintellij.keymap.customShortcuts']);
     for (const key of SETTING_KEYS) {
       expect(exposed, key).toContain(`unintellij.${key}`);
     }

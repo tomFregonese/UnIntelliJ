@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { getSetting } from '../config/settings';
 import { shortcutFor } from '../search/actions';
+import { fileIconPath } from '../search/fileIcons';
 import { FileChange } from './changesLogic';
 import { CommitViewState, FileItem, FromCommitView, RowContext, ToCommitView } from './commitProtocol';
 import { VcsService } from './vcsService';
@@ -19,6 +20,8 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
     private readonly context: vscode.ExtensionContext,
     private readonly vcs: VcsService,
     private readonly log: vscode.LogOutputChannel,
+    /** Called each time the tool window becomes visible. */
+    private readonly onVisible: () => void = () => undefined,
   ) {
     this.disposables.push(
       vscode.window.registerWebviewViewProvider(COMMIT_VIEW, this, { webviewOptions: { retainContextWhenHidden: true } }),
@@ -55,6 +58,10 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
     view.webview.html = this.html(view.webview);
     view.webview.onDidReceiveMessage((message: FromCommitView) => void this.onMessage(message));
     view.onDidDispose(() => (this.view = undefined));
+    view.onDidChangeVisibility(() => view.visible && this.onVisible());
+    if (view.visible) {
+      this.onVisible();
+    }
   }
 
   state(): CommitViewState {
@@ -66,11 +73,20 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
       return { available: false, reason: 'No Git repository in this workspace.', changelistsEnabled: false, lists: [], unversioned: [] };
     }
     const root = repository.rootUri.fsPath;
+    const webview = this.view?.webview;
+    const icon = (name: string): FileItem['icon'] => {
+      if (!webview) {
+        return undefined;
+      }
+      const { dark, light } = fileIconPath(this.context.extensionUri, name);
+      return { dark: webview.asWebviewUri(dark).toString(), light: webview.asWebviewUri(light).toString() };
+    };
     const item = (c: FileChange): FileItem => ({
       path: c.path,
       name: path.basename(c.path),
       dir: path.relative(root, path.dirname(c.path)).split(path.sep).join('/'),
       status: c.status,
+      icon: icon(path.basename(c.path)),
     });
     const { lists, unversioned } = this.vcs.groupedChanges();
     return {
@@ -245,7 +261,7 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="${iconStyle}">
 <link rel="stylesheet" href="${style}">

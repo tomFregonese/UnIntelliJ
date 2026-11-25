@@ -34,7 +34,7 @@ export function registerNavigationCommands(context: vscode.ExtensionContext, log
       vscode.commands.registerCommand('unintellij.searchEverywhere.previousTab', () => searchEverywhere.cycleTab(-1)),
       vscode.commands.registerCommand('unintellij.recentFiles', () => recent.showRecentFiles()),
       vscode.commands.registerCommand('unintellij.recentLocations', () => recent.showRecentLocations()),
-      vscode.commands.registerCommand('unintellij.fileStructure', showFileStructure),
+      vscode.commands.registerCommand('unintellij.fileStructure', () => showFileStructure(context.extensionUri)),
     ],
   };
 }

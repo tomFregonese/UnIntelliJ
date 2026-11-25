@@ -1,5 +1,7 @@
 import * as assert from 'node:assert';
+import { existsSync, readFileSync } from 'node:fs';
 import * as vscode from 'vscode';
+import type { UnIntelliJApi } from '../../src/extension';
 
 const EXTENSION_ID = 'unintellij.unintellij';
 
@@ -17,6 +19,18 @@ suite('Keymap and commands', () => {
     const contributed = vscode.extensions.getExtension(EXTENSION_ID)!.packageJSON.contributes.commands as { command: string }[];
     const missing = contributed.map((c) => c.command).filter((c) => !registered.has(c));
     assert.deepStrictEqual(missing, []);
+  });
+
+  test('reassigned shortcuts are written to the user keybindings.json and removed on reset', async () => {
+    const api = await vscode.extensions.getExtension<UnIntelliJApi>(EXTENSION_ID)!.activate();
+    const config = vscode.workspace.getConfiguration('unintellij');
+    const read = () => (existsSync(api.keymap.file) ? readFileSync(api.keymap.file, 'utf8') : '');
+    await config.update('keymap.customShortcuts', { ReformatCode: 'ctrl+shift+f9' }, vscode.ConfigurationTarget.Global);
+    await api.keymap.sync();
+    assert.match(read(), /"key":"ctrl\+shift\+f9","command":"editor\.action\.formatDocument"/);
+    await config.update('keymap.customShortcuts', undefined, vscode.ConfigurationTarget.Global);
+    await api.keymap.sync();
+    assert.ok(!read().includes('ctrl+shift+f9'), read());
   });
 
   test('Toggle Case flips the word under the caret', async () => {

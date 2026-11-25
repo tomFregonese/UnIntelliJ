@@ -5,7 +5,7 @@ fingers still think in JetBrains shortcuts.
 
 - **Search Everywhere** on double Shift, with All · Classes · Files · Symbols · Actions · Text tabs and IntelliJ-style
   matching (`USvc` → `UserService`, `app/user/serv`, `file.ts:42`)
-- IntelliJ **Windows and macOS keymaps** (~110 actions), chosen by OS, each shortcut can be disabled
+- IntelliJ **Windows and macOS keymaps** (~110 actions), chosen by OS; each shortcut can be disabled or reassigned
 - **Islands Dark / Islands Light** themes with *Sync with OS*, New UI **file and UI icons**, IntelliJ symbol colors
 - Tool windows: **Commit** (changelists, check-to-commit, amend), **Git** log with graph, **Structure**, **npm**,
   **Run widget** (npm scripts and launch configurations)
@@ -29,7 +29,7 @@ Requires VS Code 1.100 or later.
 UnIntelliJ switches VS Code to the **Islands Dark** theme (keeping *follow the OS* if you used it) and to the
 **UnIntelliJ (New UI)** file and product icon themes. Pick another theme or icon theme as usual to undo it.
 
-Recommended next step: **Settings › Editor › General › Apply IntelliJ-like settings** (JetBrains Mono, no minimap,
+Recommended next step: **Settings › Editor › General › Apply IntelliJ-like settings** (JetBrains Mono, continuous autosave, no minimap,
 ruler at 120, no rainbow brackets…). Your previous values are kept and can be restored from the same page.
 
 ## Everyday use
@@ -51,7 +51,8 @@ non-project items (e.g. `node_modules`).
 
 ### Commit like in IntelliJ
 
-The Commit tool window ignores Git's staging area: **check the files to commit** and press Commit. New changes go to
+The Commit tool window replaces VS Code's Source Control view (its Changes and Graph views are hidden; run
+*UnIntelliJ: Show VS Code's Source Control Views Again* to get them back). It ignores Git's staging area: **check the files to commit** and press Commit. New changes go to
 the **active changelist**, which is checked by default; other changelists and unversioned files are not. Right-click a
 file or changelist for Show Diff, Rollback, Move to Another Changelist, Set Active… Changelists can be turned off in
 Settings › Version Control › Git.
@@ -67,6 +68,7 @@ Everything is under **Settings** (`Ctrl+Alt+S`), or `unintellij.*` in VS Code's 
 | `unintellij.appearance.islandsPlus.enabled` | `false` | See Islands+ below |
 | `unintellij.keymap.layout` | `auto` | `auto` (by OS), `windows` or `macos` keymap |
 | `unintellij.keymap.disabledActions` | `[]` | IntelliJ action IDs whose shortcut is disabled |
+| `unintellij.keymap.customShortcuts` | `{}` | Reassigned shortcuts (edited in Settings › Keymap, written to keybindings.json) |
 | `unintellij.searchEverywhere.includeNonProjectItems` | `false` | Search libraries and excluded folders by default |
 | `unintellij.searchEverywhere.excludePatterns` | `[]` | Extra globs excluded from Search Everywhere |
 | `unintellij.vcs.updateMethod` | `merge` | Update Project with merge or rebase |
@@ -82,8 +84,8 @@ IntelliJ fonts, and the project / branch / Run widgets in the title bar.
 - It needs **write access to VS Code's installation folder**. The Windows *System* installer (in `Program Files`)
   needs administrator rights: use the *User* installer, or start VS Code once as administrator after enabling it.
 - It is re-applied automatically after VS Code updates (you are asked to reload the window).
-- Disabling it removes the block and restores the original checksum exactly. Backups (`*.unintellij-backup`) are kept
-  next to the modified files.
+- Disabling it removes the block and restores the original checksum exactly. While it is applied, safety copies
+  (`*.unintellij-backup`) sit next to the modified files; they are deleted when it is disabled.
 
 ## Known limitations
 

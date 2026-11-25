@@ -13,7 +13,7 @@ Cocher et dater quand c'est réglé.
 
 ## Lot 2 — Thèmes
 
-- [ ] **Calibrage visuel non fait** : capture d'écran impossible depuis la session (écran noir). Comparer côte à côte Rider (Islands Dark / Light) et VS Code sur le même fichier, puis corriger.
+- [x] ~~**Calibrage visuel non fait**~~ — fait le 2026-11-25 par captures d'écran (DevTools) : éditeur, Search Everywhere, Commit, Git log, Structure, Recent Files, Settings. **Calibrage visuel** : capture d'écran impossible depuis la session (écran noir). Comparer côte à côte Rider (Islands Dark / Light) et VS Code sur le même fichier, puis corriger.
 - [ ] Couleurs les plus incertaines : fond du **cadre** autour des îles (`frame`), **résultats de recherche** / identifiant sous le curseur, et l'ensemble du **thème clair** (gutter, diff, ANSI).
 - [ ] Vérifier la coloration **Angular** (templates, bindings) et **Java** avec jdtls installé (semantic tokens).
 
@@ -45,9 +45,9 @@ Cocher et dater quand c'est réglé.
 
 - [ ] **Rendu non vérifié à l'écran** (testé dans un DOM simulé : arbre, champs, recherche, modifications en attente, keymap, plugins).
 - [ ] **Onglet d'éditeur, pas une vraie fenêtre modale** : VS Code ne permet pas aux extensions d'ouvrir un dialogue modal personnalisé.
-- [ ] **Keymap : on peut désactiver un raccourci mais pas le réassigner** comme dans IntelliJ (il faudrait écrire dans `keybindings.json` de l'utilisateur). À décider si utile.
+- [x] **Réassigner un raccourci** : fait (Settings › Keymap, bouton ✎, écrit dans `keybindings.json` sans toucher à tes propres entrées).
 - [ ] **JetBrains Mono** doit être installée sur le poste (Windows : installation « pour moi » possible sans droits admin) ; le préréglage la met en premier avec repli sur Consolas.
-- [ ] Le préréglage « IntelliJ-like » choisit `files.autoSave = onWindowChange` (sauvegarde quand la fenêtre perd le focus) : à valider avec tes habitudes.
+- [x] Sauvegarde auto : le préréglage passe en sauvegarde continue (`afterDelay`, 100 ms), comme ton réglage actuel.
 
 ## Lot 7 — Structure, npm, Run
 
@@ -63,7 +63,7 @@ Cocher et dater quand c'est réglé.
 - [ ] **Pas de commit partiel de lignes** (IntelliJ permet de cocher des morceaux de fichier dans le diff) : on committe des fichiers entiers.
 - [ ] **La zone de staging est réécrite au commit** (comme IntelliJ qui l'ignore) : si tu utilises `git add -p` à côté, ce staging est remplacé par les fichiers cochés.
 - [ ] **Fichiers renommés** : à vérifier qu'un renommage se committe bien en un seul « rename » (on stage le nouveau chemin ; l'ancien doit suivre).
-- [ ] **Vue Source Control native de VS Code toujours présente** à côté de notre Commit tool window : la masquer (clic droit sur la barre d'activité) ou la laisser ?
+- [x] **Vue Source Control native** : masquée — la Commit tool window est dans le conteneur Source Control, les vues natives sont cachées dès que Commit s'affiche (Alt+0 ou clic). Commande « Show VS Code's Source Control Views Again » pour revenir en arrière.
 - [ ] **Widget de branche dans la barre d'état** (en bas) en plus de celui de VS Code ; avec Islands+, le placer en haut comme dans IntelliJ.
 - [ ] **Push** = popup de confirmation (liste des commits + Push / Force Push) plutôt qu'un vrai dialogue ; suppression de branche distante via la commande native de VS Code.
 
@@ -82,10 +82,18 @@ Cocher et dater quand c'est réglé.
 - [ ] **Widgets dans la barre de titre** (projet, branche, Run) : déplacés par script depuis la barre d'état — expérimental, à surveiller (VS Code peut les remettre en bas, le script les re-déplace).
 - [ ] **Limites assumées** : pas de changement de hauteur des onglets/lignes d'arbre (VS Code calcule ces tailles en JS) ; police Inter seulement si installée.
 - [ ] **Après chaque mise à jour de VS Code** : ré-application automatique au démarrage + demande de rechargement de la fenêtre.
-- [ ] Des fichiers `*.unintellij-backup` restent à côté de `workbench.html` / `product.json` (filet de sécurité) : les supprimer à la désactivation ?
+- [x] Les copies de sécurité `*.unintellij-backup` sont supprimées quand Islands+ est désactivé.
 
 ## Lot 11 — Documentation et packaging
 
 - [ ] **Release GitHub** : le `.vsix` est publié automatiquement à chaque tag `v*` (workflow Release). Première version : 0.1.0.
 - [ ] **Icône de l'extension** dessinée pour l'occasion (îles + couleurs Islands) : à remplacer si tu préfères autre chose.
 - [ ] **Publication sur le Marketplace** : non faite (nom public sans « IntelliJ », vrai `publisher`, compte Azure DevOps) — cf. lot 1.
+
+## Retours du 2026-11-25 (après captures)
+
+- [x] Icônes de symboles colorées (SVG New UI) dans Search Everywhere, File Structure et Structure.
+- [x] Icônes de type de fichier dans la Commit tool window ; icônes propres à chaque tool window dans Recent Files.
+- [x] Fichiers modifiés qui restaient rouges à cause des erreurs : le préréglage désactive cette coloration (ils restent bleus).
+- [ ] **Premier clic sur l'icône Source Control** (au lieu d'Alt+0) : tant que la section Commit n'a jamais été dépliée, VS Code affiche encore ses vues ; elles disparaissent dès que Commit s'affiche, et ce choix est mémorisé.
+- [ ] **Deux widgets de branche** dans la barre d'état (celui de VS Code et le nôtre) : masquer celui de VS Code par clic droit sur la barre d'état si tu veux.

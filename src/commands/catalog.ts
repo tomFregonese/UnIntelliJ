@@ -70,6 +70,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.git.showLog', title: 'Show Git Log' },
   { command: 'unintellij.git.showFileHistory', title: 'Show History for Current File' },
   { command: 'unintellij.git.resolveConflicts', title: 'Resolve Conflicts…' },
+  { command: 'unintellij.git.showNativeScmViews', title: "Show VS Code's Source Control Views Again" },
   { command: 'unintellij.git.copyRevision', title: 'Copy Revision Number', hidden: true },
   { command: 'unintellij.git.checkoutRevision', title: 'Checkout Revision', hidden: true },
   { command: 'unintellij.git.newBranchHere', title: 'New Branch…', hidden: true },

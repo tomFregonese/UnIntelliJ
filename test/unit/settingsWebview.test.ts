@@ -13,10 +13,12 @@ const model: SettingsModel = {
     'unintellij.appearance.syncWithOs': false,
     'unintellij.keymap.layout': 'auto',
     'unintellij.keymap.disabledActions': [],
+    'unintellij.keymap.customShortcuts': {},
     'editor.fontSize': 14,
     'unintellij.searchEverywhere.excludePatterns': [],
   },
   autoKeymapOs: 'windows',
+  platform: 'windows',
   keymap: [
     { id: 'SearchEverywhere', name: 'Search Everywhere', category: 'Navigation', windows: 'Double Shift', macos: '⇧⇧' },
     { id: 'ReformatCode', name: 'Reformat Code', category: 'Editing', windows: 'Ctrl+Alt+L', macos: '⌘⌥L' },
@@ -88,12 +90,31 @@ describe('Settings webview', () => {
   it('disables a shortcut from the Keymap page', async () => {
     treeItem('Keymap').click();
     const rows = [...document.querySelectorAll<HTMLTableRowElement>('.keymap tbody tr')];
-    expect(rows.map((r) => r.cells[2].textContent)).toEqual(['Double Shift', 'Ctrl+Alt+L']);
+    expect(rows.map((r) => r.cells[2].querySelector('kbd')!.textContent)).toEqual(['Double Shift', 'Ctrl+Alt+L']);
     const checkbox = rows[1].querySelector<HTMLInputElement>('input')!;
     checkbox.checked = false;
     checkbox.dispatchEvent(new Event('change'));
     $<HTMLButtonElement>('#ok').click();
     expect(sent.at(-1)).toEqual({ type: 'apply', changes: { 'unintellij.keymap.disabledActions': ['ReformatCode'] }, close: true });
+  });
+
+  it('reassigns a shortcut by recording it, and resets it with Backspace', async () => {
+    treeItem('Keymap').click();
+    const row = () => document.querySelector<HTMLTableRowElement>('tr[data-action="ReformatCode"]')!;
+    row().querySelector<HTMLButtonElement>('button.edit')!.click();
+    expect(row().textContent).toContain('Press a shortcut');
+    // A modifier alone waits for the full combination.
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'ShiftLeft', shiftKey: true }));
+    expect(row().textContent).toContain('Press a shortcut');
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyL', ctrlKey: true, shiftKey: true }));
+    expect(row().querySelector('kbd.custom-key')!.textContent).toBe('Ctrl+Shift+L');
+    document.querySelector<HTMLButtonElement>('#apply')!.click();
+    expect(sent.at(-1)).toMatchObject({ type: 'apply', changes: { 'unintellij.keymap.customShortcuts': { ReformatCode: 'ctrl+shift+l' } } });
+    await deliver({ type: 'applied' });
+
+    row().querySelector<HTMLButtonElement>('button.edit')!.click();
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Backspace' }));
+    expect(row().querySelector('kbd')!.textContent).toBe('Ctrl+Alt+L');
   });
 
   it('navigates on request and lists integrations', async () => {

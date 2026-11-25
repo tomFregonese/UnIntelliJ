@@ -25,6 +25,8 @@ export interface SettingsModel {
   values: Record<string, unknown>;
   /** OS used by the "auto" keymap layout. */
   autoKeymapOs: 'windows' | 'macos';
+  /** OS of this machine, to record shortcuts with the right meta key name. */
+  platform: 'windows' | 'macos';
   keymap: KeymapRow[];
   integrations: IntegrationRow[];
   preset: { applied: boolean; entries: { key: string; value: unknown; reason: string }[] };

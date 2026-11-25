@@ -15,7 +15,8 @@ export class NotWritableError extends Error {
 const BACKUP_SUFFIX = '.unintellij-backup';
 
 /**
- * Applies/reverts Islands+ on a VS Code installation (`appRoot`). Every write keeps
+ * Applies/reverts Islands+ on a VS Code installation (`appRoot`). Safety copies of the modified
+ * files (`*.unintellij-backup`) exist while Islands+ is applied. Every write keeps
  * workbench.html and the product.json checksum consistent, so VS Code does not report a
  * corrupt installation.
  */
@@ -87,6 +88,9 @@ export class WorkbenchPatcher {
       }
       await rm(path.join(dir, ASSET_CSS), { force: true });
       await rm(path.join(dir, ASSET_JS), { force: true });
+      // The originals are restored: the safety copies are no longer needed.
+      await rm(location.html + BACKUP_SUFFIX, { force: true });
+      await rm(this.productJson + BACKUP_SUFFIX, { force: true });
     });
   }
 }

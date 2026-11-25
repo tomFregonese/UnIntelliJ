@@ -6,7 +6,6 @@
 export const VIEW_CONTAINERS = {
   panel: [{ id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' }],
   activitybar: [
-    { id: 'unintellij-commit', title: 'Commit', icon: 'media/commit.svg' },
     { id: 'unintellij-structure', title: 'Structure', icon: 'media/structure.svg' },
     { id: 'unintellij-npm', title: 'npm', icon: 'media/npm.svg' },
   ],
@@ -14,7 +13,9 @@ export const VIEW_CONTAINERS = {
 
 export const VIEWS = {
   'unintellij-git': [{ type: 'webview', id: 'unintellij.gitLog', name: 'Log' }],
-  'unintellij-commit': [{ type: 'webview', id: 'unintellij.commit', name: 'Commit' }],
+  // In VS Code's Source Control container, whose native views UnIntelliJ hides (see scmViews.ts).
+  // Expanded by default: contributed views are otherwise added collapsed at the bottom.
+  scm: [{ type: 'webview', id: 'unintellij.commit', name: 'Commit', visibility: 'visible' }],
   'unintellij-structure': [{ id: 'unintellij.structure', name: 'Structure' }],
   'unintellij-npm': [{ id: 'unintellij.npm', name: 'Scripts' }],
 };

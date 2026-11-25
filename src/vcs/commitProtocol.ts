@@ -7,6 +7,8 @@ export interface FileItem {
   /** Directory relative to the repository root. */
   dir: string;
   status: FileStatus;
+  /** Webview URIs of the New UI file icon, for dark and light themes. */
+  icon?: { dark: string; light: string };
 }
 
 export interface ChangelistItem {

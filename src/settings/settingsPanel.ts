@@ -27,7 +27,7 @@ export async function applyChanges(changes: Record<string, unknown>): Promise<vo
 export function buildModel(state: vscode.Memento, initialPage = 'appearance'): SettingsModel {
   const config = vscode.workspace.getConfiguration();
   const values: Record<string, unknown> = {};
-  for (const key of [...fieldKeys(), 'unintellij.keymap.disabledActions']) {
+  for (const key of [...fieldKeys(), 'unintellij.keymap.disabledActions', 'unintellij.keymap.customShortcuts']) {
     values[key] = config.get(key);
   }
   return {
@@ -41,6 +41,7 @@ export function buildModel(state: vscode.Memento, initialPage = 'appearance'): S
       windows: a.windows && formatKey(a.windows, 'windows'),
       macos: a.macos && formatKey(a.macos, 'macos'),
     })),
+    platform: process.platform === 'darwin' ? 'macos' : 'windows',
     integrations: detectIntegrations().map((i) => ({
       name: i.name,
       extensionId: i.extensionId,

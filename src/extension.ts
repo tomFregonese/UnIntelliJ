@@ -4,6 +4,7 @@ import { ThemeSync } from './appearance/themeSync';
 import { registerEditorCommands } from './editor/commands';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 import { syncDisabledActions } from './keymap/disabledActions';
+import { UserKeybindings } from './keymap/userKeybindings';
 import { IslandsPlus } from './islandsPlus/islandsPlus';
 import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
@@ -28,6 +29,8 @@ export interface UnIntelliJApi {
   structure(): Promise<string[]>;
   /** Version control service and Commit tool window (used by tests). */
   vcs: { service: VcsService; commitState(): CommitViewState; gitLog: GitLogView };
+  /** User keybindings written for reassigned shortcuts (used by tests). */
+  keymap: { file: string; sync(): Promise<void> };
   /** Settings window operations (used by tests). */
   settings: {
     applyChanges(changes: Record<string, unknown>): Promise<void>;
@@ -48,6 +51,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   context.subscriptions.push(vscode.extensions.onDidChange(logIntegrations));
 
   // Commands first: a keybinding may be what activated the extension.
+  const userKeybindings = new UserKeybindings(context, log);
+  void userKeybindings.sync();
   const navigation = registerNavigationCommands(context, log);
   const vcs = registerVcsCommands(context, log);
   context.subscriptions.push(
@@ -56,10 +61,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     ...registerSettingsCommands(context, log),
     ...vcs.disposables,
     syncDisabledActions(),
+    userKeybindings,
     new RunWidget(context.workspaceState),
     new NpmView(),
   );
-  const structure = new StructureView(context.globalState);
+  const structure = new StructureView(context.globalState, context.extensionUri);
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(structure, islandsPlus);
   // Not awaited: patching may prompt the user and must not delay activation.
@@ -75,6 +81,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     appearanceIdle: () => themeSync.idle(),
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
     vcs: { service: vcs.service, commitState: () => vcs.commitView.state(), gitLog: vcs.gitLog },
+    keymap: { file: userKeybindings.file, sync: () => userKeybindings.sync() },
     structure: async () => (await structure.whenLoaded()).map((n) => n.symbol.name),
     settings: {
       applyChanges,

@@ -2,6 +2,7 @@
  * Settings window UI (runs in the webview, browser environment). Renders the declarative pages
  * from the extension, keeps edits pending until OK/Apply, like IntelliJ's Settings dialog.
  */
+import { formatKey, keyFromEvent } from '../keymap/keymap';
 import type { Field, Page } from '../settings/pages';
 import type { FromWebview, KeymapRow, SettingsModel, ToWebview } from '../settings/protocol';
 
@@ -13,6 +14,8 @@ let currentPage = 'appearance';
 let pending: Record<string, unknown> = {};
 let search = '';
 let keymapSearch = '';
+/** Action whose new shortcut is being recorded. */
+let recording: string | undefined;
 
 type Child = Node | string | false | null | undefined;
 function h<K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, unknown> = {}, ...children: Child[]): HTMLElementTagNameMap[K] {
@@ -168,11 +171,14 @@ function keymapOs(): 'windows' | 'macos' {
 function renderKeymap(): HTMLElement {
   const os = keymapOs();
   const disabled = new Set((value('unintellij.keymap.disabledActions') as string[]) ?? []);
+  const custom = (): Record<string, string> => ({ ...((value('unintellij.keymap.customShortcuts') as Record<string, string>) ?? {}) });
   const tbody = h('tbody');
   const fill = (): void => {
     tbody.replaceChildren();
     const query = keymapSearch.toLowerCase();
-    const rows = model!.keymap.filter((row: KeymapRow) => [row.name, row.id, row.category, row[os]].some((t) => (t ?? '').toLowerCase().includes(query)));
+    const customs = custom();
+    const shortcutText = (row: KeymapRow): string => (customs[row.id] ? formatKey(customs[row.id], os) : (row[os] ?? ''));
+    const rows = model!.keymap.filter((row: KeymapRow) => [row.name, row.id, row.category, shortcutText(row)].some((t) => (t ?? '').toLowerCase().includes(query)));
     for (const row of rows) {
       const toggle = h('input', {
         type: 'checkbox',
@@ -185,20 +191,63 @@ function renderKeymap(): HTMLElement {
             disabled.add(row.id);
           }
           setValue('unintellij.keymap.disabledActions', [...disabled].sort());
+          fill();
         },
       });
+      const isCustom = Boolean(customs[row.id]);
+      const shortcut =
+        recording === row.id
+          ? h('span', { className: 'recording' }, 'Press a shortcut… (Esc: cancel, Backspace: reset)')
+          : h('kbd', { className: isCustom ? 'custom-key' : '', title: isCustom ? `Default: ${row[os] ?? 'none'}` : '' }, shortcutText(row));
+      const edit = h(
+        'button',
+        {
+          className: 'tool edit',
+          title: 'Change shortcut',
+          onClick: () => {
+            recording = row.id;
+            fill();
+          },
+        },
+        '✎',
+      );
       tbody.append(
         h(
           'tr',
-          { className: disabled.has(row.id) ? 'disabled' : '' },
+          { className: disabled.has(row.id) ? 'disabled' : '', 'data-action': row.id },
           h('td', {}, toggle),
           h('td', {}, row.name),
-          h('td', {}, h('kbd', {}, row[os] ?? '')),
+          h('td', {}, shortcut, ' ', edit),
           h('td', { className: 'muted' }, row.category),
           h('td', { className: 'muted mono' }, row.id),
         ),
       );
     }
+  };
+  recordShortcut = (event: KeyboardEvent): void => {
+    if (!recording) {
+      return;
+    }
+    const plain = !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey;
+    const customs = custom();
+    if (plain && event.code === 'Escape') {
+      recording = undefined;
+    } else if (plain && event.code === 'Backspace') {
+      delete customs[recording];
+      setValue('unintellij.keymap.customShortcuts', customs);
+      recording = undefined;
+    } else {
+      const key = keyFromEvent(event, model!.platform);
+      if (!key) {
+        return; // modifier only: wait for the full combination
+      }
+      customs[recording] = key;
+      setValue('unintellij.keymap.customShortcuts', customs);
+      recording = undefined;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    fill();
   };
   fill();
   return h(
@@ -217,6 +266,9 @@ function renderKeymap(): HTMLElement {
     h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Action'), h('th', {}, 'Shortcut'), h('th', {}, 'Group'), h('th', {}, 'ID'))), tbody),
   );
 }
+
+let recordShortcut: ((event: KeyboardEvent) => void) | undefined;
+window.addEventListener('keydown', (event) => recordShortcut?.(event), true);
 
 function renderPreset(): HTMLElement {
   const { applied, entries } = model!.preset;

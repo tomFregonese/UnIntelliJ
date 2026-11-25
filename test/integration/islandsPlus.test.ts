@@ -31,6 +31,7 @@ suite('Islands+ patcher', () => {
 
     await patcher.apply();
     assert.strictEqual(await patcher.status(), 'patched');
+    assert.strictEqual(readFileSync(join(appRoot, `${relative!}.unintellij-backup`), 'utf8'), originalHtml, 'backup of the original');
     assert.match(html(), /unintellij-islands\.js/);
     assert.ok(existsSync(join(appRoot, relative!, '..', 'unintellij-islands.css')));
     if (originalChecksum) {
@@ -46,6 +47,8 @@ suite('Islands+ patcher', () => {
     assert.strictEqual(html(), originalHtml);
     assert.strictEqual(product().checksums?.[checksumKey(relative!)], originalChecksum);
     assert.ok(!existsSync(join(appRoot, relative!, '..', 'unintellij-islands.js')));
+    assert.ok(!existsSync(join(appRoot, `${relative!}.unintellij-backup`)), 'backups are removed on revert');
+    assert.ok(!existsSync(join(appRoot, 'product.json.unintellij-backup')));
   });
 
   test('the running installation is not patched by tests', async () => {

@@ -30,6 +30,7 @@ export interface Settings {
   'appearance.islandsPlus.enabled': boolean;
   'keymap.layout': KeymapLayout;
   'keymap.disabledActions': string[];
+  'keymap.customShortcuts': Record<string, string>;
   'searchEverywhere.includeNonProjectItems': boolean;
   'searchEverywhere.excludePatterns': string[];
   'vcs.updateMethod': UpdateMethod;
@@ -47,7 +48,7 @@ export const SECTIONS = {
 } as const;
 export type SectionId = keyof typeof SECTIONS;
 
-type JsonType<T> = T extends boolean ? 'boolean' : T extends number ? 'number' : T extends string ? 'string' : 'array';
+type JsonType<T> = T extends boolean ? 'boolean' : T extends number ? 'number' : T extends string ? 'string' : T extends unknown[] ? 'array' : 'object';
 
 export interface SettingDefinition<T> {
   section: SectionId;
@@ -56,7 +57,7 @@ export interface SettingDefinition<T> {
   markdownDescription: string;
   /** Allowed values with their human-readable labels, for string enums. */
   enum?: readonly { value: T; label: string }[];
-  /** Item type, for arrays. */
+  /** Item type, for arrays; value type, for objects. */
   items?: 'string';
 }
 
@@ -121,6 +122,14 @@ export const SETTINGS: { [K in SettingKey]: SettingDefinition<Settings[K]> } = {
     markdownDescription:
       'IntelliJ action IDs whose shortcut should be disabled (e.g. `SearchEverywhere`).',
   },
+  'keymap.customShortcuts': {
+    section: 'keymap',
+    type: 'object',
+    items: 'string',
+    default: {},
+    markdownDescription:
+      'Shortcuts reassigned in **Settings › Keymap**: IntelliJ action ID → VS Code key (e.g. `{ "ReformatCode": "ctrl+shift+l" }`). Written to your keybindings.json by UnIntelliJ.',
+  },
   'searchEverywhere.includeNonProjectItems': {
     section: 'searchEverywhere',
     type: 'boolean',
@@ -174,6 +183,12 @@ export function sanitize<K extends SettingKey>(key: K, value: unknown): Settings
       return (
         Array.isArray(value) && value.every((v) => typeof v === 'string') ? value : def.default
       ) as Settings[K];
+    case 'object':
+      return (
+        value !== null && typeof value === 'object' && !Array.isArray(value) && Object.values(value).every((v) => typeof v === 'string')
+          ? value
+          : def.default
+      ) as Settings[K];
   }
 }
 
@@ -183,7 +198,7 @@ export function buildConfigurationContribution(): unknown[] {
     const keys = SETTING_KEYS.filter((key) => SETTINGS[key].section === section);
     const properties: Record<string, unknown> = {};
     keys.forEach((key, index) => {
-      const def = SETTINGS[key] as SettingDefinition<unknown>;
+      const def = SETTINGS[key] as Omit<SettingDefinition<unknown>, 'type'> & { type: string };
       properties[`${CONFIG_NAMESPACE}.${key}`] = {
         type: def.type,
         default: def.default,
@@ -191,7 +206,8 @@ export function buildConfigurationContribution(): unknown[] {
           enum: def.enum.map((e) => e.value),
           enumDescriptions: def.enum.map((e) => e.label),
         }),
-        ...(def.items && { items: { type: def.items }, uniqueItems: true }),
+        ...(def.items && def.type === 'array' && { items: { type: def.items }, uniqueItems: true }),
+        ...(def.items && def.type === 'object' && { additionalProperties: { type: def.items } }),
         markdownDescription: def.markdownDescription,
         order: index + 1,
       };

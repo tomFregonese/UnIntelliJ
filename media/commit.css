@@ -204,3 +204,16 @@ button.secondary:hover:not(:disabled) {
 button:disabled {
   opacity: 0.5;
 }
+
+.file-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* VS Code sets vscode-light / vscode-dark / vscode-high-contrast* on the webview body. */
+body.vscode-light .file-icon.dark,
+body.vscode-high-contrast-light .file-icon.dark,
+body:not(.vscode-light):not(.vscode-high-contrast-light) .file-icon.light {
+  display: none;
+}

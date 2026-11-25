@@ -2,7 +2,7 @@
   "name": "unintellij",
   "displayName": "UnIntelliJ",
   "description": "Make VS Code look and behave like IntelliJ IDEA (New UI / Islands).",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "unintellij",
   "license": "MIT",
   "private": true,
@@ -118,6 +118,15 @@
             "uniqueItems": true,
             "markdownDescription": "IntelliJ action IDs whose shortcut should be disabled (e.g. `SearchEverywhere`).",
             "order": 2
+          },
+          "unintellij.keymap.customShortcuts": {
+            "type": "object",
+            "default": {},
+            "additionalProperties": {
+              "type": "string"
+            },
+            "markdownDescription": "Shortcuts reassigned in **Settings › Keymap**: IntelliJ action ID → VS Code key (e.g. `{ \"ReformatCode\": \"ctrl+shift+l\" }`). Written to your keybindings.json by UnIntelliJ.",
+            "order": 3
           }
         }
       },
@@ -440,6 +449,11 @@
       {
         "command": "unintellij.git.resolveConflicts",
         "title": "Resolve Conflicts…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.showNativeScmViews",
+        "title": "Show VS Code's Source Control Views Again",
         "category": "UnIntelliJ"
       },
       {
@@ -1218,13 +1232,13 @@
       },
       {
         "key": "alt+0",
-        "command": "workbench.view.extension.unintellij-commit",
+        "command": "unintellij.commit.focus",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
       },
       {
         "key": "alt+0",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-commit')"
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
       },
       {
         "key": "alt+f12",
@@ -1864,13 +1878,13 @@
       },
       {
         "key": "cmd+0",
-        "command": "workbench.view.extension.unintellij-commit",
+        "command": "unintellij.commit.focus",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
       },
       {
         "key": "cmd+0",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-commit')"
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
       },
       {
         "key": "alt+f12",
@@ -2093,11 +2107,6 @@
       ],
       "activitybar": [
         {
-          "id": "unintellij-commit",
-          "title": "Commit",
-          "icon": "media/commit.svg"
-        },
-        {
           "id": "unintellij-structure",
           "title": "Structure",
           "icon": "media/structure.svg"
@@ -2117,11 +2126,12 @@
           "name": "Log"
         }
       ],
-      "unintellij-commit": [
+      "scm": [
         {
           "type": "webview",
           "id": "unintellij.commit",
-          "name": "Commit"
+          "name": "Commit",
+          "visibility": "visible"
         }
       ],
       "unintellij-structure": [
@@ -2199,5 +2209,8 @@
   "galleryBanner": {
     "color": "#131417",
     "theme": "dark"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
   }
 }

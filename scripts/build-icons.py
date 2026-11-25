@@ -12,6 +12,7 @@ Outputs (committed, so building the extension does not need Python):
   icons/product-icons.woff             monochrome icon font
   icons/product-icon-theme.json        VS Code product icon theme
   icons/symbol-colors.json             symbolIcon.* colors per theme type, used by the color themes
+  icons/symbols/*.svg                  colored symbol icons (dark and light) for Quick Pick and trees
 
 Usage:
   python -m venv .venv && .venv/bin/pip install picosvg fonttools
@@ -266,6 +267,8 @@ def build_product_icons(expui: Path, spec: dict) -> None:
     fb.setupNameTable({"familyName": "UnIntelliJ Product Icons", "styleName": "Regular"})
     fb.setupOS2(sTypoAscender=UNITS_PER_EM, sTypoDescender=0, usWinAscent=UNITS_PER_EM, usWinDescent=0)
     fb.setupPost()
+    # Fixed timestamps: identical input gives a byte-identical font.
+    fb.font["head"].created = fb.font["head"].modified = 0
     fb.font.flavor = "woff"
     fb.font.save(str(ICONS / "product-icons.woff"))
 
@@ -288,6 +291,18 @@ def write_json(path: Path, data: object) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def build_symbol_icons(expui: Path, spec: dict) -> None:
+    """Colored New UI node icons for places where VS Code ignores icon colors (Quick Pick)."""
+    out = ICONS / "symbols"
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    for name, source in spec.items():
+        shutil.copyfile(source_svg(expui, source, True), out / f"{name}.svg")
+        shutil.copyfile(source_svg(expui, source, False), out / f"{name}_light.svg")
+    print(f"symbol icons: {len(spec)} kinds")
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         fail("usage: build-icons.py <path to intellij-community checkout>")
@@ -298,6 +313,7 @@ def main() -> None:
     build_file_icons(expui, spec["fileIcons"])
     build_product_icons(expui, spec["productIcons"])
     build_symbol_colors(expui, spec["symbolColors"])
+    build_symbol_icons(expui, spec["symbolIcons"])
 
 
 if __name__ == "__main__":

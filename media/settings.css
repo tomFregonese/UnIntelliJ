@@ -290,3 +290,25 @@ footer {
   border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
   background: var(--vscode-editor-background);
 }
+
+kbd.custom-key {
+  color: var(--vscode-textLink-foreground);
+}
+
+.recording {
+  color: var(--vscode-textLink-foreground);
+  font-style: italic;
+}
+
+button.tool.edit {
+  background: transparent;
+  color: var(--vscode-icon-foreground);
+  border: none;
+  padding: 0 4px;
+  opacity: 0;
+}
+
+tr:hover button.tool.edit,
+button.tool.edit:focus-visible {
+  opacity: 1;
+}
