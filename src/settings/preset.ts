@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
  * Applied on demand from Settings › Editor › General; previous values are kept for Revert.
  */
 /** Bumped when entries change, so that users who applied an older preset are offered the new one. */
-export const PRESET_VERSION = 3;
+export const PRESET_VERSION = 4;
 
 /**
  * JetBrains Mono (installed by the setup), then each OS's own coding font, never Courier New:
@@ -26,6 +26,7 @@ export const PRESET: readonly { key: string; value: unknown; reason: string }[] 
   { key: 'terminal.integrated.lineHeight', value: 1.2, reason: 'IntelliJ terminal line spacing' },
   { key: 'debug.console.fontSize', value: EDITOR_FONT_SIZE, reason: 'Console font size' },
   { key: 'debug.console.fontFamily', value: EDITOR_FONT, reason: 'Console uses the editor font' },
+  { key: 'breadcrumbs.enabled', value: false, reason: 'The navigation bar is in the status bar, bottom left' },
   { key: 'editor.minimap.enabled', value: false, reason: 'IntelliJ has no minimap' },
   { key: 'editor.renderWhitespace', value: 'none', reason: 'Whitespaces hidden' },
   { key: 'editor.rulers', value: [120], reason: 'Hard wrap guide at 120' },

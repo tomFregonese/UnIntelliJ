@@ -8,8 +8,8 @@ export interface CommandDefinition {
   title: string;
   /** Hidden from the Command Palette (internal or context-only commands). */
   hidden?: boolean;
-  /** Codicon/product icon shown in view toolbars, e.g. `$(play)`. */
-  icon?: string;
+  /** Codicon/product icon shown in view toolbars, e.g. `$(play)`, or colored SVGs. */
+  icon?: string | { light: string; dark: string };
 }
 
 export const COMMAND_CATEGORY = 'UnIntelliJ';
@@ -36,6 +36,11 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.showKeymapSettings', title: 'Settings: Keymap' },
   { command: 'unintellij.applyRecommendedSettings', title: 'Set Up IntelliJ-like Settings (Theme, Fonts)…' },
   // Run
+  // Inspection widget (editor title, top right)
+  { command: 'unintellij.inspection.ok', title: 'No Problems Found', icon: { light: 'media/inspections/ok-light.svg', dark: 'media/inspections/ok-dark.svg' }, hidden: true },
+  { command: 'unintellij.inspection.warning', title: 'Warnings in This File', icon: { light: 'media/inspections/warning-light.svg', dark: 'media/inspections/warning-dark.svg' }, hidden: true },
+  { command: 'unintellij.inspection.error', title: 'Errors in This File', icon: { light: 'media/inspections/error-light.svg', dark: 'media/inspections/error-dark.svg' }, hidden: true },
+  { command: 'unintellij.toggleReadOnly', title: 'Toggle Read-Only Attribute' },
   // Project tool window
   { command: 'unintellij.project.selectMode', title: 'Change Project View…', icon: '$(chevron-down)' },
   { command: 'unintellij.project.selectOpenedFile', title: 'Select Opened File', icon: '$(target)' },

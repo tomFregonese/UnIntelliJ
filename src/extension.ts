@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { initializeIconThemes } from './appearance/iconThemes';
 import { ThemeSync } from './appearance/themeSync';
 import { registerEditorCommands } from './editor/commands';
+import { StatusDetails } from './editor/statusDetails';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 import { syncDisabledActions } from './keymap/disabledActions';
 import { UserKeybindings } from './keymap/userKeybindings';
@@ -64,6 +65,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     userKeybindings,
     new RunWidget(context.workspaceState, context.extensionUri),
     new GutterRunner(log),
+    new StatusDetails(),
     new ProjectView(context, vcs.service),
   );
   const islandsPlus = IslandsPlus.create(context, log);

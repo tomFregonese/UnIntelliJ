@@ -67,6 +67,12 @@ export const MENUS = {
     { command: 'unintellij.change.showDiff', group: 'navigation@1' },
     { command: 'unintellij.change.copyOriginal', group: 'navigation@2' },
   ],
+  // IntelliJ's inspection widget at the top right of the editor (state from editor/statusDetails.ts).
+  'editor/title': [
+    { command: 'unintellij.inspection.ok', when: "unintellij.inspection == 'ok'", group: 'navigation@-100' },
+    { command: 'unintellij.inspection.warning', when: "unintellij.inspection == 'warning'", group: 'navigation@-100' },
+    { command: 'unintellij.inspection.error', when: "unintellij.inspection == 'error'", group: 'navigation@-100' },
+  ],
   'view/title': [
     { command: 'unintellij.project.selectMode', when: 'view == unintellij.project', group: 'navigation@0' },
     { command: 'unintellij.project.selectOpenedFile', when: 'view == unintellij.project', group: 'navigation@1' },

@@ -127,3 +127,11 @@
 .monaco-workbench .part.editor > .content .editor-group-container > .editor-group-watermark .letterpress {
   display: none !important;
 }
+
+/* IntelliJ's status bar right side: position, line endings, encoding, indent, read-only only. */
+.monaco-workbench .part.statusbar .statusbar-item[id$='status.editor.mode'],
+.monaco-workbench .part.statusbar .statusbar-item[id$='status.editor.info'],
+.monaco-workbench .part.statusbar .statusbar-item[id='status.host'],
+.monaco-workbench .part.statusbar .statusbar-item[id='status.problems'] {
+  display: none !important;
+}

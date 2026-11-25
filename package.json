@@ -302,6 +302,38 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.inspection.ok",
+        "title": "No Problems Found",
+        "category": "UnIntelliJ",
+        "icon": {
+          "light": "media/inspections/ok-light.svg",
+          "dark": "media/inspections/ok-dark.svg"
+        }
+      },
+      {
+        "command": "unintellij.inspection.warning",
+        "title": "Warnings in This File",
+        "category": "UnIntelliJ",
+        "icon": {
+          "light": "media/inspections/warning-light.svg",
+          "dark": "media/inspections/warning-dark.svg"
+        }
+      },
+      {
+        "command": "unintellij.inspection.error",
+        "title": "Errors in This File",
+        "category": "UnIntelliJ",
+        "icon": {
+          "light": "media/inspections/error-light.svg",
+          "dark": "media/inspections/error-dark.svg"
+        }
+      },
+      {
+        "command": "unintellij.toggleReadOnly",
+        "title": "Toggle Read-Only Attribute",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.project.selectMode",
         "title": "Change Project View…",
         "category": "UnIntelliJ",
@@ -564,6 +596,18 @@
           "when": "false"
         },
         {
+          "command": "unintellij.inspection.ok",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.inspection.warning",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.inspection.error",
+          "when": "false"
+        },
+        {
           "command": "unintellij.project.refresh",
           "when": "false"
         },
@@ -772,6 +816,23 @@
         {
           "command": "unintellij.change.copyOriginal",
           "group": "navigation@2"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "unintellij.inspection.ok",
+          "when": "unintellij.inspection == 'ok'",
+          "group": "navigation@-100"
+        },
+        {
+          "command": "unintellij.inspection.warning",
+          "when": "unintellij.inspection == 'warning'",
+          "group": "navigation@-100"
+        },
+        {
+          "command": "unintellij.inspection.error",
+          "when": "unintellij.inspection == 'error'",
+          "group": "navigation@-100"
         }
       ],
       "view/title": [
