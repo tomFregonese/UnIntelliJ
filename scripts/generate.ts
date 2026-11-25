@@ -1,0 +1,61 @@
+/**
+ * Regenerates every generated artifact from its TypeScript source of truth:
+ *   package.json  contributes.configuration   ← src/config/schema.ts
+ *   package.json  contributes.commands/menus  ← src/commands/catalog.ts
+ *   package.json  contributes.keybindings     ← src/keymap/keymap.ts
+ *   docs/KEYMAP.md                            ← src/keymap/keymap.ts
+ *   themes/*.json                             ← src/theme/palettes.ts (+ icons/symbol-colors.json)
+ *
+ * `--check` writes nothing and exits non-zero when something is out of date (used in CI).
+ */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
+import { buildCommandContribution, buildCommandPaletteMenu } from '../src/commands/catalog';
+import { buildConfigurationContribution } from '../src/config/schema';
+import { buildKeybindings, buildKeymapMarkdown } from '../src/keymap/keymap';
+import { buildColorTheme, themeFileName } from '../src/theme/build';
+import { PALETTES } from '../src/theme/palettes';
+
+const root = join(__dirname, '..');
+const check = process.argv.includes('--check');
+const outdated: string[] = [];
+
+function emit(path: string, content: string): void {
+  const current = existsSync(path) ? readFileSync(path, 'utf8') : undefined;
+  if (current === content) {
+    return;
+  }
+  outdated.push(relative(root, path));
+  if (!check) {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, content);
+  }
+}
+
+const json = (data: unknown): string => `${JSON.stringify(data, null, 2)}\n`;
+
+// package.json
+const packagePath = join(root, 'package.json');
+const pkg = JSON.parse(readFileSync(packagePath, 'utf8'));
+pkg.contributes.configuration = buildConfigurationContribution();
+pkg.contributes.commands = buildCommandContribution();
+pkg.contributes.menus = { ...pkg.contributes.menus, commandPalette: buildCommandPaletteMenu() };
+pkg.contributes.keybindings = buildKeybindings();
+emit(packagePath, json(pkg));
+
+// Keymap reference
+emit(join(root, 'docs', 'KEYMAP.md'), buildKeymapMarkdown());
+
+// Color themes
+for (const palette of PALETTES) {
+  emit(join(root, 'themes', themeFileName(palette)), json(buildColorTheme(palette)));
+}
+
+if (outdated.length === 0) {
+  console.log('Generated files are up to date.');
+} else if (check) {
+  console.error(`Out of date: ${outdated.join(', ')}. Run \`npm run gen\`.`);
+  process.exit(1);
+} else {
+  console.log(`Updated: ${outdated.join(', ')}`);
+}

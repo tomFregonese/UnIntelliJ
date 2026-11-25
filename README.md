@@ -24,13 +24,13 @@ On Windows without the `code` command: **Extensions** view › `…` › **Insta
 | `npm run typecheck` · `npm run lint` | Static checks |
 | `npm run test:unit` | Unit tests (Vitest, no VS Code needed) |
 | `npm run test:integration` | Integration tests in a downloaded VS Code (`VSCODE_TEST_VERSION` to pick a version) |
-| `npm run gen:config` | Regenerate `contributes.configuration` from `src/config/schema.ts` |
+| `npm run gen` | Regenerate package.json contributions, `docs/KEYMAP.md` and `themes/` from their TypeScript sources (`check:generated` verifies, CI fails if stale) |
 | `npm run package` | Build the `.vsix` |
 
 ### Settings
 
 All settings live under `unintellij.*` and are declared **once** in `src/config/schema.ts`.
-After changing it, run `npm run gen:config`; CI fails if `package.json` is out of date.
+After changing it, run `npm run gen`; CI fails if `package.json` is out of date.
 Read them with `getSetting()` from `src/config/settings.ts`, which falls back to the default for invalid values.
 
 ### Icons
@@ -38,7 +38,7 @@ Read them with `getSetting()` from `src/config/settings.ts`, which falls back to
 Icons come from IntelliJ's New UI set (`platform/icons/src/expui` in intellij-community, Apache 2.0, see `NOTICE`).
 `icons/sources.json` maps VS Code icons to IntelliJ ones; `scripts/build-icons.py` copies the SVGs, builds the
 monochrome product icon font and extracts symbol colors. Its output is committed, so only regenerating icons needs Python
-(usage at the top of the script). Then run `npm run gen:themes` to pick up symbol colors.
+(usage at the top of the script). Then run `npm run gen` to pick up symbol colors.
 
 ### Optional integrations
 

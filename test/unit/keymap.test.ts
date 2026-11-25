@@ -1,0 +1,121 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { COMMANDS } from '../../src/commands/catalog';
+import { buildKeybindings, buildKeymapMarkdown, CATEGORIES, formatKey, KEYMAP, KeymapOs, ownCommands } from '../../src/keymap/keymap';
+
+const root = join(__dirname, '..', '..');
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+const VALID_KEY = /^((ctrl|shift|alt|cmd|meta)\+)*([a-z0-9]|f[0-9]{1,2}|escape|enter|backspace|delete|insert|tab|space|up|down|left|right|home|end|pageup|pagedown|[-=[\]`'/\\;,.])$/;
+
+describe('keymap', () => {
+  it('has unique action ids in known categories', () => {
+    const ids = KEYMAP.map((a) => a.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const action of KEYMAP) {
+      expect(CATEGORIES).toContain(action.category);
+    }
+  });
+
+  it('uses valid VS Code key syntax', () => {
+    for (const action of KEYMAP) {
+      for (const key of [action.windows, action.macos]) {
+        if (!key) {
+          continue;
+        }
+        for (const chord of key.split(' ')) {
+          expect(chord === 'shift' || VALID_KEY.test(chord), `${action.id}: ${key}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('does not use cmd in the Windows keymap', () => {
+    for (const action of KEYMAP) {
+      expect(action.windows ?? '', action.id).not.toMatch(/cmd/);
+    }
+  });
+
+  it('only points to UnIntelliJ commands that exist', () => {
+    const catalog = COMMANDS.map((c) => c.command);
+    for (const command of ownCommands()) {
+      expect(catalog).toContain(command);
+    }
+  });
+
+  it('never binds the same key twice in the same context', () => {
+    for (const os of ['windows', 'macos'] as KeymapOs[]) {
+      const seen = new Map<string, string>();
+      for (const action of KEYMAP) {
+        const key = action[os];
+        if (!key) {
+          continue;
+        }
+        for (const when of [action.when ?? '', ...(action.variants ?? []).map((v) => v.when)]) {
+          const slot = `${key} | ${when}`;
+          expect(seen.get(slot), `${os}: ${slot} bound by ${seen.get(slot)} and ${action.id}`).toBeUndefined();
+          seen.set(slot, action.id);
+        }
+      }
+    }
+  });
+
+  it('includes the essentials', () => {
+    const byId = Object.fromEntries(KEYMAP.map((a) => [a.id, a]));
+    expect(byId.SearchEverywhere).toMatchObject({ windows: 'shift shift', macos: 'shift shift' });
+    expect(byId.GotoClass).toMatchObject({ windows: 'ctrl+n', macos: 'cmd+o' });
+    expect(byId.ShowIntentionActions).toMatchObject({ windows: 'alt+enter' });
+    expect(byId.EditorSelectWord).toMatchObject({ windows: 'ctrl+w', macos: 'alt+up' });
+  });
+});
+
+describe('buildKeybindings', () => {
+  const bindings = buildKeybindings();
+
+  it('is what package.json contributes', () => {
+    expect(pkg.contributes.keybindings).toEqual(bindings);
+  });
+
+  it('guards every binding with the keymap layout and the disabled-action context key', () => {
+    for (const binding of bindings) {
+      expect(binding.when).toMatch(/config\.unintellij\.keymap\.layout/);
+      expect(binding.when).toMatch(/!unintellij\.keymap\.disabled\./);
+    }
+  });
+
+  it('puts toggle variants after the main binding so they win when focused', () => {
+    const project = bindings.filter((b) => b.key === 'alt+1');
+    expect(project.map((b) => b.command)).toEqual(['workbench.view.explorer', 'workbench.action.closeSidebar']);
+  });
+
+  it('passes args through', () => {
+    const extract = bindings.find((b) => b.key === 'ctrl+alt+m');
+    expect(extract?.args).toEqual({ kind: 'refactor.extract.function', apply: 'ifSingle' });
+  });
+});
+
+describe('formatKey', () => {
+  it('formats Windows shortcuts like IntelliJ', () => {
+    expect(formatKey('ctrl+shift+n', 'windows')).toBe('Ctrl+Shift+N');
+    expect(formatKey('shift shift', 'windows')).toBe('Double Shift');
+    expect(formatKey('alt+enter', 'windows')).toBe('Alt+Enter');
+  });
+
+  it('formats macOS shortcuts with symbols', () => {
+    expect(formatKey('cmd+shift+o', 'macos')).toBe('⌘⇧O');
+    expect(formatKey('shift shift', 'macos')).toBe('⇧⇧');
+    expect(formatKey('alt+up', 'macos')).toBe('⌥↑');
+  });
+});
+
+describe('docs/KEYMAP.md', () => {
+  it('is generated and up to date', () => {
+    expect(readFileSync(join(root, 'docs', 'KEYMAP.md'), 'utf8')).toBe(buildKeymapMarkdown());
+  });
+});
+
+describe('commands', () => {
+  it('are all contributed in package.json', () => {
+    expect(pkg.contributes.commands.map((c: { command: string }) => c.command)).toEqual(COMMANDS.map((c) => c.command));
+  });
+});

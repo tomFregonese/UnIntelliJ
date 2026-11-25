@@ -24,3 +24,10 @@ Cocher et dater quand c'est réglé.
 - [ ] **Tous les `.java` ont l'icône de classe** « C » : VS Code ne sait pas si le fichier contient une interface, un enum ou un record.
 - [ ] **Icônes absentes du pack New UI de la plateforme** : Maven (`pom.xml`), Angular (component/service/module), Spring, Terminal, npm. Elles sont dans les plugins JetBrains, à chercher dans `intellij-community/plugins/*` (licence à vérifier pour chacune).
 - [ ] **Icônes d'interface monochromes** (contrainte des polices d'icônes) : Run vert, Debug, etc. perdent leur couleur ; `pinned` ressemble à `pin`.
+
+## Lot 4 — Keymap
+
+- [ ] **Raccourcis jamais testés au clavier réel** : la table est générée et validée (syntaxe, conflits, commandes existantes) mais pas pressée touche par touche. À essayer au travail sous Windows, en priorité `Shift Shift`, `Ctrl+W`, `Alt+Enter`, `Ctrl+E`, `Alt+1`.
+- [ ] **`Ctrl+K` (Commit) écrase le préfixe des raccourcis à deux temps de VS Code** (`Ctrl+K Ctrl+S`, `Ctrl+K Ctrl+0`…). Voulu pour coller à IntelliJ, mais ces commandes ne restent accessibles que par `Ctrl+Shift+A`.
+- [ ] **Équivalences approximatives** : Move Statement = Move Line ; Introduce Variable ouvre le menu « Extract » ; la tool window Run = Debug Console ; Paste from History absent (pas d'API presse-papiers).
+- [ ] Les raccourcis VS Code par défaut qui n'existent pas dans IntelliJ restent actifs (ex. `Ctrl+Shift+P`) — à décider : les laisser ou les neutraliser.

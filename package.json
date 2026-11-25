@@ -199,6 +199,1370 @@
         "label": "UnIntelliJ (New UI)",
         "path": "./icons/product-icon-theme.json"
       }
+    ],
+    "commands": [
+      {
+        "command": "unintellij.searchEverywhere",
+        "title": "Search Everywhere",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.findAction",
+        "title": "Find Action…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.gotoClass",
+        "title": "Go to Class…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.gotoFile",
+        "title": "Go to File…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.gotoSymbol",
+        "title": "Go to Symbol…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.recentFiles",
+        "title": "Recent Files",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.recentLocations",
+        "title": "Recent Locations",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.fileStructure",
+        "title": "File Structure",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.nextMethod",
+        "title": "Next Method",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.previousMethod",
+        "title": "Previous Method",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.toggleCase",
+        "title": "Toggle Case",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.showSettings",
+        "title": "Settings…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit",
+        "title": "Commit…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.push",
+        "title": "Push…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.updateProject",
+        "title": "Update Project…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.vcsOperations",
+        "title": "VCS Operations Popup…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.branches",
+        "title": "Branches…",
+        "category": "UnIntelliJ"
+      }
+    ],
+    "menus": {
+      "commandPalette": []
+    },
+    "keybindings": [
+      {
+        "key": "shift shift",
+        "command": "unintellij.searchEverywhere",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SearchEverywhere"
+      },
+      {
+        "key": "ctrl+shift+a",
+        "command": "unintellij.findAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoAction"
+      },
+      {
+        "key": "ctrl+n",
+        "command": "unintellij.gotoClass",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoClass"
+      },
+      {
+        "key": "ctrl+shift+n",
+        "command": "unintellij.gotoFile",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoFile"
+      },
+      {
+        "key": "ctrl+alt+shift+n",
+        "command": "unintellij.gotoSymbol",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoSymbol"
+      },
+      {
+        "key": "ctrl+e",
+        "command": "unintellij.recentFiles",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RecentFiles"
+      },
+      {
+        "key": "ctrl+shift+e",
+        "command": "unintellij.recentLocations",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RecentLocations"
+      },
+      {
+        "key": "ctrl+f12",
+        "command": "unintellij.fileStructure",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FileStructurePopup"
+      },
+      {
+        "key": "ctrl+g",
+        "command": "workbench.action.gotoLine",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoLine"
+      },
+      {
+        "key": "ctrl+b",
+        "command": "editor.action.revealDefinition",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoDeclaration && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+alt+b",
+        "command": "editor.action.goToImplementation",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoImplementation && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+shift+b",
+        "command": "editor.action.goToTypeDefinition",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoTypeDeclaration && (editorTextFocus)"
+      },
+      {
+        "key": "alt+f7",
+        "command": "references-view.findReferences",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FindUsages && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+alt+f7",
+        "command": "editor.action.referenceSearch.trigger",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ShowUsages && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+shift+f7",
+        "command": "editor.action.wordHighlight.trigger",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.HighlightUsagesInFile && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+shift+i",
+        "command": "editor.action.peekDefinition",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.QuickImplementations && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+q",
+        "command": "editor.action.showHover",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.QuickJavaDoc && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+p",
+        "command": "editor.action.triggerParameterHints",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ParameterInfo && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+alt+left",
+        "command": "workbench.action.navigateBack",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Back"
+      },
+      {
+        "key": "ctrl+alt+right",
+        "command": "workbench.action.navigateForward",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Forward"
+      },
+      {
+        "key": "alt+down",
+        "command": "unintellij.nextMethod",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MethodDown && (editorTextFocus)"
+      },
+      {
+        "key": "alt+up",
+        "command": "unintellij.previousMethod",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MethodUp && (editorTextFocus)"
+      },
+      {
+        "key": "f2",
+        "command": "editor.action.marker.nextInFiles",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoNextError && (editorTextFocus)"
+      },
+      {
+        "key": "shift+f2",
+        "command": "editor.action.marker.prevInFiles",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.GotoPreviousError && (editorTextFocus)"
+      },
+      {
+        "key": "alt+f1",
+        "command": "workbench.files.action.showActiveFileInExplorer",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SelectIn"
+      },
+      {
+        "key": "ctrl+f",
+        "command": "actions.find",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Find && (editorFocus || editorIsOpen)"
+      },
+      {
+        "key": "ctrl+r",
+        "command": "editor.action.startFindReplaceAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Replace && (editorFocus || editorIsOpen)"
+      },
+      {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.findInFiles",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FindInPath"
+      },
+      {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.replaceInFiles",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ReplaceInPath"
+      },
+      {
+        "key": "f3",
+        "command": "editor.action.nextMatchFindAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FindNext && (editorFocus)"
+      },
+      {
+        "key": "shift+f3",
+        "command": "editor.action.previousMatchFindAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FindPrevious && (editorFocus)"
+      },
+      {
+        "key": "alt+enter",
+        "command": "editor.action.quickFix",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ShowIntentionActions && (editorTextFocus && !editorReadonly && !findWidgetVisible)"
+      },
+      {
+        "key": "ctrl+space",
+        "command": "editor.action.triggerSuggest",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CodeCompletion && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+space",
+        "command": "editor.action.triggerSuggest",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SmartTypeCompletion && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+insert",
+        "command": "editor.action.sourceAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Generate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+insert",
+        "command": "explorer.newFile",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NewElement && (explorerViewletFocus && !inputFocus)"
+      },
+      {
+        "key": "ctrl+alt+t",
+        "command": "editor.action.surroundWithSnippet",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SurroundWith && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+j",
+        "command": "editor.action.showSnippets",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.InsertLiveTemplate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+alt+l",
+        "command": "editor.action.formatDocument",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ReformatCode && (editorTextFocus && !editorReadonly && !editorHasSelection)"
+      },
+      {
+        "key": "ctrl+alt+l",
+        "command": "editor.action.formatSelection",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ReformatCodeSelection && (editorTextFocus && !editorReadonly && editorHasSelection)"
+      },
+      {
+        "key": "ctrl+alt+o",
+        "command": "editor.action.organizeImports",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.OptimizeImports && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+w",
+        "command": "editor.action.smartSelect.expand",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorSelectWord && (editorFocus)"
+      },
+      {
+        "key": "ctrl+shift+w",
+        "command": "editor.action.smartSelect.shrink",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorUnSelectWord && (editorFocus)"
+      },
+      {
+        "key": "ctrl+d",
+        "command": "editor.action.duplicateSelection",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorDuplicate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+y",
+        "command": "editor.action.deleteLines",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorDeleteLine && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+shift+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MoveLineUp && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+shift+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MoveLineDown && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MoveStatementUp && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MoveStatementDown && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+/",
+        "command": "editor.action.commentLine",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CommentByLineComment && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+/",
+        "command": "editor.action.blockComment",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CommentByBlockComment && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+enter",
+        "command": "editor.action.insertLineAfter",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorStartNewLine && (editorTextFocus && !editorReadonly && !suggestWidgetVisible)"
+      },
+      {
+        "key": "ctrl+alt+enter",
+        "command": "editor.action.insertLineBefore",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorStartNewLineBefore && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+j",
+        "command": "editor.action.joinLines",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorJoinLines && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+u",
+        "command": "unintellij.toggleCase",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorToggleCase && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+j",
+        "command": "editor.action.addSelectionToNextFindMatch",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SelectNextOccurrence && (editorFocus)"
+      },
+      {
+        "key": "alt+shift+j",
+        "command": "cursorUndo",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.UnselectPreviousOccurrence && (editorFocus)"
+      },
+      {
+        "key": "ctrl+alt+shift+j",
+        "command": "editor.action.selectHighlights",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SelectAllOccurrences && (editorFocus)"
+      },
+      {
+        "key": "ctrl+-",
+        "command": "editor.fold",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CollapseRegion && (editorFocus)"
+      },
+      {
+        "key": "ctrl+=",
+        "command": "editor.unfold",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ExpandRegion && (editorFocus)"
+      },
+      {
+        "key": "ctrl+shift+-",
+        "command": "editor.foldAll",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CollapseAllRegions && (editorFocus)"
+      },
+      {
+        "key": "ctrl+shift+=",
+        "command": "editor.unfoldAll",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ExpandAllRegions && (editorFocus)"
+      },
+      {
+        "key": "ctrl+shift+z",
+        "command": "redo",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Redo && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+c",
+        "command": "copyFilePath",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CopyPaths"
+      },
+      {
+        "key": "ctrl+alt+shift+t",
+        "command": "editor.action.refactor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Refactorings.QuickListPopupAction && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+f6",
+        "command": "editor.action.rename",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RenameElement && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+f6",
+        "command": "renameFile",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RenameFile && (explorerViewletFocus && !inputFocus)"
+      },
+      {
+        "key": "ctrl+alt+m",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ExtractMethod && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.extract.function",
+          "apply": "ifSingle"
+        }
+      },
+      {
+        "key": "ctrl+alt+v",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.IntroduceVariable && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.extract",
+          "apply": "never"
+        }
+      },
+      {
+        "key": "ctrl+alt+n",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Inline && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.inline",
+          "apply": "ifSingle"
+        }
+      },
+      {
+        "key": "f6",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Move && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.move",
+          "apply": "never"
+        }
+      },
+      {
+        "key": "alt+1",
+        "command": "workbench.view.explorer",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow"
+      },
+      {
+        "key": "alt+1",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.explorer')"
+      },
+      {
+        "key": "alt+3",
+        "command": "workbench.view.search",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateFindToolWindow"
+      },
+      {
+        "key": "alt+3",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateFindToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.search')"
+      },
+      {
+        "key": "alt+4",
+        "command": "workbench.debug.action.toggleRepl",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateRunToolWindow"
+      },
+      {
+        "key": "alt+5",
+        "command": "workbench.view.debug",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateDebugToolWindow"
+      },
+      {
+        "key": "alt+5",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateDebugToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.debug')"
+      },
+      {
+        "key": "alt+6",
+        "command": "workbench.actions.view.problems",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProblemsViewToolWindow"
+      },
+      {
+        "key": "alt+6",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProblemsViewToolWindow && (panelFocus && activePanel == 'workbench.panel.markers')"
+      },
+      {
+        "key": "alt+7",
+        "command": "outline.focus",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
+      },
+      {
+        "key": "alt+7",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
+      },
+      {
+        "key": "alt+9",
+        "command": "workbench.view.scm",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow"
+      },
+      {
+        "key": "alt+9",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+      },
+      {
+        "key": "alt+0",
+        "command": "workbench.view.scm",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
+      },
+      {
+        "key": "alt+0",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+      },
+      {
+        "key": "alt+f12",
+        "command": "terminal.focus",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateTerminalToolWindow"
+      },
+      {
+        "key": "alt+f12",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateTerminalToolWindow && (terminalFocus)"
+      },
+      {
+        "key": "shift+escape",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.HideActiveWindow && (sideBarFocus)"
+      },
+      {
+        "key": "shift+escape",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.HideActiveWindow && (panelFocus)"
+      },
+      {
+        "key": "escape",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.FocusEditor && ((sideBarFocus || panelFocus && !terminalFocus) && !inputFocus && !listHasSelectionOrFocus)"
+      },
+      {
+        "key": "ctrl+shift+f12",
+        "command": "workbench.action.maximizeEditorHideSidebar",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.HideAllWindows"
+      },
+      {
+        "key": "ctrl+shift+'",
+        "command": "workbench.action.toggleMaximizedPanel",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.MaximizeToolWindow && (panelFocus)"
+      },
+      {
+        "key": "ctrl+alt+s",
+        "command": "unintellij.showSettings",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ShowSettings"
+      },
+      {
+        "key": "ctrl+`",
+        "command": "workbench.action.selectTheme",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.QuickChangeScheme"
+      },
+      {
+        "key": "ctrl+k",
+        "command": "unintellij.commit",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CheckinProject"
+      },
+      {
+        "key": "ctrl+shift+k",
+        "command": "unintellij.push",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Vcs.Push"
+      },
+      {
+        "key": "ctrl+t",
+        "command": "unintellij.updateProject",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Vcs.UpdateProject"
+      },
+      {
+        "key": "ctrl+alt+z",
+        "command": "git.revertSelectedRanges",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ChangesView.Revert && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+`",
+        "command": "unintellij.vcsOperations",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Vcs.QuickListPopupAction"
+      },
+      {
+        "key": "ctrl+shift+`",
+        "command": "unintellij.branches",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Git.Branches"
+      },
+      {
+        "key": "ctrl+alt+shift+down",
+        "command": "workbench.action.editor.nextChange",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.VcsShowNextChangeMarker && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+alt+shift+up",
+        "command": "workbench.action.editor.previousChange",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.VcsShowPrevChangeMarker && (editorTextFocus)"
+      },
+      {
+        "key": "f7",
+        "command": "workbench.action.compareEditor.nextChange",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NextDiff && (textCompareEditorVisible && !inDebugMode)"
+      },
+      {
+        "key": "shift+f7",
+        "command": "workbench.action.compareEditor.previousChange",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.PreviousDiff && (textCompareEditorVisible && !inDebugMode)"
+      },
+      {
+        "key": "shift+f10",
+        "command": "workbench.action.debug.run",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Run && (!inDebugMode)"
+      },
+      {
+        "key": "shift+f9",
+        "command": "workbench.action.debug.start",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Debug && (!inDebugMode)"
+      },
+      {
+        "key": "ctrl+f2",
+        "command": "workbench.action.debug.stop",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Stop && (inDebugMode)"
+      },
+      {
+        "key": "ctrl+f5",
+        "command": "workbench.action.debug.restart",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Rerun && (inDebugMode)"
+      },
+      {
+        "key": "ctrl+f8",
+        "command": "editor.debug.action.toggleBreakpoint",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ToggleLineBreakpoint && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+shift+f8",
+        "command": "workbench.debug.viewlet.action.focusBreakpointsView",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ViewBreakpoints"
+      },
+      {
+        "key": "f8",
+        "command": "workbench.action.debug.stepOver",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.StepOver && (inDebugMode)"
+      },
+      {
+        "key": "f7",
+        "command": "workbench.action.debug.stepInto",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.StepInto && (inDebugMode)"
+      },
+      {
+        "key": "shift+f8",
+        "command": "workbench.action.debug.stepOut",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.StepOut && (inDebugMode)"
+      },
+      {
+        "key": "f9",
+        "command": "workbench.action.debug.continue",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Resume && (inDebugMode)"
+      },
+      {
+        "key": "alt+f8",
+        "command": "editor.debug.action.selectionToRepl",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EvaluateExpression && (inDebugMode)"
+      },
+      {
+        "key": "alt+f9",
+        "command": "editor.debug.action.runToCursor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RunToCursor && (inDebugMode)"
+      },
+      {
+        "key": "alt+right",
+        "command": "workbench.action.nextEditor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NextTab && (!terminalFocus)"
+      },
+      {
+        "key": "alt+left",
+        "command": "workbench.action.previousEditor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.PreviousTab && (!terminalFocus)"
+      },
+      {
+        "key": "ctrl+f4",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.CloseContent"
+      },
+      {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.reopenClosedEditor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ReopenClosedTab"
+      },
+      {
+        "key": "ctrl+tab",
+        "command": "workbench.action.quickOpenPreviousRecentlyUsedEditor",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Switcher"
+      },
+      {
+        "key": "ctrl+s",
+        "command": "workbench.action.files.saveAll",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SaveAll"
+      },
+      {
+        "key": "ctrl+alt+shift+insert",
+        "command": "workbench.action.files.newUntitledFile",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NewScratchFile"
+      },
+      {
+        "key": "shift shift",
+        "command": "unintellij.searchEverywhere",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SearchEverywhere"
+      },
+      {
+        "key": "cmd+shift+a",
+        "command": "unintellij.findAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoAction"
+      },
+      {
+        "key": "cmd+o",
+        "command": "unintellij.gotoClass",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoClass"
+      },
+      {
+        "key": "cmd+shift+o",
+        "command": "unintellij.gotoFile",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoFile"
+      },
+      {
+        "key": "cmd+alt+o",
+        "command": "unintellij.gotoSymbol",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoSymbol"
+      },
+      {
+        "key": "cmd+e",
+        "command": "unintellij.recentFiles",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RecentFiles"
+      },
+      {
+        "key": "cmd+shift+e",
+        "command": "unintellij.recentLocations",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RecentLocations"
+      },
+      {
+        "key": "cmd+f12",
+        "command": "unintellij.fileStructure",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FileStructurePopup"
+      },
+      {
+        "key": "cmd+l",
+        "command": "workbench.action.gotoLine",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoLine"
+      },
+      {
+        "key": "cmd+b",
+        "command": "editor.action.revealDefinition",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoDeclaration && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+alt+b",
+        "command": "editor.action.goToImplementation",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoImplementation && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+shift+b",
+        "command": "editor.action.goToTypeDefinition",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoTypeDeclaration && (editorTextFocus)"
+      },
+      {
+        "key": "alt+f7",
+        "command": "references-view.findReferences",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FindUsages && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+alt+f7",
+        "command": "editor.action.referenceSearch.trigger",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ShowUsages && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+shift+f7",
+        "command": "editor.action.wordHighlight.trigger",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.HighlightUsagesInFile && (editorTextFocus)"
+      },
+      {
+        "key": "alt+space",
+        "command": "editor.action.peekDefinition",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.QuickImplementations && (editorTextFocus)"
+      },
+      {
+        "key": "f1",
+        "command": "editor.action.showHover",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.QuickJavaDoc && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+p",
+        "command": "editor.action.triggerParameterHints",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ParameterInfo && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+[",
+        "command": "workbench.action.navigateBack",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Back"
+      },
+      {
+        "key": "cmd+]",
+        "command": "workbench.action.navigateForward",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Forward"
+      },
+      {
+        "key": "ctrl+down",
+        "command": "unintellij.nextMethod",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MethodDown && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+up",
+        "command": "unintellij.previousMethod",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MethodUp && (editorTextFocus)"
+      },
+      {
+        "key": "f2",
+        "command": "editor.action.marker.nextInFiles",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoNextError && (editorTextFocus)"
+      },
+      {
+        "key": "shift+f2",
+        "command": "editor.action.marker.prevInFiles",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.GotoPreviousError && (editorTextFocus)"
+      },
+      {
+        "key": "alt+f1",
+        "command": "workbench.files.action.showActiveFileInExplorer",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SelectIn"
+      },
+      {
+        "key": "cmd+f",
+        "command": "actions.find",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Find && (editorFocus || editorIsOpen)"
+      },
+      {
+        "key": "cmd+r",
+        "command": "editor.action.startFindReplaceAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Replace && (editorFocus || editorIsOpen)"
+      },
+      {
+        "key": "cmd+shift+f",
+        "command": "workbench.action.findInFiles",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FindInPath"
+      },
+      {
+        "key": "cmd+shift+r",
+        "command": "workbench.action.replaceInFiles",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ReplaceInPath"
+      },
+      {
+        "key": "cmd+g",
+        "command": "editor.action.nextMatchFindAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FindNext && (editorFocus)"
+      },
+      {
+        "key": "cmd+shift+g",
+        "command": "editor.action.previousMatchFindAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FindPrevious && (editorFocus)"
+      },
+      {
+        "key": "alt+enter",
+        "command": "editor.action.quickFix",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ShowIntentionActions && (editorTextFocus && !editorReadonly && !findWidgetVisible)"
+      },
+      {
+        "key": "ctrl+space",
+        "command": "editor.action.triggerSuggest",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CodeCompletion && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+space",
+        "command": "editor.action.triggerSuggest",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SmartTypeCompletion && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+n",
+        "command": "editor.action.sourceAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Generate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+n",
+        "command": "explorer.newFile",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewElement && (explorerViewletFocus && !inputFocus)"
+      },
+      {
+        "key": "cmd+alt+t",
+        "command": "editor.action.surroundWithSnippet",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SurroundWith && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+j",
+        "command": "editor.action.showSnippets",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.InsertLiveTemplate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+alt+l",
+        "command": "editor.action.formatDocument",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ReformatCode && (editorTextFocus && !editorReadonly && !editorHasSelection)"
+      },
+      {
+        "key": "cmd+alt+l",
+        "command": "editor.action.formatSelection",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ReformatCodeSelection && (editorTextFocus && !editorReadonly && editorHasSelection)"
+      },
+      {
+        "key": "ctrl+alt+o",
+        "command": "editor.action.organizeImports",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.OptimizeImports && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+up",
+        "command": "editor.action.smartSelect.expand",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorSelectWord && (editorFocus)"
+      },
+      {
+        "key": "alt+down",
+        "command": "editor.action.smartSelect.shrink",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorUnSelectWord && (editorFocus)"
+      },
+      {
+        "key": "cmd+d",
+        "command": "editor.action.duplicateSelection",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorDuplicate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+backspace",
+        "command": "editor.action.deleteLines",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorDeleteLine && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+shift+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MoveLineUp && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "alt+shift+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MoveLineDown && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+shift+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MoveStatementUp && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+shift+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MoveStatementDown && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+/",
+        "command": "editor.action.commentLine",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CommentByLineComment && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+alt+/",
+        "command": "editor.action.blockComment",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CommentByBlockComment && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+enter",
+        "command": "editor.action.insertLineAfter",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorStartNewLine && (editorTextFocus && !editorReadonly && !suggestWidgetVisible)"
+      },
+      {
+        "key": "cmd+alt+enter",
+        "command": "editor.action.insertLineBefore",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorStartNewLineBefore && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+shift+j",
+        "command": "editor.action.joinLines",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorJoinLines && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+shift+u",
+        "command": "unintellij.toggleCase",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EditorToggleCase && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+g",
+        "command": "editor.action.addSelectionToNextFindMatch",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SelectNextOccurrence && (editorFocus)"
+      },
+      {
+        "key": "ctrl+shift+g",
+        "command": "cursorUndo",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.UnselectPreviousOccurrence && (editorFocus)"
+      },
+      {
+        "key": "ctrl+cmd+g",
+        "command": "editor.action.selectHighlights",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SelectAllOccurrences && (editorFocus)"
+      },
+      {
+        "key": "cmd+-",
+        "command": "editor.fold",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CollapseRegion && (editorFocus)"
+      },
+      {
+        "key": "cmd+=",
+        "command": "editor.unfold",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ExpandRegion && (editorFocus)"
+      },
+      {
+        "key": "cmd+shift+-",
+        "command": "editor.foldAll",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CollapseAllRegions && (editorFocus)"
+      },
+      {
+        "key": "cmd+shift+=",
+        "command": "editor.unfoldAll",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ExpandAllRegions && (editorFocus)"
+      },
+      {
+        "key": "cmd+shift+z",
+        "command": "redo",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Redo && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "cmd+shift+c",
+        "command": "copyFilePath",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CopyPaths"
+      },
+      {
+        "key": "ctrl+t",
+        "command": "editor.action.refactor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Refactorings.QuickListPopupAction && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+f6",
+        "command": "editor.action.rename",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RenameElement && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "shift+f6",
+        "command": "renameFile",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RenameFile && (explorerViewletFocus && !inputFocus)"
+      },
+      {
+        "key": "cmd+alt+m",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ExtractMethod && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.extract.function",
+          "apply": "ifSingle"
+        }
+      },
+      {
+        "key": "cmd+alt+v",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.IntroduceVariable && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.extract",
+          "apply": "never"
+        }
+      },
+      {
+        "key": "cmd+alt+n",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Inline && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.inline",
+          "apply": "ifSingle"
+        }
+      },
+      {
+        "key": "f6",
+        "command": "editor.action.codeAction",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Move && (editorTextFocus && !editorReadonly)",
+        "args": {
+          "kind": "refactor.move",
+          "apply": "never"
+        }
+      },
+      {
+        "key": "cmd+1",
+        "command": "workbench.view.explorer",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow"
+      },
+      {
+        "key": "cmd+1",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.explorer')"
+      },
+      {
+        "key": "cmd+3",
+        "command": "workbench.view.search",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateFindToolWindow"
+      },
+      {
+        "key": "cmd+3",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateFindToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.search')"
+      },
+      {
+        "key": "cmd+4",
+        "command": "workbench.debug.action.toggleRepl",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateRunToolWindow"
+      },
+      {
+        "key": "cmd+5",
+        "command": "workbench.view.debug",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateDebugToolWindow"
+      },
+      {
+        "key": "cmd+5",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateDebugToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.debug')"
+      },
+      {
+        "key": "cmd+6",
+        "command": "workbench.actions.view.problems",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProblemsViewToolWindow"
+      },
+      {
+        "key": "cmd+6",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProblemsViewToolWindow && (panelFocus && activePanel == 'workbench.panel.markers')"
+      },
+      {
+        "key": "cmd+7",
+        "command": "outline.focus",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
+      },
+      {
+        "key": "cmd+7",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
+      },
+      {
+        "key": "cmd+9",
+        "command": "workbench.view.scm",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow"
+      },
+      {
+        "key": "cmd+9",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+      },
+      {
+        "key": "cmd+0",
+        "command": "workbench.view.scm",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
+      },
+      {
+        "key": "cmd+0",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+      },
+      {
+        "key": "alt+f12",
+        "command": "terminal.focus",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateTerminalToolWindow"
+      },
+      {
+        "key": "alt+f12",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateTerminalToolWindow && (terminalFocus)"
+      },
+      {
+        "key": "shift+escape",
+        "command": "workbench.action.closeSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.HideActiveWindow && (sideBarFocus)"
+      },
+      {
+        "key": "shift+escape",
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.HideActiveWindow && (panelFocus)"
+      },
+      {
+        "key": "escape",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.FocusEditor && ((sideBarFocus || panelFocus && !terminalFocus) && !inputFocus && !listHasSelectionOrFocus)"
+      },
+      {
+        "key": "cmd+shift+f12",
+        "command": "workbench.action.maximizeEditorHideSidebar",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.HideAllWindows"
+      },
+      {
+        "key": "cmd+shift+'",
+        "command": "workbench.action.toggleMaximizedPanel",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.MaximizeToolWindow && (panelFocus)"
+      },
+      {
+        "key": "cmd+,",
+        "command": "unintellij.showSettings",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ShowSettings"
+      },
+      {
+        "key": "ctrl+`",
+        "command": "workbench.action.selectTheme",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.QuickChangeScheme"
+      },
+      {
+        "key": "cmd+k",
+        "command": "unintellij.commit",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CheckinProject"
+      },
+      {
+        "key": "cmd+shift+k",
+        "command": "unintellij.push",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Vcs.Push"
+      },
+      {
+        "key": "cmd+t",
+        "command": "unintellij.updateProject",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Vcs.UpdateProject"
+      },
+      {
+        "key": "cmd+alt+z",
+        "command": "git.revertSelectedRanges",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ChangesView.Revert && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+v",
+        "command": "unintellij.vcsOperations",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Vcs.QuickListPopupAction"
+      },
+      {
+        "key": "cmd+shift+`",
+        "command": "unintellij.branches",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Git.Branches"
+      },
+      {
+        "key": "ctrl+alt+shift+down",
+        "command": "workbench.action.editor.nextChange",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.VcsShowNextChangeMarker && (editorTextFocus)"
+      },
+      {
+        "key": "ctrl+alt+shift+up",
+        "command": "workbench.action.editor.previousChange",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.VcsShowPrevChangeMarker && (editorTextFocus)"
+      },
+      {
+        "key": "f7",
+        "command": "workbench.action.compareEditor.nextChange",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NextDiff && (textCompareEditorVisible && !inDebugMode)"
+      },
+      {
+        "key": "shift+f7",
+        "command": "workbench.action.compareEditor.previousChange",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.PreviousDiff && (textCompareEditorVisible && !inDebugMode)"
+      },
+      {
+        "key": "ctrl+r",
+        "command": "workbench.action.debug.run",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Run && (!inDebugMode)"
+      },
+      {
+        "key": "ctrl+d",
+        "command": "workbench.action.debug.start",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Debug && (!inDebugMode)"
+      },
+      {
+        "key": "cmd+f2",
+        "command": "workbench.action.debug.stop",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Stop && (inDebugMode)"
+      },
+      {
+        "key": "cmd+r",
+        "command": "workbench.action.debug.restart",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Rerun && (inDebugMode)"
+      },
+      {
+        "key": "cmd+f8",
+        "command": "editor.debug.action.toggleBreakpoint",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ToggleLineBreakpoint && (editorTextFocus)"
+      },
+      {
+        "key": "cmd+shift+f8",
+        "command": "workbench.debug.viewlet.action.focusBreakpointsView",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ViewBreakpoints"
+      },
+      {
+        "key": "f8",
+        "command": "workbench.action.debug.stepOver",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.StepOver && (inDebugMode)"
+      },
+      {
+        "key": "f7",
+        "command": "workbench.action.debug.stepInto",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.StepInto && (inDebugMode)"
+      },
+      {
+        "key": "shift+f8",
+        "command": "workbench.action.debug.stepOut",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.StepOut && (inDebugMode)"
+      },
+      {
+        "key": "cmd+alt+r",
+        "command": "workbench.action.debug.continue",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Resume && (inDebugMode)"
+      },
+      {
+        "key": "alt+f8",
+        "command": "editor.debug.action.selectionToRepl",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.EvaluateExpression && (inDebugMode)"
+      },
+      {
+        "key": "alt+f9",
+        "command": "editor.debug.action.runToCursor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RunToCursor && (inDebugMode)"
+      },
+      {
+        "key": "cmd+shift+]",
+        "command": "workbench.action.nextEditor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NextTab && (!terminalFocus)"
+      },
+      {
+        "key": "cmd+shift+[",
+        "command": "workbench.action.previousEditor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.PreviousTab && (!terminalFocus)"
+      },
+      {
+        "key": "cmd+w",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.CloseContent"
+      },
+      {
+        "key": "cmd+shift+t",
+        "command": "workbench.action.reopenClosedEditor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ReopenClosedTab"
+      },
+      {
+        "key": "ctrl+tab",
+        "command": "workbench.action.quickOpenPreviousRecentlyUsedEditor",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Switcher"
+      },
+      {
+        "key": "cmd+s",
+        "command": "workbench.action.files.saveAll",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SaveAll"
+      },
+      {
+        "key": "cmd+shift+n",
+        "command": "workbench.action.files.newUntitledFile",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewScratchFile"
+      }
     ]
   },
   "scripts": {
@@ -209,12 +1573,10 @@
     "test:unit": "vitest run",
     "compile:integration": "tsc -p tsconfig.integration.json",
     "test:integration": "npm run build && npm run compile:integration && vscode-test",
-    "gen:config": "tsx scripts/generate-config.ts",
-    "check:config": "tsx scripts/generate-config.ts --check",
     "package": "vsce package --no-dependencies",
     "vscode:prepublish": "node esbuild.mjs --production",
-    "gen:themes": "tsx scripts/generate-themes.ts",
-    "check:themes": "tsx scripts/generate-themes.ts --check"
+    "gen": "tsx scripts/generate.ts",
+    "check:generated": "tsx scripts/generate.ts --check"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

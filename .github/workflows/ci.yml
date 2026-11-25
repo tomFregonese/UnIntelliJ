@@ -19,8 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run check:config
-      - run: npm run check:themes
+      - run: npm run check:generated
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test:unit

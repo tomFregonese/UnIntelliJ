@@ -1,7 +1,12 @@
 import * as vscode from 'vscode';
 import { initializeIconThemes } from './appearance/iconThemes';
 import { ThemeSync } from './appearance/themeSync';
+import { registerEditorCommands } from './editor/commands';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
+import { syncDisabledActions } from './keymap/disabledActions';
+import { registerNavigationCommands } from './navigation/commands';
+import { registerSettingsCommands } from './settings/commands';
+import { registerVcsCommands } from './vcs/commands';
 
 export interface UnIntelliJApi {
   integrations(): IntegrationStatus[];
@@ -19,6 +24,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   const logIntegrations = (): void => log.info(`Integrations:\n${formatIntegrations(detectIntegrations())}`);
   logIntegrations();
   context.subscriptions.push(vscode.extensions.onDidChange(logIntegrations));
+
+  // Commands first: a keybinding may be what activated the extension.
+  context.subscriptions.push(
+    ...registerNavigationCommands(),
+    ...registerEditorCommands(),
+    ...registerSettingsCommands(context),
+    ...registerVcsCommands(),
+    syncDisabledActions(),
+  );
 
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);
