@@ -12,6 +12,7 @@ import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
 import { applyPreset, revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
+import { ProjectView } from './project/projectView';
 import { RunWidget } from './run/runWidget';
 import { GutterRunner } from './testing/gutterRunner';
 import { registerVcsCommands } from './vcs/commands';
@@ -63,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     userKeybindings,
     new RunWidget(context.workspaceState, context.extensionUri),
     new GutterRunner(log),
+    new ProjectView(context, vcs.service),
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);

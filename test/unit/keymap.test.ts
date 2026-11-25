@@ -85,7 +85,7 @@ describe('buildKeybindings', () => {
 
   it('puts toggle variants after the main binding so they win when focused', () => {
     const project = bindings.filter((b) => b.key === 'alt+1');
-    expect(project.map((b) => b.command)).toEqual(['workbench.view.explorer', 'workbench.action.closeSidebar']);
+    expect(project.map((b) => b.command)).toEqual(['workbench.view.extension.unintellij-project', 'workbench.action.closeSidebar']);
   });
 
   it('passes args through', () => {
@@ -142,8 +142,8 @@ describe('customKeybindings', () => {
   it('rebinds the action and its variants on the new key', () => {
     expect(customKeybindings({ ReformatCode: 'ctrl+shift+l', ActivateProjectToolWindow: 'f1' })).toEqual([
       { key: 'ctrl+shift+l', command: 'editor.action.formatDocument', when: 'editorTextFocus && !editorReadonly && !editorHasSelection' },
-      { key: 'f1', command: 'workbench.view.explorer' },
-      { key: 'f1', command: 'workbench.action.closeSidebar', when: "sideBarFocus && activeViewlet == 'workbench.view.explorer'" },
+      { key: 'f1', command: 'workbench.view.extension.unintellij-project' },
+      { key: 'f1', command: 'workbench.action.closeSidebar', when: "sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-project'" },
     ]);
   });
 });

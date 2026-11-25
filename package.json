@@ -302,6 +302,64 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.project.selectMode",
+        "title": "Change Project View…",
+        "category": "UnIntelliJ",
+        "icon": "$(chevron-down)"
+      },
+      {
+        "command": "unintellij.project.selectOpenedFile",
+        "title": "Select Opened File",
+        "category": "UnIntelliJ",
+        "icon": "$(target)"
+      },
+      {
+        "command": "unintellij.project.refresh",
+        "title": "Reload from Disk",
+        "category": "UnIntelliJ",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "unintellij.project.newFile",
+        "title": "New File…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.newFolder",
+        "title": "New Directory…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.copyPath",
+        "title": "Copy Absolute Path",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.copyRelativePath",
+        "title": "Copy Path from Content Root",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.rename",
+        "title": "Rename…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.delete",
+        "title": "Delete…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.revealInOs",
+        "title": "Open in File Manager",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.project.openInTerminal",
+        "title": "Open in Terminal",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.run",
         "title": "Run",
         "category": "UnIntelliJ",
@@ -506,6 +564,42 @@
           "when": "false"
         },
         {
+          "command": "unintellij.project.refresh",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.newFile",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.newFolder",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.copyRelativePath",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.rename",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.delete",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.revealInOs",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.project.openInTerminal",
+          "when": "false"
+        },
+        {
           "command": "unintellij.runConfiguration",
           "when": "false"
         },
@@ -682,6 +776,21 @@
       ],
       "view/title": [
         {
+          "command": "unintellij.project.selectMode",
+          "when": "view == unintellij.project",
+          "group": "navigation@0"
+        },
+        {
+          "command": "unintellij.project.selectOpenedFile",
+          "when": "view == unintellij.project",
+          "group": "navigation@1"
+        },
+        {
+          "command": "unintellij.project.refresh",
+          "when": "view == unintellij.project",
+          "group": "navigation@2"
+        },
+        {
           "command": "unintellij.updateProject",
           "when": "view == unintellij.commit",
           "group": "navigation@10"
@@ -710,6 +819,48 @@
           "command": "unintellij.fetch",
           "when": "view == unintellij.gitLog",
           "group": "navigation@12"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "unintellij.project.newFile",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "1_new@1"
+        },
+        {
+          "command": "unintellij.project.newFolder",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "1_new@2"
+        },
+        {
+          "command": "unintellij.project.copyPath",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "2_copy@1"
+        },
+        {
+          "command": "unintellij.project.copyRelativePath",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "2_copy@2"
+        },
+        {
+          "command": "unintellij.project.rename",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "3_modify@1"
+        },
+        {
+          "command": "unintellij.project.delete",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "3_modify@2"
+        },
+        {
+          "command": "unintellij.project.revealInOs",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "4_os@1"
+        },
+        {
+          "command": "unintellij.project.openInTerminal",
+          "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
+          "group": "4_os@2"
         }
       ]
     },
@@ -836,7 +987,7 @@
       },
       {
         "key": "alt+f1",
-        "command": "workbench.files.action.showActiveFileInExplorer",
+        "command": "unintellij.project.selectOpenedFile",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.SelectIn"
       },
       {
@@ -891,8 +1042,13 @@
       },
       {
         "key": "alt+insert",
-        "command": "explorer.newFile",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NewElement && (explorerViewletFocus && !inputFocus)"
+        "command": "unintellij.project.newFile",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.NewElement && (focusedView == 'unintellij.project' && !inputFocus)"
+      },
+      {
+        "key": "delete",
+        "command": "unintellij.project.delete",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.$Delete && (focusedView == 'unintellij.project' && !inputFocus)"
       },
       {
         "key": "ctrl+alt+t",
@@ -1046,8 +1202,8 @@
       },
       {
         "key": "shift+f6",
-        "command": "renameFile",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RenameFile && (explorerViewletFocus && !inputFocus)"
+        "command": "unintellij.project.rename",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.RenameFile && (focusedView == 'unintellij.project' && !inputFocus)"
       },
       {
         "key": "ctrl+alt+m",
@@ -1087,13 +1243,13 @@
       },
       {
         "key": "alt+1",
-        "command": "workbench.view.explorer",
+        "command": "workbench.view.extension.unintellij-project",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow"
       },
       {
         "key": "alt+1",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.explorer')"
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-project')"
       },
       {
         "key": "alt+3",
@@ -1482,7 +1638,7 @@
       },
       {
         "key": "alt+f1",
-        "command": "workbench.files.action.showActiveFileInExplorer",
+        "command": "unintellij.project.selectOpenedFile",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.SelectIn"
       },
       {
@@ -1537,8 +1693,13 @@
       },
       {
         "key": "cmd+n",
-        "command": "explorer.newFile",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewElement && (explorerViewletFocus && !inputFocus)"
+        "command": "unintellij.project.newFile",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewElement && (focusedView == 'unintellij.project' && !inputFocus)"
+      },
+      {
+        "key": "cmd+backspace",
+        "command": "unintellij.project.delete",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.$Delete && (focusedView == 'unintellij.project' && !inputFocus)"
       },
       {
         "key": "cmd+alt+t",
@@ -1692,8 +1853,8 @@
       },
       {
         "key": "shift+f6",
-        "command": "renameFile",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RenameFile && (explorerViewletFocus && !inputFocus)"
+        "command": "unintellij.project.rename",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.RenameFile && (focusedView == 'unintellij.project' && !inputFocus)"
       },
       {
         "key": "cmd+alt+m",
@@ -1733,13 +1894,13 @@
       },
       {
         "key": "cmd+1",
-        "command": "workbench.view.explorer",
+        "command": "workbench.view.extension.unintellij-project",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow"
       },
       {
         "key": "cmd+1",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.explorer')"
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateProjectToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-project')"
       },
       {
         "key": "cmd+3",
@@ -2018,6 +2179,13 @@
       }
     ],
     "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "unintellij-project",
+          "title": "Project",
+          "icon": "media/project.svg"
+        }
+      ],
       "panel": [
         {
           "id": "unintellij-git",
@@ -2027,6 +2195,12 @@
       ]
     },
     "views": {
+      "unintellij-project": [
+        {
+          "id": "unintellij.project",
+          "name": "Project"
+        }
+      ],
       "unintellij-git": [
         {
           "type": "webview",

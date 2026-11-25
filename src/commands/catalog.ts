@@ -36,6 +36,18 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.showKeymapSettings', title: 'Settings: Keymap' },
   { command: 'unintellij.applyRecommendedSettings', title: 'Set Up IntelliJ-like Settings (Theme, Fonts)…' },
   // Run
+  // Project tool window
+  { command: 'unintellij.project.selectMode', title: 'Change Project View…', icon: '$(chevron-down)' },
+  { command: 'unintellij.project.selectOpenedFile', title: 'Select Opened File', icon: '$(target)' },
+  { command: 'unintellij.project.refresh', title: 'Reload from Disk', icon: '$(refresh)', hidden: true },
+  { command: 'unintellij.project.newFile', title: 'New File…', hidden: true },
+  { command: 'unintellij.project.newFolder', title: 'New Directory…', hidden: true },
+  { command: 'unintellij.project.copyPath', title: 'Copy Absolute Path', hidden: true },
+  { command: 'unintellij.project.copyRelativePath', title: 'Copy Path from Content Root', hidden: true },
+  { command: 'unintellij.project.rename', title: 'Rename…', hidden: true },
+  { command: 'unintellij.project.delete', title: 'Delete…', hidden: true },
+  { command: 'unintellij.project.revealInOs', title: 'Open in File Manager', hidden: true },
+  { command: 'unintellij.project.openInTerminal', title: 'Open in Terminal', hidden: true },
   { command: 'unintellij.run', title: 'Run', icon: '$(play)' },
   { command: 'unintellij.run.editConfigurations', title: 'Edit Configurations…' },
   { command: 'unintellij.debug', title: 'Debug', icon: '$(debug-alt)' },

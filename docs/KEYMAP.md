@@ -51,6 +51,7 @@ UnIntelliJ reproduces IntelliJ's default **Windows** and **macOS** keymaps. The 
 | Type-Matching Completion | `Ctrl+Shift+Space` | `⌃⇧Space` | `SmartTypeCompletion` |
 | Generate… | `Alt+Insert` | `⌘N` | `Generate` |
 | New… (Project View) | `Alt+Insert` | `⌘N` | `NewElement` |
+| Delete (Project View) | `DELETE` | `⌘⌫` | `$Delete` |
 | Surround With… | `Ctrl+Alt+T` | `⌘⌥T` | `SurroundWith` |
 | Insert Live Template… | `Ctrl+J` | `⌘J` | `InsertLiveTemplate` |
 | Reformat Code | `Ctrl+Alt+L` | `⌘⌥L` | `ReformatCode` |

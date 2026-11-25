@@ -4,10 +4,14 @@
  */
 
 export const VIEW_CONTAINERS = {
+  // First in the activity bar: IntelliJ's Project tool window. VS Code's Explorer cannot host it
+  // instead of its Folders view (that view cannot be hidden).
+  activitybar: [{ id: 'unintellij-project', title: 'Project', icon: 'media/project.svg' }],
   panel: [{ id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' }],
 };
 
 export const VIEWS = {
+  'unintellij-project': [{ id: 'unintellij.project', name: 'Project' }],
   'unintellij-git': [{ type: 'webview', id: 'unintellij.gitLog', name: 'Log' }],
   // In VS Code's Source Control container, whose native views UnIntelliJ hides (see scmViews.ts).
   // Expanded by default: contributed views are otherwise added collapsed at the bottom.
@@ -22,6 +26,8 @@ const commitMenu = (section: string, entries: [string, string][], extraWhen = ''
 const CHANGELISTS_ON = ' && config.unintellij.vcs.changelists.enabled';
 
 const logMenu = (entries: [string, string][]) => entries.map(([command, group]) => ({ command, group, when: "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'" }));
+
+const PROJECT_ITEM = "view == unintellij.project && viewItem =~ /^(file|folder)$/";
 
 export const MENUS = {
   'webview/context': [
@@ -62,10 +68,23 @@ export const MENUS = {
     { command: 'unintellij.change.copyOriginal', group: 'navigation@2' },
   ],
   'view/title': [
+    { command: 'unintellij.project.selectMode', when: 'view == unintellij.project', group: 'navigation@0' },
+    { command: 'unintellij.project.selectOpenedFile', when: 'view == unintellij.project', group: 'navigation@1' },
+    { command: 'unintellij.project.refresh', when: 'view == unintellij.project', group: 'navigation@2' },
     // IntelliJ's Update / Push / Fetch actions, also on the Commit and Git tool windows.
     ...['unintellij.updateProject', 'unintellij.push', 'unintellij.fetch'].flatMap((command, i) =>
       ['unintellij.commit', 'unintellij.gitLog'].map((view) => ({ command, when: `view == ${view}`, group: `navigation@${10 + i}` })),
     ),
+  ],
+  'view/item/context': [
+    { command: 'unintellij.project.newFile', when: PROJECT_ITEM, group: '1_new@1' },
+    { command: 'unintellij.project.newFolder', when: PROJECT_ITEM, group: '1_new@2' },
+    { command: 'unintellij.project.copyPath', when: PROJECT_ITEM, group: '2_copy@1' },
+    { command: 'unintellij.project.copyRelativePath', when: PROJECT_ITEM, group: '2_copy@2' },
+    { command: 'unintellij.project.rename', when: PROJECT_ITEM, group: '3_modify@1' },
+    { command: 'unintellij.project.delete', when: PROJECT_ITEM, group: '3_modify@2' },
+    { command: 'unintellij.project.revealInOs', when: PROJECT_ITEM, group: '4_os@1' },
+    { command: 'unintellij.project.openInTerminal', when: PROJECT_ITEM, group: '4_os@2' },
   ],
 };
 
