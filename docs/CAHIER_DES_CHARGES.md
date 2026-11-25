@@ -358,3 +358,36 @@ Besoin : se connecter aux bases **PostgreSQL** (locales et distantes) et exécut
 - Pilote `pg` (node-postgres) embarqué dans l'extension : pas d'installation de `psql` nécessaire.
 - Connexions ouvertes à la demande, fermées à la déconnexion et à la fermeture de VS Code ; délai d'attente configurable.
 - Tests : base PostgreSQL éphémère (conteneur en CI) pour la connexion, le découpage des scripts, l'exécution et l'annulation.
+
+## 17. Triangles verts « Run » dans la gouttière (itération 2)
+
+Comme IntelliJ Ultimate : partout où quelque chose est lançable, un **triangle vert ▶** apparaît dans la gouttière, à côté de la ligne concernée. Un clic ouvre le petit menu IntelliJ **Run '…'** / **Debug '…'** (puis Run with Coverage plus tard, et Modify Run Configuration…). L'exécution crée ou réutilise une configuration temporaire, qui apparaît dans le widget Run (§14.5) comme dans IntelliJ.
+
+### 17.1 Java — tests (JUnit 4 et 5)
+
+- ▶ à côté de **chaque méthode de test** (`@Test`, `@ParameterizedTest`, `@RepeatedTest`, `@TestFactory`) : lance cette méthode seule.
+- ▶ (double) à côté de la **classe de test** : lance toute la classe.
+- Clic droit sur un package ou un dossier `src/test/java` dans la vue Project : lancer tous les tests du package.
+- **Icône d'état** après exécution, comme IntelliJ : ✓ vert si le test a réussi, ✗ rouge s'il a échoué, à la place du triangle, jusqu'à la prochaine modification.
+- Résultats dans le panneau du bas (onglet Run) : arbre des tests avec durées, sortie console, trace de l'erreur cliquable vers la ligne.
+- Moteur : intégration « Test Runner for Java » si installée ; sinon lancement Maven (`mvn -Dtest=Classe#methode test`) en repli.
+
+### 17.2 Java — applications
+
+- ▶ à côté de `public static void main` et des classes `@SpringBootApplication` : Run / Debug de l'application (Debug via Debugger for Java si installé).
+
+### 17.3 Node / Angular
+
+- `package.json` : ▶ à côté de **chaque script** de `"scripts"` (`start`, `build`, `test`…), avec npm, yarn ou pnpm selon le projet.
+- Tests TypeScript/JavaScript (Jasmine/Karma pour Angular, Jest, Vitest) : ▶ à côté de chaque `describe` et `it`/`test` (selon l'outil détecté dans le projet).
+
+### 17.4 Autres fichiers
+
+- `pom.xml` : ▶ sur les goals usuels (plus tard avec la tool window Maven).
+- Fichiers `.sql` : ▶ à côté de chaque instruction, qui l'exécute sur la source choisie (cf. §16).
+- Fichiers `.http` / `.rest` : ▶ à côté de chaque requête (plus tard).
+
+### 17.5 Technique
+
+- Triangles affichés via des décorations de gouttière avec les icônes New UI (`run`, `runAll`, `testPassed`, `testFailed`), et menu Run/Debug au clic. VS Code ne permet pas aux extensions de capter directement un clic dans la gouttière : le clic passe par CodeLens ou par l'API Testing de VS Code (qui affiche son propre ▶ dans la gouttière). Choisir le rendu le plus proche d'IntelliJ.
+- Détection : symboles du serveur de langage (jdtls pour Java, TypeScript pour Node) et analyse de `package.json`.

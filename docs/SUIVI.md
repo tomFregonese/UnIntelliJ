@@ -112,3 +112,4 @@ Cocher et dater quand c'est réglé.
 - [ ] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
 - [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
 - [ ] **Base de données PostgreSQL façon IntelliJ** : tool window Database, sources de données (mots de passe sécurisés, couleur par source), sélecteur source/schéma dans les fichiers `.sql`, `Ctrl+Entrée`, résultats en grille — §16 (PostgreSQL uniquement)
+- [ ] **Triangles verts ▶ dans la gouttière** : tests Java (méthode, classe, package, avec ✓/✗ après exécution), `main` / Spring Boot, scripts `package.json`, tests TS/JS, instructions SQL — §17
