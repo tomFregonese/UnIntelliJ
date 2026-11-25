@@ -5,20 +5,26 @@ import * as vscode from 'vscode';
  * Applied on demand from Settings › Editor › General; previous values are kept for Revert.
  */
 /** Bumped when entries change, so that users who applied an older preset are offered the new one. */
-export const PRESET_VERSION = 2;
+export const PRESET_VERSION = 3;
 
-const EDITOR_FONT = "'JetBrains Mono', Consolas, 'Courier New', monospace";
-/** IntelliJ's 13 pt renders larger on Windows/Linux than VS Code's 13 px. */
-const EDITOR_FONT_SIZE = process.platform === 'darwin' ? 13 : 14;
+/**
+ * JetBrains Mono (installed by the setup), then each OS's own coding font, never Courier New:
+ * that serif fallback is what VS Code shows when the first font is missing.
+ */
+const EDITOR_FONT = "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace";
+/** Measured on Rider / IntelliJ New UI screenshots: about 15 px on macOS, 14 px on Windows. */
+const EDITOR_FONT_SIZE = process.platform === 'darwin' ? 15 : 14;
 
 export const PRESET: readonly { key: string; value: unknown; reason: string }[] = [
   { key: 'editor.fontFamily', value: EDITOR_FONT, reason: 'IntelliJ default editor font' },
-  { key: 'editor.fontSize', value: EDITOR_FONT_SIZE, reason: 'IntelliJ default size (13 pt)' },
-  { key: 'editor.lineHeight', value: 1.4, reason: 'IntelliJ line spacing' },
+  { key: 'editor.fontSize', value: EDITOR_FONT_SIZE, reason: 'Same visual size as IntelliJ' },
+  { key: 'editor.lineHeight', value: 1.6, reason: 'IntelliJ line spacing (1.2 × JetBrains Mono line height)' },
   { key: 'editor.fontLigatures', value: false, reason: 'Ligatures off, IntelliJ default' },
   { key: 'editor.fontWeight', value: 'normal', reason: 'Regular weight' },
   { key: 'terminal.integrated.fontFamily', value: EDITOR_FONT, reason: 'Terminal uses the editor font' },
   { key: 'terminal.integrated.fontSize', value: EDITOR_FONT_SIZE, reason: 'Terminal font size' },
+  { key: 'terminal.integrated.lineHeight', value: 1.2, reason: 'IntelliJ terminal line spacing' },
+  { key: 'debug.console.fontSize', value: EDITOR_FONT_SIZE, reason: 'Console font size' },
   { key: 'debug.console.fontFamily', value: EDITOR_FONT, reason: 'Console uses the editor font' },
   { key: 'editor.minimap.enabled', value: false, reason: 'IntelliJ has no minimap' },
   { key: 'editor.renderWhitespace', value: 'none', reason: 'Whitespaces hidden' },

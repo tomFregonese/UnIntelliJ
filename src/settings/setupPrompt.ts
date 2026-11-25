@@ -21,6 +21,8 @@ export class SetupPrompt {
   async maybeAsk(): Promise<void> {
     const state = this.context.globalState;
     if (appliedPresetVersion(state) >= PRESET_VERSION || state.get<number>(DISMISSED_KEY) === PRESET_VERSION) {
+      // Nothing to propose: still make sure the editor font exists.
+      await this.checkFontOnStartup();
       return;
     }
     const isUpdate = appliedPresetVersion(state) > 0;
@@ -29,8 +31,8 @@ export class SetupPrompt {
     const never = "Don't Ask Again";
     const answer = await vscode.window.showInformationMessage(
       isUpdate
-        ? 'UnIntelliJ: the IntelliJ-like settings were updated (fonts, sizes). Apply them?'
-        : 'UnIntelliJ: apply IntelliJ-like settings (JetBrains Mono, font sizes, autosave, Islands theme…)?',
+        ? 'UnIntelliJ: the IntelliJ-like settings were updated (editor font size and line spacing, terminal). Apply them?'
+        : 'UnIntelliJ: apply IntelliJ-like settings? Installs the JetBrains Mono font for your account and sets font sizes, autosave and the Islands theme.',
       apply,
       details,
       'Later',
@@ -62,7 +64,35 @@ export class SetupPrompt {
     await vscode.workspace.getConfiguration('unintellij').update('appearance.theme', theme.id, vscode.ConfigurationTarget.Global);
     await applyPreset(this.context.globalState);
     this.log.info(`Setup: preset v${PRESET_VERSION} applied with ${theme.label}`);
-    await this.checkFont();
+    // The preset's editor font: without it VS Code falls back to another font.
+    await this.ensureFont();
+  }
+
+  /** Installs the bundled JetBrains Mono for the current user when missing, then offers a restart. */
+  async ensureFont(): Promise<void> {
+    if (await hasJetBrainsMono()) {
+      return;
+    }
+    try {
+      await installJetBrainsMono(this.context.extensionUri, this.log);
+    } catch (error) {
+      this.log.error(`Could not install JetBrains Mono: ${String(error)}`);
+      await this.checkFont();
+      return;
+    }
+    const restart = 'Restart Now';
+    const answer = await vscode.window.showInformationMessage('JetBrains Mono was installed for your account. Restart VS Code to use it in the editor and the terminal.', restart, 'Later');
+    if (answer === restart) {
+      await vscode.commands.executeCommand('workbench.action.quit');
+    }
+  }
+
+  /** On startup: the editor font is set to JetBrains Mono but the font is missing. */
+  async checkFontOnStartup(): Promise<void> {
+    const family = vscode.workspace.getConfiguration('editor').get<string>('fontFamily') ?? '';
+    if (/JetBrains Mono/i.test(family)) {
+      await this.checkFont();
+    }
   }
 
   /** Offers to install the bundled JetBrains Mono for the current user when it is missing. */
