@@ -2,7 +2,7 @@
   "name": "unintellij",
   "displayName": "UnIntelliJ",
   "description": "Make VS Code look and behave like IntelliJ IDEA (New UI / Islands).",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "unintellij",
   "license": "MIT",
   "private": true,

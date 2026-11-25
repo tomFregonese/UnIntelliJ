@@ -21,9 +21,10 @@ export function splitStatements(sql: string): Statement[] {
   let i = 0;
   const push = (end: number): void => {
     const raw = sql.slice(begin, end);
-    const lead = raw.length - raw.trimStart().length;
-    const text = raw.trim();
-    if (text && !/^(?:--[^\n]*\n?|\/\*[\s\S]*?\*\/|\s)*$/.test(text)) {
+    // Leading comments belong to the statement but its ▶ and position start at the code.
+    const lead = raw.length - raw.replace(/^(?:\s+|--[^\n]*(?:\n|$)|\/\*[\s\S]*?\*\/)*/, '').length;
+    const text = raw.slice(lead).trim();
+    if (text) {
       statements.push({ text, start: begin + lead, end: begin + lead + text.length });
     }
   };

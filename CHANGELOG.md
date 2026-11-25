@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+- Exact Islands Light / Dark colors from IntelliJ; JetBrains Mono installed for your account by the setup; IntelliJ font sizes.
+- First-run setup (theme, fonts, settings), IntelliJ checkboxes in windows, solid change bars, change popup actions, IntelliJ diff titles.
+- Branch widget (↗ outgoing / ↙ incoming, Update / Push / Fetch, background fetch).
+- Run/Debug Configurations window; green ▶ in the gutter for scripts, Java and JS/TS tests, mains.
+- Project tool window (Project / Packages / Files / Open / Changed), navigation bar, inspection widget, read-only lock.
+- Commit: single click previews the diff, double click opens the file.
+- PostgreSQL: data sources, Database tool window, SQL files and consoles, results panel.
+- English by default, French in Settings › Appearance › Language.
+
 ## 0.2.0 — 2026-11-25
 
 - **Commit tool window replaces VS Code's Source Control**: it lives in the Source Control container and VS Code's own Changes and Graph views are hidden (command to show them again). Alt+0 focuses it.

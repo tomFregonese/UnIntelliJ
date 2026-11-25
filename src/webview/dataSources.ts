@@ -180,7 +180,9 @@ function renderForm(): HTMLElement {
           onClick: () => {
             testStatus = 'running';
             render();
-            vscode.postMessage({ type: 'test', source, password: passwords[source.id] ?? undefined });
+            // The form edits `sources` in place: test the current values, not those of the last render.
+            const edited = current() ?? source;
+            vscode.postMessage({ type: 'test', source: edited, password: passwords[edited.id] ?? undefined });
           },
         },
         t('Test Connection'),
