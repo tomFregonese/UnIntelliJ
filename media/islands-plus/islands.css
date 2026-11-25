@@ -1,0 +1,95 @@
+/*
+ * UnIntelliJ Islands+ — loaded by VS Code's workbench.html when Islands+ is enabled.
+ * Gives the workbench IntelliJ's New UI "Islands" shape: parts float as rounded islands on the
+ * window frame. Only visual properties are changed (clip-path, radius, colors): VS Code computes
+ * every part's size itself, so margins or row heights are left alone.
+ */
+
+:root {
+  --unintellij-island-gap: 3px;
+  --unintellij-island-radius: 8px;
+}
+
+/* The frame behind the islands uses the title bar color of the theme. */
+.monaco-workbench {
+  background-color: var(--vscode-titleBar-activeBackground) !important;
+}
+
+.monaco-workbench .part.sidebar,
+.monaco-workbench .part.auxiliarybar,
+.monaco-workbench .part.panel,
+.monaco-workbench .part.editor > .content {
+  clip-path: inset(var(--unintellij-island-gap) round var(--unintellij-island-radius));
+}
+
+/* Keep the gaps visible: borders between parts are drawn by the gaps themselves. */
+.monaco-workbench .part.sidebar,
+.monaco-workbench .part.auxiliarybar,
+.monaco-workbench .part.panel,
+.monaco-workbench .part.editor {
+  border: none !important;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container {
+  border: none !important;
+}
+
+/* IntelliJ New UI typography. Inter is used when installed, else the system UI font. */
+.monaco-workbench,
+.monaco-workbench .monaco-list,
+.monaco-workbench .tabs-container,
+.monaco-workbench .part.statusbar {
+  font-family: Inter, 'Segoe UI Variable Text', 'Segoe UI', -apple-system, system-ui, sans-serif;
+}
+
+/* Tabs: no separators, active tab marked by the theme's bottom border only. */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+  border-right: none !important;
+}
+
+/* Rounded popups like IntelliJ. */
+.monaco-workbench .quick-input-widget,
+.monaco-workbench .monaco-menu-container,
+.monaco-workbench .suggest-widget,
+.monaco-workbench .monaco-hover,
+.monaco-workbench .notification-toast-container,
+.monaco-workbench .editor-widget.find-widget {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+/* Title bar widgets (project, branch, run) moved here by islands.js. */
+.unintellij-titlebar-widgets {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.unintellij-titlebar-widgets.left {
+  margin-left: 8px;
+}
+
+.unintellij-titlebar-widgets.right {
+  margin-right: 8px;
+}
+
+.unintellij-titlebar-widgets .statusbar-item {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 6px;
+  color: var(--vscode-titleBar-activeForeground);
+  font-weight: 500;
+}
+
+.unintellij-titlebar-widgets .statusbar-item:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.unintellij-titlebar-widgets .statusbar-item a {
+  color: inherit !important;
+  text-decoration: none !important;
+}

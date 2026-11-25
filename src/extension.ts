@@ -4,6 +4,7 @@ import { ThemeSync } from './appearance/themeSync';
 import { registerEditorCommands } from './editor/commands';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 import { syncDisabledActions } from './keymap/disabledActions';
+import { IslandsPlus } from './islandsPlus/islandsPlus';
 import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
@@ -59,7 +60,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     new NpmView(),
   );
   const structure = new StructureView(context.globalState);
-  context.subscriptions.push(structure);
+  const islandsPlus = IslandsPlus.create(context, log);
+  context.subscriptions.push(structure, islandsPlus);
+  // Not awaited: patching may prompt the user and must not delay activation.
+  void islandsPlus.reconcile();
 
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);

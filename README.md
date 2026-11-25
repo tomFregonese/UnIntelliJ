@@ -40,6 +40,14 @@ Icons come from IntelliJ's New UI set (`platform/icons/src/expui` in intellij-co
 monochrome product icon font and extracts symbol colors. Its output is committed, so only regenerating icons needs Python
 (usage at the top of the script). Then run `npm run gen` to pick up symbol colors.
 
+### Islands+
+
+Optional (`unintellij.appearance.islandsPlus.enabled`, off by default). VS Code offers no API to change the
+shape of its UI, so Islands+ adds a stylesheet and a small script next to VS Code's `workbench.html`, references
+them from it and updates the file checksum in `product.json` (no "corrupt installation" warning). Disabling removes
+the block and restores the checksum exactly; backups (`*.unintellij-backup`) are kept next to the files. It is
+re-applied automatically after VS Code updates. Requires write access to VS Code's installation folder.
+
 ### Optional integrations
 
 UnIntelliJ never requires another extension. `src/integrations.ts` lists the ones it can use

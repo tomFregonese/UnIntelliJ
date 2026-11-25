@@ -74,3 +74,12 @@ Cocher et dater quand c'est réglé.
 - [ ] **Diff et merge = éditeurs natifs de VS Code** aux couleurs IntelliJ (pas une réimplémentation du diff IntelliJ) ; F7 / Shift+F7 pour naviguer entre les différences.
 - [ ] **Conflits** : « Yours/Theirs » suivent Git (`--ours/--theirs`) ; pendant un rebase le sens est inversé, c'est rappelé dans le dialogue.
 - [ ] **Annotate (blame)** = décoration native de VS Code activée depuis VCS Operations (pas la colonne de gouttière d'IntelliJ).
+
+## Lot 10 — Islands+
+
+- [ ] **Pas utilisable sur ton poste de travail en l'état** : VS Code y est installé en « System setup » (Program Files) → droits admin requis. Le message d'erreur le dit et propose de désactiver. Pistes : version « User setup », ou lancer VS Code une fois en administrateur.
+- [ ] **Rendu non vérifié visuellement** : vérifié que le VS Code patché démarre et fonctionne (toute la suite de tests y passe) et que le retrait est exact à l'octet près ; mais l'aspect (îles arrondies, widgets en haut) reste à voir sur ton Mac.
+- [ ] **Widgets dans la barre de titre** (projet, branche, Run) : déplacés par script depuis la barre d'état — expérimental, à surveiller (VS Code peut les remettre en bas, le script les re-déplace).
+- [ ] **Limites assumées** : pas de changement de hauteur des onglets/lignes d'arbre (VS Code calcule ces tailles en JS) ; police Inter seulement si installée.
+- [ ] **Après chaque mise à jour de VS Code** : ré-application automatique au démarrage + demande de rechargement de la fenêtre.
+- [ ] Des fichiers `*.unintellij-backup` restent à côté de `workbench.html` / `product.json` (filet de sécurité) : les supprimer à la désactivation ?
