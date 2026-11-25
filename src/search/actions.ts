@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { getSetting } from '../config/settings';
 import { formatKey, KEYMAP, KeymapOs } from '../keymap/keymap';
+import { t } from '../i18n/i18n';
+import { COMMANDS } from '../commands/catalog';
 
 export interface ActionEntry {
   label: string;
@@ -13,16 +15,16 @@ export interface ActionEntry {
 
 /** Editor/IDE options IntelliJ lets you flip from Find Action ("Soft-Wraps: ON"). */
 const TOGGLES: readonly { label: string; section: string; key: string; on: unknown; off: unknown }[] = [
-  { label: 'Soft-Wraps', section: 'editor', key: 'wordWrap', on: 'on', off: 'off' },
-  { label: 'Show Whitespaces', section: 'editor', key: 'renderWhitespace', on: 'all', off: 'none' },
-  { label: 'Show Line Numbers', section: 'editor', key: 'lineNumbers', on: 'on', off: 'off' },
-  { label: 'Show Indent Guides', section: 'editor.guides', key: 'indentation', on: true, off: false },
-  { label: 'Show Minimap', section: 'editor.minimap', key: 'enabled', on: true, off: false },
-  { label: 'Show Breadcrumbs', section: 'breadcrumbs', key: 'enabled', on: true, off: false },
-  { label: 'Sticky Lines', section: 'editor.stickyScroll', key: 'enabled', on: true, off: false },
-  { label: 'Inlay Hints', section: 'editor.inlayHints', key: 'enabled', on: 'on', off: 'off' },
-  { label: 'Save Files Automatically', section: 'files', key: 'autoSave', on: 'afterDelay', off: 'off' },
-  { label: 'Code Folding', section: 'editor', key: 'folding', on: true, off: false },
+  { label: t('Soft-Wraps'), section: 'editor', key: 'wordWrap', on: 'on', off: 'off' },
+  { label: t('Show Whitespaces'), section: 'editor', key: 'renderWhitespace', on: 'all', off: 'none' },
+  { label: t('Show Line Numbers'), section: 'editor', key: 'lineNumbers', on: 'on', off: 'off' },
+  { label: t('Show Indent Guides'), section: 'editor.guides', key: 'indentation', on: true, off: false },
+  { label: t('Show Minimap'), section: 'editor.minimap', key: 'enabled', on: true, off: false },
+  { label: t('Show Breadcrumbs'), section: 'breadcrumbs', key: 'enabled', on: true, off: false },
+  { label: t('Sticky Lines'), section: 'editor.stickyScroll', key: 'enabled', on: true, off: false },
+  { label: t('Inlay Hints'), section: 'editor.inlayHints', key: 'enabled', on: 'on', off: 'off' },
+  { label: t('Save Files Automatically'), section: 'files', key: 'autoSave', on: 'afterDelay', off: 'off' },
+  { label: t('Code Folding'), section: 'editor', key: 'folding', on: true, off: false },
 ];
 
 export function currentKeymapOs(): KeymapOs {
@@ -61,10 +63,11 @@ export function collectActions(): ActionEntry[] {
     seen.add(id);
     const key = actionKey(action.id, action[os]);
     entries.push({
-      label: action.name,
+      label: t(action.name),
       description: key ? formatKey(key, os) : undefined,
       detail: undefined,
-      searchText: `${action.name} ${action.category}`,
+      // English names stay searchable in French, like IntelliJ.
+      searchText: `${t(action.name)} ${action.name} ${action.category}`,
       run: () => vscode.commands.executeCommand(action.command, ...(action.args !== undefined ? [action.args] : [])),
     });
   }
@@ -73,11 +76,21 @@ export function collectActions(): ActionEntry[] {
     const config = vscode.workspace.getConfiguration(toggle.section);
     const isOn = config.get(toggle.key) === toggle.on;
     entries.push({
-      label: `${toggle.label}: ${isOn ? 'ON' : 'OFF'}`,
-      description: 'Option',
+      label: `${t(toggle.label)}: ${isOn ? 'ON' : 'OFF'}`,
+      description: t('Option'),
       searchText: `${toggle.label} option toggle`,
       run: () => config.update(toggle.key, isOn ? toggle.off : toggle.on, vscode.ConfigurationTarget.Global),
     });
+  }
+
+  // UnIntelliJ's own commands: their package.json titles are %key% placeholders.
+  for (const c of COMMANDS) {
+    if (c.hidden || seen.has(`${c.command}|undefined`)) {
+      continue;
+    }
+    seen.add(`${c.command}|undefined`);
+    const label = `UnIntelliJ: ${t(c.title)}`;
+    entries.push({ label, description: shortcutFor(c.command), searchText: `${label} ${c.title}`, run: () => vscode.commands.executeCommand(c.command) });
   }
 
   // Commands contributed by extensions (built-in VS Code commands have no public titles; the

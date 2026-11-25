@@ -1,6 +1,9 @@
 /** Git tool window (log) UI: filters, commit graph, details. Runs in the webview. */
 import type { CommitDetails, CommitContext, CommitRow, FromGitLog, LogFilters, ToGitLog } from '../vcs/gitLogProtocol';
 import type { GraphRow } from '../vcs/logLogic';
+import { setLanguage, t, type Language } from '../i18n/i18n';
+
+setLanguage((document.body.dataset.lang as Language | undefined) ?? 'en');
 
 declare function acquireVsCodeApi(): { postMessage(message: FromGitLog): void };
 const vscode = acquireVsCodeApi();
@@ -98,7 +101,7 @@ function renderToolbar(): HTMLElement {
   const f = filters!;
   const text = h('input', {
     type: 'search',
-    placeholder: 'Text or hash',
+    placeholder: t('Text or hash'),
     value: f.text,
     onInput: (e: Event) => {
       clearTimeout(textTimer);
@@ -110,11 +113,11 @@ function renderToolbar(): HTMLElement {
     'div',
     { className: 'toolbar' },
     text,
-    dropdown('Branch', f.branch, [['all', 'All'], ['HEAD', 'HEAD'], ...branches.map((b): [string, string] => [b, b])], (v) => setFilter({ branch: v })),
-    dropdown('User', f.author, [['all', 'All'], ...authors.map((a): [string, string] => [a, a])], (v) => setFilter({ author: v })),
-    dropdown('Date', f.since, [['all', 'All'], ['1', 'Last 24 hours'], ['7', 'Last 7 days'], ['30', 'Last 30 days']], (v) => setFilter({ since: v })),
-    f.path && h('span', { className: 'path-filter', title: 'Showing history of this path' }, `Path: ${f.path}`, h('button', { className: 'tool', title: 'Clear', onClick: () => setFilter({ path: '' }) }, h('span', { className: 'icon icon-close' }))),
-    h('button', { className: 'tool', title: 'Refresh', onClick: () => vscode.postMessage({ type: 'refresh' }) }, h('span', { className: 'icon icon-refresh' })),
+    dropdown(t('Branch'), f.branch, [['all', t('All')], ['HEAD', 'HEAD'], ...branches.map((b): [string, string] => [b, b])], (v) => setFilter({ branch: v })),
+    dropdown(t('User'), f.author, [['all', t('All')], ...authors.map((a): [string, string] => [a, a])], (v) => setFilter({ author: v })),
+    dropdown(t('Date'), f.since, [['all', t('All')], ['1', t('Last 24 hours')], ['7', t('Last 7 days')], ['30', t('Last 30 days')]], (v) => setFilter({ since: v })),
+    f.path && h('span', { className: 'path-filter', title: t('Showing history of this path') }, `Path: ${f.path}`, h('button', { className: 'tool', title: t('Clear'), onClick: () => setFilter({ path: '' }) }, h('span', { className: 'icon icon-close' }))),
+    h('button', { className: 'tool', title: t('Refresh'), onClick: () => vscode.postMessage({ type: 'refresh' }) }, h('span', { className: 'icon icon-refresh' })),
   );
 }
 
@@ -141,20 +144,20 @@ function renderTable(): HTMLElement {
     );
   });
   if (commits.length === 0) {
-    table.append(h('div', { className: 'empty' }, 'No commits match the filters'));
+    table.append(h('div', { className: 'empty' }, t('No commits match the filters')));
   }
   if (hasMore) {
-    table.append(h('button', { className: 'more secondary', onClick: () => vscode.postMessage({ type: 'loadMore' }) }, 'Load more commits'));
+    table.append(h('button', { className: 'more secondary', onClick: () => vscode.postMessage({ type: 'loadMore' }) }, t('Load more commits')));
   }
   return table;
 }
 
 function renderDetails(): HTMLElement {
   if (!selected) {
-    return h('div', { className: 'details empty' }, 'Select a commit to view its changes');
+    return h('div', { className: 'details empty' }, t('Select a commit to view its changes'));
   }
   if (!details || details.hash !== selected) {
-    return h('div', { className: 'details empty' }, 'Loading…');
+    return h('div', { className: 'details empty' }, t('Loading…'));
   }
   const d = details;
   return h(

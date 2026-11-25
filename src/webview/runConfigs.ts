@@ -4,6 +4,9 @@
  */
 import { newConfigId, NpmConfigData, uniqueName } from '../run/runConfigLogic';
 import type { FromRunWebview, RunConfigsModel, ToRunWebview } from '../run/runProtocol';
+import { setLanguage, t, type Language } from '../i18n/i18n';
+
+setLanguage((document.body.dataset.lang as Language | undefined) ?? 'en');
 
 declare function acquireVsCodeApi(): { postMessage(message: FromRunWebview): void };
 const vscode = acquireVsCodeApi();
@@ -55,7 +58,7 @@ function update(patch: Partial<NpmConfigData>): void {
 
 function add(copyOf?: NpmConfigData): void {
   const pkg = model?.packages[0];
-  const base: NpmConfigData = copyOf ?? { id: '', name: 'Unnamed', packageJson: pkg?.path ?? '', script: pkg?.scripts[0] ?? '', args: '', env: '' };
+  const base: NpmConfigData = copyOf ?? { id: '', name: t('Unnamed'), packageJson: pkg?.path ?? '', script: pkg?.scripts[0] ?? '', args: '', env: '' };
   const config = { ...base, id: newConfigId(), name: uniqueName(copyOf ? `${copyOf.name} (copy)` : base.script || base.name, configs.map((c) => c.name)) };
   configs = [...configs, config];
   selected = config.id;
@@ -97,8 +100,8 @@ function renderTree(): void {
   }
   tree.replaceChildren(
     h('li', { className: 'group-label' }, h('span', { className: 'icon icon-chevron-down' }), ' npm'),
-    ...configs.map((c) => treeItem(c.id, c.name || 'Unnamed', 'symbol-package')),
-    ...(model.launches.length > 0 ? [h('li', { className: 'group-label' }, h('span', { className: 'icon icon-chevron-down' }), ' Launch Configurations (launch.json)')] : []),
+    ...configs.map((c) => treeItem(c.id, c.name || t('Unnamed'), 'symbol-package')),
+    ...(model.launches.length > 0 ? [h('li', { className: 'group-label' }, h('span', { className: 'icon icon-chevron-down' }), t(' Launch Configurations (launch.json)'))] : []),
     ...model.launches.map((l) => treeItem(l.id, l.name, 'debug-alt')),
   );
 }
@@ -114,15 +117,15 @@ function renderForm(): HTMLElement {
     return h(
       'div',
       { className: 'group' },
-      row('Name:', h('input', { type: 'text', value: launch.name, disabled: true })),
-      row('Type:', h('input', { type: 'text', value: launch.type, disabled: true })),
-      row('Folder:', h('input', { type: 'text', value: launch.folder, disabled: true })),
-      h('p', { className: 'muted' }, 'Launch configurations are defined in launch.json.'),
-      h('div', { className: 'buttons-inline' }, h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'openLaunch', id: launch.id }) }, 'Open launch.json')),
+      row(t('Name:'), h('input', { type: 'text', value: launch.name, disabled: true })),
+      row(t('Type:'), h('input', { type: 'text', value: launch.type, disabled: true })),
+      row(t('Folder:'), h('input', { type: 'text', value: launch.folder, disabled: true })),
+      h('p', { className: 'muted' }, t('Launch configurations are defined in launch.json.')),
+      h('div', { className: 'buttons-inline' }, h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'openLaunch', id: launch.id }) }, t('Open launch.json'))),
     );
   }
   if (!config || !model) {
-    return h('p', { className: 'muted' }, 'Click + to add an npm configuration.');
+    return h('p', { className: 'muted' }, t('Click + to add an npm configuration.'));
   }
   const pkg = model.packages.find((p) => p.path === config.packageJson);
   const packageSelect = h(
@@ -140,12 +143,12 @@ function renderForm(): HTMLElement {
   return h(
     'div',
     { className: 'group' },
-    row('Name:', input('name')),
+    row(t('Name:'), input('name')),
     row('package.json:', packageSelect),
-    row('Command:', h('input', { type: 'text', value: 'run', disabled: true })),
-    row('Scripts:', scriptSelect),
-    row('Arguments:', input('args', 'e.g. --port 4300')),
-    row('Environment:', input('env', 'NAME=value;OTHER=value')),
+    row(t('Command:'), h('input', { type: 'text', value: 'run', disabled: true })),
+    row(t('Scripts:'), scriptSelect),
+    row(t('Arguments:'), input('args', 'e.g. --port 4300')),
+    row(t('Environment:'), input('env', 'NAME=value;OTHER=value')),
   );
 }
 
@@ -155,9 +158,9 @@ function render(): void {
   const toolbar = h(
     'div',
     { className: 'toolbar' },
-    h('button', { className: 'tool', title: 'Add New Configuration (npm)', onClick: () => add() }, h('span', { className: 'icon icon-add' })),
-    h('button', { className: 'tool', title: 'Remove Configuration', disabled: !current(), onClick: remove }, h('span', { className: 'icon icon-remove' })),
-    h('button', { className: 'tool', title: 'Copy Configuration', disabled: !current(), onClick: () => add(current()) }, h('span', { className: 'icon icon-copy' })),
+    h('button', { className: 'tool', title: t('Add New Configuration (npm)'), onClick: () => add() }, h('span', { className: 'icon icon-add' })),
+    h('button', { className: 'tool', title: t('Remove Configuration'), disabled: !current(), onClick: remove }, h('span', { className: 'icon icon-remove' })),
+    h('button', { className: 'tool', title: t('Copy Configuration'), disabled: !current(), onClick: () => add(current()) }, h('span', { className: 'icon icon-copy' })),
   );
   app.replaceChildren(
     h('nav', { className: 'sidebar' }, toolbar, h('ul', { className: 'tree' })),
@@ -166,8 +169,8 @@ function render(): void {
       'footer',
       {},
       h('button', { onClick: () => save(true) }, 'OK'),
-      h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'cancel' }) }, 'Cancel'),
-      h('button', { id: 'apply', className: 'secondary', disabled: !dirty(), onClick: () => save(false) }, 'Apply'),
+      h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'cancel' }) }, t('Cancel')),
+      h('button', { id: 'apply', className: 'secondary', disabled: !dirty(), onClick: () => save(false) }, t('Apply')),
     ),
   );
   renderTree();

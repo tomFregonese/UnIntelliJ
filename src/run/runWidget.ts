@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { shortcutFor } from '../search/actions';
 import { collectRunConfigurations, configurationIcon, RunConfiguration, startConfiguration } from './configurations';
 import { EditConfigurationsPanel, SavedConfigurations } from './editConfigurations';
+import { t } from '../i18n/i18n';
 
 const SELECTED_KEY = 'run.selectedConfiguration';
 
@@ -32,15 +33,15 @@ export class RunWidget implements vscode.Disposable {
     this.runButton = item('run', 102);
     this.debugButton = item('debug', 101);
     this.stopButton = item('stop', 100);
-    this.selector.name = 'Run Configuration';
+    this.selector.name = t('Run Configuration');
     this.selector.command = 'unintellij.run.selectConfiguration';
-    this.runButton.name = 'Run';
+    this.runButton.name = t('Run');
     this.runButton.command = 'unintellij.run';
     this.runButton.text = '$(play)';
-    this.debugButton.name = 'Debug';
+    this.debugButton.name = t('Debug');
     this.debugButton.command = 'unintellij.debug';
     this.debugButton.text = '$(debug-alt)';
-    this.stopButton.name = 'Stop';
+    this.stopButton.name = t('Stop');
     this.stopButton.command = 'unintellij.stop';
     this.stopButton.text = '$(debug-stop)';
     this.stopButton.color = new vscode.ThemeColor('errorForeground');
@@ -84,19 +85,19 @@ export class RunWidget implements vscode.Disposable {
 
   private render(): void {
     if (!this.selected) {
-      this.selector.text = '$(play) Add Configuration…';
-      this.selector.tooltip = 'No run configuration: add npm scripts or a launch.json configuration';
+      this.selector.text = t('$(play) Add Configuration…');
+      this.selector.tooltip = t('No run configuration: add npm scripts or a launch.json configuration');
       this.selector.show();
       this.runButton.hide();
       this.debugButton.hide();
       this.stopButton.hide();
       return;
     }
-    this.selector.text = `$(${configurationIcon(this.selected).id}) ${this.selected.name} $(chevron-down)`;
-    this.selector.tooltip = 'Select Run/Debug Configuration';
-    this.runButton.tooltip = `Run '${this.selected.name}'${hint(shortcutFor('unintellij.run'))}`;
-    this.debugButton.tooltip = `Debug '${this.selected.name}'${hint(shortcutFor('unintellij.debug'))}`;
-    this.stopButton.tooltip = `Stop${hint(shortcutFor('unintellij.stop'))}`;
+    this.selector.text = t('$({0}) {1} $(chevron-down)', configurationIcon(this.selected).id, this.selected.name);
+    this.selector.tooltip = t('Select Run/Debug Configuration');
+    this.runButton.tooltip = t('Run \'{0}\'{1}', this.selected.name, hint(shortcutFor('unintellij.run')));
+    this.debugButton.tooltip = t('Debug \'{0}\'{1}', this.selected.name, hint(shortcutFor('unintellij.debug')));
+    this.stopButton.tooltip = t('Stop{0}', hint(shortcutFor('unintellij.stop')));
     this.selector.show();
     this.runButton.show();
     this.debugButton.show();
@@ -114,14 +115,14 @@ export class RunWidget implements vscode.Disposable {
     const groups: [string, RunConfiguration[]][] = [
       ['npm', configurations.filter((c) => c.kind === 'npm' && c.saved)],
       ['npm scripts', configurations.filter((c) => c.kind === 'npm' && !c.saved)],
-      ['Launch Configurations', configurations.filter((c) => c.kind === 'launch')],
+      [t('Launch Configurations'), configurations.filter((c) => c.kind === 'launch')],
     ];
     for (const [label, group] of groups) {
       if (group.length > 0) {
         items.push({ label, kind: vscode.QuickPickItemKind.Separator });
         items.push(
           ...group.map((c) => ({
-            label: `$(${configurationIcon(c).id}) ${c.name}`,
+            label: t('$({0}) {1}', configurationIcon(c).id, c.name),
             description: c.kind === 'npm' ? c.command : c.type,
             picked: c.id === this.selected?.id,
             configuration: c,
@@ -129,8 +130,8 @@ export class RunWidget implements vscode.Disposable {
         );
       }
     }
-    items.push({ label: '', kind: vscode.QuickPickItemKind.Separator }, { label: '$(edit) Edit Configurations…' });
-    const picked = await vscode.window.showQuickPick(items, { title: then === 'select' ? 'Run/Debug Configurations' : then === 'run' ? 'Run' : 'Debug', placeHolder: 'Type to filter' });
+    items.push({ label: '', kind: vscode.QuickPickItemKind.Separator }, { label: t('$(edit) Edit Configurations…') });
+    const picked = await vscode.window.showQuickPick(items, { title: then === 'select' ? t('Run/Debug Configurations') : then === 'run' ? t('Run') : t('Debug'), placeHolder: t('Type to filter') });
     if (!picked) {
       return;
     }

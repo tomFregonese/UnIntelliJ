@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
+import { language, t } from '../i18n/i18n';
 import { CommitContext, CommitDetails, CommitRow, classifyRef, DEFAULT_FILTERS, FromGitLog, LogFilters, ToGitLog } from './gitLogProtocol';
 import { validateBranchName } from './branchesLogic';
 import { ChangedFile, layoutGraph, logArgs, LogCommit, parseLog, parseNameStatus } from './logLogic';
@@ -14,12 +15,12 @@ function formatDate(seconds: number): string {
   const now = new Date();
   const time = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
   if (date.toDateString() === now.toDateString()) {
-    return `Today ${time}`;
+    return t('Today {0}', time);
   }
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
   if (date.toDateString() === yesterday.toDateString()) {
-    return `Yesterday ${time}`;
+    return t('Yesterday {0}', time);
   }
   return `${date.toLocaleDateString()} ${time}`;
 }
@@ -99,7 +100,7 @@ export class GitLogView implements vscode.WebviewViewProvider, vscode.Disposable
   async load(filters: LogFilters = this.filters, limit = this.limit): Promise<Extract<ToGitLog, { type: 'log' }> | Extract<ToGitLog, { type: 'unavailable' }>> {
     const repository = this.vcs.repository;
     if (!this.vcs.available || !repository) {
-      return { type: 'unavailable', reason: this.vcs.available ? 'No Git repository in this workspace.' : 'The built-in Git extension is disabled.' };
+      return { type: 'unavailable', reason: this.vcs.available ? t('No Git repository in this workspace.') : t('The built-in Git extension is disabled.') };
     }
     let commits: LogCommit[];
     try {
@@ -199,44 +200,44 @@ export class GitLogView implements vscode.WebviewViewProvider, vscode.Disposable
     try {
       await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title }, () => this.vcs.git(args));
     } catch (error) {
-      void vscode.window.showErrorMessage(`${title} failed: ${error instanceof Error ? error.message : String(error)}`);
+      void vscode.window.showErrorMessage(t('{0} failed: {1}', title, error instanceof Error ? error.message : String(error)));
     }
     await this.refresh();
   }
 
   private async newBranch(hash: string): Promise<void> {
-    const name = await vscode.window.showInputBox({ title: `New Branch from ${short(hash)}`, prompt: 'Branch name', validateInput: validateBranchName });
+    const name = await vscode.window.showInputBox({ title: t('New Branch from {0}', short(hash)), prompt: t('Branch name'), validateInput: validateBranchName });
     if (name) {
-      await this.run(`Creating branch ${name}`, ['checkout', '-b', name, hash]);
+      await this.run(t('Creating branch {0}', name), ['checkout', '-b', name, hash]);
     }
   }
 
   private async newTag(hash: string): Promise<void> {
-    const name = await vscode.window.showInputBox({ title: `New Tag on ${short(hash)}`, prompt: 'Tag name', validateInput: (v) => (/^[^\s~^:?*[\\]+$/.test(v) ? undefined : 'Invalid tag name') });
+    const name = await vscode.window.showInputBox({ title: t('New Tag on {0}', short(hash)), prompt: t('Tag name'), validateInput: (v) => (/^[^\s~^:?*[\\]+$/.test(v) ? undefined : 'Invalid tag name') });
     if (name) {
-      await this.run(`Creating tag ${name}`, ['tag', name, hash]);
+      await this.run(t('Creating tag {0}', name), ['tag', name, hash]);
     }
   }
 
   private async reset(hash: string): Promise<void> {
     const branch = this.vcs.repository?.state.HEAD?.name ?? 'HEAD';
     const modes = [
-      { label: 'Soft', description: 'Files are not changed, differences are staged for commit', mode: '--soft' },
-      { label: 'Mixed', description: 'Files are not changed, differences are not staged', mode: '--mixed' },
-      { label: 'Hard', description: 'Files are reverted, local changes are lost', mode: '--hard' },
-      { label: 'Keep', description: 'Files are reverted, local changes are kept', mode: '--keep' },
+      { label: t('Soft'), description: t('Files are not changed, differences are staged for commit'), mode: '--soft' },
+      { label: t('Mixed'), description: t('Files are not changed, differences are not staged'), mode: '--mixed' },
+      { label: t('Hard'), description: t('Files are reverted, local changes are lost'), mode: '--hard' },
+      { label: t('Keep'), description: t('Files are reverted, local changes are kept'), mode: '--keep' },
     ];
-    const picked = await vscode.window.showQuickPick(modes, { title: `Reset '${branch}' to ${short(hash)}` });
+    const picked = await vscode.window.showQuickPick(modes, { title: t('Reset \'{0}\' to {1}', branch, short(hash)) });
     if (!picked) {
       return;
     }
     if (picked.mode === '--hard') {
-      const confirm = await vscode.window.showWarningMessage(`Hard reset '${branch}' to ${short(hash)}? Local changes will be lost.`, { modal: true }, 'Reset');
-      if (confirm !== 'Reset') {
+      const confirm = await vscode.window.showWarningMessage(t('Hard reset \'{0}\' to {1}? Local changes will be lost.', branch, short(hash)), { modal: true }, t('Reset'));
+      if (confirm !== t('Reset')) {
         return;
       }
     }
-    await this.run(`Resetting ${branch}`, ['reset', picked.mode, hash]);
+    await this.run(t('Resetting {0}', branch), ['reset', picked.mode, hash]);
   }
 
   private html(webview: vscode.Webview): string {
@@ -252,7 +253,7 @@ export class GitLogView implements vscode.WebviewViewProvider, vscode.Disposable
 <link rel="stylesheet" href="${uri('media', 'controls.css')}">
 <link rel="stylesheet" href="${uri('media', 'git-log.css')}">
 </head>
-<body data-vscode-context='{"preventDefaultContextMenuItems": true}'>
+<body data-vscode-context='{"preventDefaultContextMenuItems": true}' data-lang="${language()}">
 <div id="app"></div>
 <script nonce="${nonce}" src="${uri('dist', 'webview', 'gitLog.js')}"></script>
 </body>

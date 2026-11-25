@@ -4,6 +4,7 @@
  * Pure: no `vscode` import.
  */
 import { createScanner, Node, parseTree, SyntaxKind } from 'jsonc-parser';
+import { t } from '../i18n/i18n';
 
 interface Edit {
   offset: number;
@@ -55,7 +56,7 @@ export function replaceManagedEntries(text: string, previous: readonly object[],
   let content = text.trim() === '' ? '[]\n' : text;
   let tree = parseTree(content);
   if (!tree || tree.type !== 'array') {
-    throw new Error('keybindings.json is not a JSON array');
+    throw new Error(t('keybindings.json is not a JSON array'));
   }
 
   // 1. Remove stale managed entries with one adjacent comma each.

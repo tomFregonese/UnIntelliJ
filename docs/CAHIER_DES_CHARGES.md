@@ -415,6 +415,13 @@ Dans IntelliJ, un clic sur la barre ouvre un **petit popup** avec une barre d'ou
 - **Show Diff** (depuis le popup, la Commit tool window ou `Ctrl+D`) : diff côte à côte façon IntelliJ — en-têtes « Base / Votre version » avec révisions, barre d'outils (précédent / suivant, « Accept / Revert » par bloc avec les flèches `>>` / `<<` entre les deux côtés, ignorer les espaces, mode côte à côte / unifié), couleurs IntelliJ (fond bleu pour modifié, vert pour ajouté, gris pour supprimé) et liens entre les blocs des deux côtés.
 - Base : éditeur de diff natif stylé par le thème + actions de bloc ; pour les flèches `>>`/`<<` entre les deux côtés, utiliser les actions de bloc natives de VS Code si disponibles, sinon les ajouter dans la barre d'outils.
 
+## 20. Langue de l'interface (2026-11-25)
+
+- Toute l'extension est en **anglais par défaut**, avec le **français** en option : réglage `unintellij.appearance.language` (Settings › Appearance › Language).
+- Chaque nouvelle fonctionnalité (dont la base de données, §16) est livrée dans les deux langues.
+- Les titres des commandes et des réglages dans l'interface native de VS Code (palette, éditeur de réglages) suivent la langue d'affichage de VS Code (`package.nls.json` / `package.nls.fr.json`), une extension ne pouvant pas les changer à la volée.
+- Contrôle automatique : `npm run check:i18n` (en CI) échoue si un texte affiché n'a pas de traduction française.
+
 ## 19. Retours après essai sur Mac (2026-11-25)
 
 ### 19.1 Commit : aperçu au simple clic (priorité 1)

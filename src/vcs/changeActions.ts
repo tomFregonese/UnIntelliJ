@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { VcsService } from './vcsService';
+import { t } from '../i18n/i18n';
 
 /** A changed block as passed by VS Code's quick diff peek (`scm/change/title` menu). */
 interface LineChange {
@@ -29,7 +30,7 @@ export function registerChangeActions(vcs: VcsService): vscode.Disposable[] {
   const original = async (uri: vscode.Uri): Promise<string> => {
     const api = vcs.gitApi;
     if (!api) {
-      throw new Error('Git is not available');
+      throw new Error(t('Git is not available'));
     }
     const doc = await vscode.workspace.openTextDocument(api.toGitUri(uri, 'HEAD'));
     return doc.getText();
@@ -41,7 +42,7 @@ export function registerChangeActions(vcs: VcsService): vscode.Disposable[] {
         return;
       }
       await vscode.env.clipboard.writeText(originalLines(await original(uri), change));
-      vscode.window.setStatusBarMessage('Original content copied', 2000);
+      vscode.window.setStatusBarMessage(t('Original content copied'), 2000);
     }),
     vscode.commands.registerCommand('unintellij.change.showDiff', async (uri: vscode.Uri, changes: LineChange[], index: number) => {
       const target = uri ?? vscode.window.activeTextEditor?.document.uri;

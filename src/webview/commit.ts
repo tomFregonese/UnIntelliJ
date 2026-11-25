@@ -3,6 +3,9 @@
  * checked by default, unversioned files unchecked, Amend, Commit / Commit and Push.
  */
 import type { CommitViewState, FileItem, FromCommitView, RowContext, ToCommitView } from '../vcs/commitProtocol';
+import { setLanguage, t, type Language } from '../i18n/i18n';
+
+setLanguage((document.body.dataset.lang as Language | undefined) ?? 'en');
 
 interface Persisted {
   message: string;
@@ -28,7 +31,7 @@ let selection = new Set<string>();
 let anchor: string | undefined;
 
 const UNVERSIONED = '__unversioned__';
-const STATUS_TITLES: Record<string, string> = { M: 'Modified', A: 'Added', D: 'Deleted', R: 'Renamed', U: 'Unversioned', C: 'Merge conflict' };
+const STATUS_TITLES: Record<string, string> = { M: t('Modified'), A: t('Added'), D: t('Deleted'), R: t('Renamed'), U: t('Unversioned'), C: t('Merge conflict') };
 
 function persist(): void {
   vscode.setState({ message, amend, checked: [...checked], known: [...known], collapsed: [...collapsed] });
@@ -71,7 +74,7 @@ function groups(): Group[] {
   }
   const lists: Group[] = state.lists.filter((l) => l.files.length > 0 || state!.changelistsEnabled).map((l) => ({ ...l }));
   if (state.unversioned.length > 0) {
-    lists.push({ id: UNVERSIONED, name: 'Unversioned Files', active: false, files: state.unversioned });
+    lists.push({ id: UNVERSIONED, name: t('Unversioned Files'), active: false, files: state.unversioned });
   }
   return lists;
 }
@@ -205,7 +208,8 @@ function renderGroup(group: Group): HTMLElement[] {
     icon(isCollapsed ? 'chevron-right' : 'chevron-down'),
     box,
     h('span', { className: 'group-name' }, group.name),
-    h('span', { className: 'count' }, `${group.files.length} file${group.files.length === 1 ? '' : 's'}`),
+    group.active && state!.changelistsEnabled && h('span', { className: 'active-label' }, t('(active)')),
+    h('span', { className: 'count' }, group.files.length === 1 ? t('1 file') : t('{0} files', group.files.length)),
   );
   return [header, ...(isCollapsed ? [] : group.files.map((f) => renderFile(f, section === 'unversioned' ? 'unversioned' : 'file')))];
 }
@@ -227,28 +231,28 @@ function render(): void {
     return;
   }
   if (!state.available) {
-    app.replaceChildren(h('div', { className: 'empty' }, state.reason ?? 'Version control is not available.'));
+    app.replaceChildren(h('div', { className: 'empty' }, state.reason ?? t('Version control is not available.')));
     return;
   }
   const selected = [...selection];
   const toolbar = h(
     'div',
     { className: 'toolbar' },
-    h('button', { className: 'tool', title: 'Refresh', onClick: () => vscode.postMessage({ type: 'refresh' }) }, icon('refresh')),
-    h('button', { className: 'tool', title: 'Rollback…', disabled: selected.length === 0, onClick: () => vscode.postMessage({ type: 'rollback', paths: selected }) }, icon('discard')),
-    h('button', { className: 'tool', title: 'Show Diff', disabled: selected.length !== 1, onClick: () => vscode.postMessage({ type: 'diff', path: selected[0] }) }, icon('diff')),
-    state.changelistsEnabled && h('button', { className: 'tool', title: 'New Changelist…', onClick: () => vscode.postMessage({ type: 'newChangelist' }) }, icon('add')),
+    h('button', { className: 'tool', title: t('Refresh'), onClick: () => vscode.postMessage({ type: 'refresh' }) }, icon('refresh')),
+    h('button', { className: 'tool', title: t('Rollback…'), disabled: selected.length === 0, onClick: () => vscode.postMessage({ type: 'rollback', paths: selected }) }, icon('discard')),
+    h('button', { className: 'tool', title: t('Show Diff'), disabled: selected.length !== 1, onClick: () => vscode.postMessage({ type: 'diff', path: selected[0] }) }, icon('diff')),
+    state.changelistsEnabled && h('button', { className: 'tool', title: t('New Changelist…'), onClick: () => vscode.postMessage({ type: 'newChangelist' }) }, icon('add')),
     h('span', { className: 'branch', title: `${state.repository} · ${state.branch ?? ''}` }, icon('git-branch'), ` ${state.branch ?? ''}`),
   );
 
   const list = h('div', { className: 'changes', tabindex: 0, onKeydown: onListKey }, ...groups().flatMap(renderGroup));
   if (groups().every((g) => g.files.length === 0)) {
-    list.append(h('div', { className: 'empty' }, 'No changes'));
+    list.append(h('div', { className: 'empty' }, t('No changes')));
   }
 
   const textarea = h('textarea', {
     id: 'message',
-    placeholder: 'Commit Message',
+    placeholder: t('Commit Message'),
     rows: 4,
     onInput: (e: Event) => {
       message = (e.target as HTMLTextAreaElement).value;
@@ -281,15 +285,15 @@ function render(): void {
           render();
         },
       }),
-      ' Amend',
+      t(' Amend'),
     ),
     textarea,
     h(
       'div',
       { className: 'buttons' },
-      h('button', { id: 'commit', disabled: busy, title: state.commitShortcut ? `Commit (${state.commitShortcut} / Ctrl+Enter)` : 'Commit (Ctrl+Enter)', onClick: () => commit(false) }, amend ? 'Amend Commit' : 'Commit'),
-      h('button', { className: 'secondary', disabled: busy, onClick: () => commit(true) }, amend ? 'Amend Commit and Push…' : 'Commit and Push…'),
-      h('span', { className: 'count' }, `${total} file${total === 1 ? '' : 's'} selected`),
+      h('button', { id: 'commit', disabled: busy, title: state.commitShortcut ? t('Commit ({0} / Ctrl+Enter)', state.commitShortcut) : t('Commit (Ctrl+Enter)'), onClick: () => commit(false) }, amend ? t('Amend Commit') : t('Commit')),
+      h('button', { className: 'secondary', disabled: busy, onClick: () => commit(true) }, amend ? t('Amend Commit and Push…') : t('Commit and Push…')),
+      h('span', { className: 'count' }, total === 1 ? t('1 file selected') : t('{0} files selected', total)),
     ),
   );
 

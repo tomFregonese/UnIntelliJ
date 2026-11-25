@@ -29,9 +29,23 @@
     "configuration": [
       {
         "id": "unintellij.appearance",
-        "title": "Appearance & Behavior",
+        "title": "%config.unintellij.appearance%",
         "order": 1,
         "properties": {
+          "unintellij.appearance.language": {
+            "type": "string",
+            "default": "en",
+            "enum": [
+              "en",
+              "fr"
+            ],
+            "enumDescriptions": [
+              "%config.unintellij.appearance.language.enum.0%",
+              "%config.unintellij.appearance.language.enum.1%"
+            ],
+            "markdownDescription": "%config.unintellij.appearance.language.description%",
+            "order": 1
+          },
           "unintellij.appearance.theme": {
             "type": "string",
             "default": "islandsDark",
@@ -40,17 +54,17 @@
               "islandsLight"
             ],
             "enumDescriptions": [
-              "Islands Dark",
-              "Islands Light"
+              "%config.unintellij.appearance.theme.enum.0%",
+              "%config.unintellij.appearance.theme.enum.1%"
             ],
-            "markdownDescription": "Color theme, as in IntelliJ **Settings › Appearance › Theme**. Ignored when `#unintellij.appearance.syncWithOs#` is enabled.",
-            "order": 1
+            "markdownDescription": "%config.unintellij.appearance.theme.description%",
+            "order": 2
           },
           "unintellij.appearance.syncWithOs": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Follow the operating system's light/dark mode, using `#unintellij.appearance.preferredDarkTheme#` and `#unintellij.appearance.preferredLightTheme#`.",
-            "order": 2
+            "markdownDescription": "%config.unintellij.appearance.syncWithOs.description%",
+            "order": 3
           },
           "unintellij.appearance.preferredDarkTheme": {
             "type": "string",
@@ -60,11 +74,11 @@
               "islandsLight"
             ],
             "enumDescriptions": [
-              "Islands Dark",
-              "Islands Light"
+              "%config.unintellij.appearance.preferredDarkTheme.enum.0%",
+              "%config.unintellij.appearance.preferredDarkTheme.enum.1%"
             ],
-            "markdownDescription": "Theme used when the OS is in dark mode and `#unintellij.appearance.syncWithOs#` is enabled.",
-            "order": 3
+            "markdownDescription": "%config.unintellij.appearance.preferredDarkTheme.description%",
+            "order": 4
           },
           "unintellij.appearance.preferredLightTheme": {
             "type": "string",
@@ -74,23 +88,23 @@
               "islandsLight"
             ],
             "enumDescriptions": [
-              "Islands Dark",
-              "Islands Light"
+              "%config.unintellij.appearance.preferredLightTheme.enum.0%",
+              "%config.unintellij.appearance.preferredLightTheme.enum.1%"
             ],
-            "markdownDescription": "Theme used when the OS is in light mode and `#unintellij.appearance.syncWithOs#` is enabled.",
-            "order": 4
+            "markdownDescription": "%config.unintellij.appearance.preferredLightTheme.description%",
+            "order": 5
           },
           "unintellij.appearance.islandsPlus.enabled": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "**Islands+** (experimental): patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets. Modifies VS Code installation files and requires write access to them.",
-            "order": 5
+            "markdownDescription": "%config.unintellij.appearance.islandsPlus.enabled.description%",
+            "order": 6
           }
         }
       },
       {
         "id": "unintellij.keymap",
-        "title": "Keymap",
+        "title": "%config.unintellij.keymap%",
         "order": 2,
         "properties": {
           "unintellij.keymap.layout": {
@@ -102,11 +116,11 @@
               "macos"
             ],
             "enumDescriptions": [
-              "IntelliJ default keymap for the current operating system",
-              "IntelliJ \"Windows\" default keymap",
-              "IntelliJ \"macOS\" default keymap"
+              "%config.unintellij.keymap.layout.enum.0%",
+              "%config.unintellij.keymap.layout.enum.1%",
+              "%config.unintellij.keymap.layout.enum.2%"
             ],
-            "markdownDescription": "Which IntelliJ default keymap to emulate.",
+            "markdownDescription": "%config.unintellij.keymap.layout.description%",
             "order": 1
           },
           "unintellij.keymap.disabledActions": {
@@ -116,7 +130,7 @@
               "type": "string"
             },
             "uniqueItems": true,
-            "markdownDescription": "IntelliJ action IDs whose shortcut should be disabled (e.g. `SearchEverywhere`).",
+            "markdownDescription": "%config.unintellij.keymap.disabledActions.description%",
             "order": 2
           },
           "unintellij.keymap.customShortcuts": {
@@ -125,20 +139,20 @@
             "additionalProperties": {
               "type": "string"
             },
-            "markdownDescription": "Shortcuts reassigned in **Settings › Keymap**: IntelliJ action ID → VS Code key (e.g. `{ \"ReformatCode\": \"ctrl+shift+l\" }`). Written to your keybindings.json by UnIntelliJ.",
+            "markdownDescription": "%config.unintellij.keymap.customShortcuts.description%",
             "order": 3
           }
         }
       },
       {
         "id": "unintellij.searchEverywhere",
-        "title": "Search Everywhere",
+        "title": "%config.unintellij.searchEverywhere%",
         "order": 3,
         "properties": {
           "unintellij.searchEverywhere.includeNonProjectItems": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Also search libraries and excluded files (e.g. `node_modules`) by default, like IntelliJ's **Include non-project items** checkbox.",
+            "markdownDescription": "%config.unintellij.searchEverywhere.includeNonProjectItems.description%",
             "order": 1
           },
           "unintellij.searchEverywhere.excludePatterns": {
@@ -148,14 +162,14 @@
               "type": "string"
             },
             "uniqueItems": true,
-            "markdownDescription": "Additional glob patterns excluded from Search Everywhere, on top of `#files.exclude#` and `#search.exclude#`.",
+            "markdownDescription": "%config.unintellij.searchEverywhere.excludePatterns.description%",
             "order": 2
           }
         }
       },
       {
         "id": "unintellij.vcs",
-        "title": "Version Control",
+        "title": "%config.unintellij.vcs%",
         "order": 4,
         "properties": {
           "unintellij.vcs.updateMethod": {
@@ -166,22 +180,22 @@
               "rebase"
             ],
             "enumDescriptions": [
-              "Merge incoming changes into the current branch",
-              "Rebase the current branch on top of incoming changes"
+              "%config.unintellij.vcs.updateMethod.enum.0%",
+              "%config.unintellij.vcs.updateMethod.enum.1%"
             ],
-            "markdownDescription": "How **Update Project** integrates incoming changes.",
+            "markdownDescription": "%config.unintellij.vcs.updateMethod.description%",
             "order": 1
           },
           "unintellij.vcs.changelists.enabled": {
             "type": "boolean",
             "default": true,
-            "markdownDescription": "Enable changelists in the Commit tool window.",
+            "markdownDescription": "%config.unintellij.vcs.changelists.enabled.description%",
             "order": 2
           },
           "unintellij.vcs.backgroundFetchMinutes": {
             "type": "number",
             "default": 5,
-            "markdownDescription": "Fetch in the background every N minutes so that the branch widget shows incoming commits (blue ↙). `0` turns it off. Skipped while `#git.autofetch#` is on.",
+            "markdownDescription": "%config.unintellij.vcs.backgroundFetchMinutes.description%",
             "order": 3
           }
         }
@@ -218,93 +232,93 @@
     "commands": [
       {
         "command": "unintellij.searchEverywhere",
-        "title": "Search Everywhere",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.searchEverywhere%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.findAction",
-        "title": "Find Action…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.findAction%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.gotoClass",
-        "title": "Go to Class…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.gotoClass%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.gotoFile",
-        "title": "Go to File…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.gotoFile%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.gotoSymbol",
-        "title": "Go to Symbol…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.gotoSymbol%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.recentFiles",
-        "title": "Recent Files",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.recentFiles%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.recentLocations",
-        "title": "Recent Locations",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.recentLocations%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.fileStructure",
-        "title": "File Structure",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.fileStructure%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.searchEverywhere.text",
-        "title": "Search Everywhere: Text",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.searchEverywhere.text%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.searchEverywhere.nextTab",
-        "title": "Search Everywhere: Next Tab",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.searchEverywhere.nextTab%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.searchEverywhere.previousTab",
-        "title": "Search Everywhere: Previous Tab",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.searchEverywhere.previousTab%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.nextMethod",
-        "title": "Next Method",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.nextMethod%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.previousMethod",
-        "title": "Previous Method",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.previousMethod%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.toggleCase",
-        "title": "Toggle Case",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.toggleCase%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.showSettings",
-        "title": "Settings…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.showSettings%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.showKeymapSettings",
-        "title": "Settings: Keymap",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.showKeymapSettings%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.applyRecommendedSettings",
-        "title": "Set Up IntelliJ-like Settings (Theme, Fonts)…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.applyRecommendedSettings%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.inspection.ok",
-        "title": "No Problems Found",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.inspection.ok%",
+        "category": "%command.category%",
         "icon": {
           "light": "media/inspections/ok-light.svg",
           "dark": "media/inspections/ok-dark.svg"
@@ -312,8 +326,8 @@
       },
       {
         "command": "unintellij.inspection.warning",
-        "title": "Warnings in This File",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.inspection.warning%",
+        "category": "%command.category%",
         "icon": {
           "light": "media/inspections/warning-light.svg",
           "dark": "media/inspections/warning-dark.svg"
@@ -321,8 +335,8 @@
       },
       {
         "command": "unintellij.inspection.error",
-        "title": "Errors in This File",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.inspection.error%",
+        "category": "%command.category%",
         "icon": {
           "light": "media/inspections/error-light.svg",
           "dark": "media/inspections/error-dark.svg"
@@ -330,259 +344,259 @@
       },
       {
         "command": "unintellij.toggleReadOnly",
-        "title": "Toggle Read-Only Attribute",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.toggleReadOnly%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.selectMode",
-        "title": "Change Project View…",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.project.selectMode%",
+        "category": "%command.category%",
         "icon": "$(chevron-down)"
       },
       {
         "command": "unintellij.project.selectOpenedFile",
-        "title": "Select Opened File",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.project.selectOpenedFile%",
+        "category": "%command.category%",
         "icon": "$(target)"
       },
       {
         "command": "unintellij.project.refresh",
-        "title": "Reload from Disk",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.project.refresh%",
+        "category": "%command.category%",
         "icon": "$(refresh)"
       },
       {
         "command": "unintellij.project.newFile",
-        "title": "New File…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.newFile%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.newFolder",
-        "title": "New Directory…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.newFolder%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.copyPath",
-        "title": "Copy Absolute Path",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.copyPath%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.copyRelativePath",
-        "title": "Copy Path from Content Root",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.copyRelativePath%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.rename",
-        "title": "Rename…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.rename%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.delete",
-        "title": "Delete…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.delete%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.revealInOs",
-        "title": "Open in File Manager",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.revealInOs%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.openInTerminal",
-        "title": "Open in Terminal",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.project.openInTerminal%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.run",
-        "title": "Run",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.run%",
+        "category": "%command.category%",
         "icon": "$(play)"
       },
       {
         "command": "unintellij.run.editConfigurations",
-        "title": "Edit Configurations…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.run.editConfigurations%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.debug",
-        "title": "Debug",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.debug%",
+        "category": "%command.category%",
         "icon": "$(debug-alt)"
       },
       {
         "command": "unintellij.stop",
-        "title": "Stop",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.stop%",
+        "category": "%command.category%",
         "icon": "$(debug-stop)"
       },
       {
         "command": "unintellij.runAnything",
-        "title": "Run…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.runAnything%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.debugAnything",
-        "title": "Debug…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.debugAnything%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.run.selectConfiguration",
-        "title": "Select Run/Debug Configuration…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.run.selectConfiguration%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.runConfiguration",
-        "title": "Run Configuration",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.runConfiguration%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.showDiff",
-        "title": "Show Diff",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.showDiff%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.jumpToSource",
-        "title": "Jump to Source",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.jumpToSource%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.rollback",
-        "title": "Rollback…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.rollback%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.addToVcs",
-        "title": "Add to VCS",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.addToVcs%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.moveToChangelist",
-        "title": "Move to Another Changelist…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.moveToChangelist%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.newChangelist",
-        "title": "New Changelist…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.newChangelist%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.setActiveChangelist",
-        "title": "Set Active Changelist",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.setActiveChangelist%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.renameChangelist",
-        "title": "Edit Changelist…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.renameChangelist%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit.deleteChangelist",
-        "title": "Delete Changelist",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit.deleteChangelist%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.showLog",
-        "title": "Show Git Log",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.showLog%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.showFileHistory",
-        "title": "Show History for Current File",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.showFileHistory%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.resolveConflicts",
-        "title": "Resolve Conflicts…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.resolveConflicts%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.showNativeScmViews",
-        "title": "Show VS Code's Source Control Views Again",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.showNativeScmViews%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.copyRevision",
-        "title": "Copy Revision Number",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.copyRevision%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.checkoutRevision",
-        "title": "Checkout Revision",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.checkoutRevision%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.newBranchHere",
-        "title": "New Branch…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.newBranchHere%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.newTag",
-        "title": "New Tag…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.newTag%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.cherryPick",
-        "title": "Cherry-Pick",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.cherryPick%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.revertCommit",
-        "title": "Revert Commit",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.revertCommit%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.git.resetToHere",
-        "title": "Reset Current Branch to Here…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.git.resetToHere%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.commit",
-        "title": "Commit…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.commit%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.push",
-        "title": "Push…",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.push%",
+        "category": "%command.category%",
         "icon": "$(repo-push)"
       },
       {
         "command": "unintellij.fetch",
-        "title": "Fetch",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.fetch%",
+        "category": "%command.category%",
         "icon": "$(repo-fetch)"
       },
       {
         "command": "unintellij.change.showDiff",
-        "title": "Show Diff",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.change.showDiff%",
+        "category": "%command.category%",
         "icon": "$(diff)"
       },
       {
         "command": "unintellij.change.copyOriginal",
-        "title": "Copy Original Content",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.change.copyOriginal%",
+        "category": "%command.category%",
         "icon": "$(copy)"
       },
       {
         "command": "unintellij.updateProject",
-        "title": "Update Project…",
-        "category": "UnIntelliJ",
+        "title": "%command.unintellij.updateProject%",
+        "category": "%command.category%",
         "icon": "$(repo-pull)"
       },
       {
         "command": "unintellij.vcsOperations",
-        "title": "VCS Operations Popup…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.vcsOperations%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.branches",
-        "title": "Branches…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.branches%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.newBranch",
-        "title": "New Branch…",
-        "category": "UnIntelliJ"
+        "title": "%command.unintellij.newBranch%",
+        "category": "%command.category%"
       }
     ],
     "menus": {
@@ -2243,14 +2257,14 @@
       "activitybar": [
         {
           "id": "unintellij-project",
-          "title": "Project",
+          "title": "%viewContainer.activitybar.unintellij-project%",
           "icon": "media/project.svg"
         }
       ],
       "panel": [
         {
           "id": "unintellij-git",
-          "title": "Git",
+          "title": "%viewContainer.panel.unintellij-git%",
           "icon": "media/git.svg"
         }
       ]
@@ -2259,21 +2273,21 @@
       "unintellij-project": [
         {
           "id": "unintellij.project",
-          "name": "Project"
+          "name": "%view.unintellij.project%"
         }
       ],
       "unintellij-git": [
         {
           "type": "webview",
           "id": "unintellij.gitLog",
-          "name": "Log"
+          "name": "%view.unintellij.gitLog%"
         }
       ],
       "scm": [
         {
           "type": "webview",
           "id": "unintellij.commit",
-          "name": "Commit",
+          "name": "%view.unintellij.commit%",
           "visibility": "visible"
         }
       ]
@@ -2316,7 +2330,7 @@
     "colors": [
       {
         "id": "unintellij.tabSelectedBorder",
-        "description": "Frame of the selected editor tab (Islands+).",
+        "description": "%color.unintellij.tabSelectedBorder%",
         "defaults": {
           "dark": "#2E4D89",
           "light": "#A7C5FF",
@@ -2326,7 +2340,7 @@
       },
       {
         "id": "unintellij.tabInactiveSelectedBorder",
-        "description": "Frame of the selected editor tab in an unfocused group (Islands+).",
+        "description": "%color.unintellij.tabInactiveSelectedBorder%",
         "defaults": {
           "dark": "#40434A",
           "light": "#D1D3D9",
@@ -2336,7 +2350,7 @@
       },
       {
         "id": "unintellij.incomingCommits",
-        "description": "Incoming commits count of the branch widget.",
+        "description": "%color.unintellij.incomingCommits%",
         "defaults": {
           "dark": "#3871E1",
           "light": "#3871E1",
@@ -2346,7 +2360,7 @@
       },
       {
         "id": "unintellij.outgoingCommits",
-        "description": "Outgoing commits count of the branch widget.",
+        "description": "%color.unintellij.outgoingCommits%",
         "defaults": {
           "dark": "#6DB083",
           "light": "#338555",
@@ -2375,7 +2389,8 @@
     "package": "vsce package --no-dependencies",
     "vscode:prepublish": "node esbuild.mjs --production",
     "gen": "tsx scripts/generate.ts",
-    "check:generated": "tsx scripts/generate.ts --check"
+    "check:generated": "tsx scripts/generate.ts --check",
+    "check:i18n": "tsx scripts/i18n-keys.ts --check"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

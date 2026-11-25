@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
+import { language } from '../i18n/i18n';
 import { collectRunConfigurations, findPackageScripts } from './configurations';
 import type { NpmConfigData } from './runConfigLogic';
 import type { FromRunWebview, RunConfigsModel, ToRunWebview } from './runProtocol';
@@ -111,7 +112,7 @@ export class EditConfigurationsPanel implements vscode.Disposable {
 <link rel="stylesheet" href="${uri('media', 'run-configs.css')}">
 <title>Run/Debug Configurations</title>
 </head>
-<body>
+<body data-lang="${language()}">
 <div id="app" class="loading">Loading…</div>
 <script nonce="${nonce}" src="${uri('dist', 'webview', 'runConfigs.js')}"></script>
 </body>

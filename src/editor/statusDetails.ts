@@ -1,5 +1,6 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
+import { t } from '../i18n/i18n';
 
 /** Innermost symbols containing `position`, outermost first. */
 function symbolPath(symbols: readonly vscode.DocumentSymbol[], position: vscode.Position): vscode.DocumentSymbol[] {
@@ -29,11 +30,11 @@ export class StatusDetails implements vscode.Disposable {
   constructor() {
     // Leftmost item, like IntelliJ's navigation bar in the status bar.
     this.navigation = vscode.window.createStatusBarItem('unintellij.navigationBar', vscode.StatusBarAlignment.Left, 1000);
-    this.navigation.name = 'Navigation Bar';
+    this.navigation.name = t('Navigation Bar');
     this.navigation.command = 'unintellij.project.selectOpenedFile';
-    this.navigation.tooltip = 'Select in Project View';
+    this.navigation.tooltip = t('Select in Project View');
     this.readOnly = vscode.window.createStatusBarItem('unintellij.readOnly', vscode.StatusBarAlignment.Right, -1000);
-    this.readOnly.name = 'Read-Only';
+    this.readOnly.name = t('Read-Only');
     this.readOnly.command = 'unintellij.toggleReadOnly';
     this.disposables.push(
       this.navigation,
@@ -116,7 +117,7 @@ export class StatusDetails implements vscode.Disposable {
     const uri = editor.document.uri;
     const readonly = vscode.workspace.fs.isWritableFileSystem(uri.scheme) === false || this.lockedInSession.has(uri.toString());
     this.readOnly.text = readonly ? '$(lock)' : '$(unlock)';
-    this.readOnly.tooltip = readonly ? 'File is read-only' : 'Make file read-only';
+    this.readOnly.tooltip = readonly ? t('File is read-only') : t('Make file read-only');
     this.readOnly.show();
   }
 

@@ -15,6 +15,9 @@ const THEME_LABELS: Record<ThemeId, string> = {
   islandsLight: 'Islands Light',
 };
 
+export const UI_LANGUAGES = ['en', 'fr'] as const;
+export type UiLanguage = (typeof UI_LANGUAGES)[number];
+
 export const KEYMAP_LAYOUTS = ['auto', 'windows', 'macos'] as const;
 export type KeymapLayout = (typeof KEYMAP_LAYOUTS)[number];
 
@@ -23,6 +26,7 @@ export type UpdateMethod = (typeof UPDATE_METHODS)[number];
 
 /** Value type of every setting, keyed by its name relative to {@link CONFIG_NAMESPACE}. */
 export interface Settings {
+  'appearance.language': UiLanguage;
   'appearance.theme': ThemeId;
   'appearance.syncWithOs': boolean;
   'appearance.preferredDarkTheme': ThemeId;
@@ -66,6 +70,16 @@ const themeEnum = THEMES.map((value) => ({ value, label: THEME_LABELS[value] }))
 
 /** Definition order inside a section is the display order. */
 export const SETTINGS: { [K in SettingKey]: SettingDefinition<Settings[K]> } = {
+  'appearance.language': {
+    section: 'appearance',
+    type: 'string',
+    default: 'en',
+    enum: [
+      { value: 'en', label: 'English' },
+      { value: 'fr', label: 'Français' },
+    ],
+    markdownDescription: "Language of UnIntelliJ's windows, popups and messages. Command titles in the Command Palette follow VS Code's display language.",
+  },
   'appearance.theme': {
     section: 'appearance',
     type: 'string',

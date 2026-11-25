@@ -2,13 +2,14 @@ import { copyFile, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import * as path from 'node:path';
 import { ASSET_CSS, ASSET_JS, checksum, checksumKey, injectBlock, PATCH_VERSION, patchedVersion, removeBlock, updateChecksum, WORKBENCH_CANDIDATES } from './patchLogic';
+import { t } from '../i18n/i18n';
 
 export type PatchStatus = 'clean' | 'patched' | 'outdated' | 'unsupported';
 
 /** Thrown when VS Code's installation files are not writable (e.g. "system" install without admin rights). */
 export class NotWritableError extends Error {
   constructor(readonly file: string) {
-    super(`No write access to ${file}`);
+    super(t('No write access to {0}', file));
   }
 }
 
@@ -53,7 +54,7 @@ export class WorkbenchPatcher {
   async apply(): Promise<void> {
     const location = this.locate();
     if (!location) {
-      throw new Error('Unsupported VS Code layout: workbench.html not found.');
+      throw new Error(t('Unsupported VS Code layout: workbench.html not found.'));
     }
     const dir = path.dirname(location.html);
     const html = await readFile(location.html, 'utf8');

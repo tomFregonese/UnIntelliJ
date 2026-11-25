@@ -17,6 +17,7 @@ import {
 } from './changesLogic';
 import { getGitApi, GitApi, Repository } from './gitApi';
 import { runGit } from './gitCli';
+import { t } from '../i18n/i18n';
 
 const CHANGELISTS_KEY = 'vcs.changelists';
 
@@ -96,7 +97,7 @@ export class VcsService implements vscode.Disposable {
     const tracked = changes.filter((c) => c.status !== 'U');
     const unversioned = changes.filter((c) => c.status === 'U');
     if (!getSetting('vcs.changelists.enabled')) {
-      return { lists: [{ id: 'default', name: 'Changes', active: true, files: tracked }], unversioned };
+      return { lists: [{ id: 'default', name: t('Changes'), active: true, files: tracked }], unversioned };
     }
     const assignments = this.changelists.assignments;
     return {
@@ -156,7 +157,7 @@ export class VcsService implements vscode.Disposable {
   private requireRepository(): Repository {
     const repository = this.repository;
     if (!repository) {
-      throw new Error('No Git repository in this workspace.');
+      throw new Error(t('No Git repository in this workspace.'));
     }
     return repository;
   }

@@ -38,6 +38,7 @@ export const PAGES: readonly Page[] = [
     title: 'Appearance',
     parent: 'appearanceBehavior',
     fields: [
+      selectFromSchema('unintellij.appearance.language', 'Language'),
       { type: 'select', key: 'unintellij.appearance.theme', label: 'Theme', options: themeOptions },
       { type: 'checkbox', key: 'unintellij.appearance.syncWithOs', label: 'Sync with OS' },
       { type: 'select', key: 'unintellij.appearance.preferredDarkTheme', label: 'Preferred dark theme', options: themeOptions },

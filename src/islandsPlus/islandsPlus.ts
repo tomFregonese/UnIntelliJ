@@ -2,6 +2,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { getSetting, onSettingsChanged, setSetting } from '../config/settings';
 import { NotWritableError, WorkbenchPatcher } from './patcher';
+import { t } from '../i18n/i18n';
 
 /** VS Code settings Islands+ adjusts to get IntelliJ's title bar; previous values are restored on disable. */
 const TITLE_BAR_SETTINGS: readonly { key: string; value: unknown; platforms?: NodeJS.Platform[] }[] = [
@@ -30,9 +31,9 @@ export class IslandsPlus implements vscode.Disposable {
   ) {
     // IntelliJ's project widget, shown in the title bar by Islands+.
     this.projectItem = vscode.window.createStatusBarItem('unintellij.project', vscode.StatusBarAlignment.Left, 105);
-    this.projectItem.name = 'Project';
+    this.projectItem.name = t('Project');
     this.projectItem.command = 'workbench.action.openRecent';
-    this.projectItem.tooltip = 'Recent Projects';
+    this.projectItem.tooltip = t('Recent Projects');
     this.disposables.push(
       this.projectItem,
       onSettingsChanged(['appearance.islandsPlus.enabled'], () => void this.reconcile(true)),
@@ -71,14 +72,14 @@ export class IslandsPlus implements vscode.Disposable {
     const enabled = getSetting('appearance.islandsPlus.enabled');
     if (!IslandsPlus.supported()) {
       if (enabled && userInitiated) {
-        void vscode.window.showWarningMessage('Islands+ only works in a local VS Code window (not remote or web).');
+        void vscode.window.showWarningMessage(t('Islands+ only works in a local VS Code window (not remote or web).'));
       }
       return;
     }
     const status = await this.patcher.status();
     if (status === 'unsupported') {
       if (enabled && userInitiated) {
-        void vscode.window.showWarningMessage('Islands+ does not support this VS Code version yet.');
+        void vscode.window.showWarningMessage(t('Islands+ does not support this VS Code version yet.'));
       }
       return;
     }
@@ -101,11 +102,11 @@ export class IslandsPlus implements vscode.Disposable {
       await this.state.update(FAILURE_KEY, vscode.version);
       if (error instanceof NotWritableError) {
         const answer = await vscode.window.showErrorMessage(
-          'Islands+ cannot modify VS Code: its installation folder is read-only for your account (typically the "System" installer on Windows). Use the "User" installer or run VS Code once as administrator to apply it.',
+          t('Islands+ cannot modify VS Code: its installation folder is read-only for your account (typically the "System" installer on Windows). Use the "User" installer or run VS Code once as administrator to apply it.'),
           { detail: error.file },
-          'Disable Islands+',
+          t('Disable Islands+'),
         );
-        if (answer === 'Disable Islands+') {
+        if (answer === t('Disable Islands+')) {
           await setSetting('appearance.islandsPlus.enabled', false);
         }
         return;
@@ -115,9 +116,9 @@ export class IslandsPlus implements vscode.Disposable {
     await this.state.update(FAILURE_KEY, undefined);
     await this.applySettings();
     this.log.info(`Islands+ applied to ${this.patcher.workbenchFile}`);
-    const message = afterUpdate ? 'VS Code was updated: Islands+ has been re-applied.' : 'Islands+ is installed.';
-    const answer = await vscode.window.showInformationMessage(`${message} Reload the window to see it.`, 'Reload Window');
-    if (answer === 'Reload Window') {
+    const message = afterUpdate ? 'VS Code was updated: Islands+ has been re-applied.' : t('Islands+ is installed.');
+    const answer = await vscode.window.showInformationMessage(t('{0} Reload the window to see it.', message), 'Reload Window');
+    if (answer === t('Reload Window')) {
       await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
   }
@@ -127,15 +128,15 @@ export class IslandsPlus implements vscode.Disposable {
       await this.patcher.revert();
     } catch (error) {
       if (error instanceof NotWritableError) {
-        void vscode.window.showErrorMessage(`Islands+ could not be removed: no write access to ${error.file}.`);
+        void vscode.window.showErrorMessage(t('Islands+ could not be removed: no write access to {0}.', error.file));
         return;
       }
       throw error;
     }
     await this.restoreSettings();
     this.log.info('Islands+ removed');
-    const answer = await vscode.window.showInformationMessage('Islands+ has been removed. Reload the window to restore the standard look.', 'Reload Window');
-    if (answer === 'Reload Window') {
+    const answer = await vscode.window.showInformationMessage(t('Islands+ has been removed. Reload the window to restore the standard look.'), 'Reload Window');
+    if (answer === t('Reload Window')) {
       await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
   }

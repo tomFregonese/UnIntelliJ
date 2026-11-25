@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { VcsService } from '../vcs/vcsService';
 import { compareEntries, displayPath, folderIcon, groupPackages, MODULE_MARKERS, PROJECT_MODES, ProjectMode, rootKind, RootKind, validateFileName } from './projectLogic';
+import { t } from '../i18n/i18n';
 
 const MODE_KEY = 'project.mode';
 const TREE_MIME = 'application/vnd.code.tree.unintellij.project';
@@ -114,13 +115,13 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
             uris.set(tab.input.uri.toString(), tab.input.uri);
           }
         }
-        return this.flatFiles([...uris.values()], 'No open files');
+        return this.flatFiles([...uris.values()], t('No open files'));
       }
       case 'changedFiles': {
         const state = this.vcs.repository?.state;
         const changes = [...(state?.indexChanges ?? []), ...(state?.workingTreeChanges ?? []), ...((state as { untrackedChanges?: { uri: vscode.Uri }[] } | undefined)?.untrackedChanges ?? [])];
         const uris = new Map(changes.map((c) => [c.uri.toString(), c.uri]));
-        return this.flatFiles([...uris.values()], 'No local changes');
+        return this.flatFiles([...uris.values()], t('No local changes'));
       }
     }
   }
@@ -137,7 +138,7 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
   private async packages(): Promise<Node[]> {
     const files = await vscode.workspace.findFiles('**/src/{main,test}/{java,kotlin}/**/*.{java,kt}', '**/{node_modules,target,build}/**', 20000);
     if (files.length === 0) {
-      return [{ type: 'message', label: 'No Java packages in this project' }];
+      return [{ type: 'message', label: t('No Java packages in this project') }];
     }
     const relative = new Map<string, vscode.Uri>();
     for (const uri of files) {
@@ -233,7 +234,7 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
       item.iconPath = { light: file('_light'), dark: file('') };
     }
     if (!node.directory) {
-      item.command = { command: 'vscode.open', title: 'Open', arguments: [node.uri] };
+      item.command = { command: 'vscode.open', title: t('Open'), arguments: [node.uri] };
     }
     return item;
   }
@@ -243,7 +244,7 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
   private async selectMode(): Promise<void> {
     const picked = await vscode.window.showQuickPick(
       PROJECT_MODES.map((m) => ({ ...m, label: m.id === this.mode ? `$(check) ${m.label}` : `      ${m.label}` })),
-      { title: 'Project View', placeHolder: 'Show the project as…' },
+      { title: t('Project View'), placeHolder: t('Show the project as…') },
     );
     if (picked) {
       this.mode = picked.id;
@@ -305,7 +306,7 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
     if (!dir) {
       return;
     }
-    const name = await vscode.window.showInputBox({ title: directory ? 'New Directory' : 'New File', prompt: directory ? 'Name (a/b/c creates nested directories)' : 'Name (with extension; a/b.ts creates directories)', validateInput: validateFileName });
+    const name = await vscode.window.showInputBox({ title: directory ? t('New Directory') : t('New File'), prompt: directory ? t('Name (a/b/c creates nested directories)') : t('Name (with extension; a/b.ts creates directories)'), validateInput: validateFileName });
     if (!name) {
       return;
     }
@@ -328,7 +329,7 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
     }
     const old = path.posix.basename(target.uri.path);
     const dot = target.directory ? -1 : old.lastIndexOf('.');
-    const name = await vscode.window.showInputBox({ title: `Rename ${target.directory ? 'Directory' : 'File'}`, value: old, valueSelection: [0, dot > 0 ? dot : old.length], validateInput: validateFileName });
+    const name = await vscode.window.showInputBox({ title: t('Rename {0}', target.directory ? 'Directory' : 'File'), value: old, valueSelection: [0, dot > 0 ? dot : old.length], validateInput: validateFileName });
     if (!name || name === old) {
       return;
     }
@@ -350,8 +351,8 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
       return;
     }
     const what = targets.length === 1 ? `'${path.posix.basename(targets[0].uri.path)}'` : `${targets.length} items`;
-    const answer = await vscode.window.showWarningMessage(`Delete ${what}?`, { modal: true, detail: 'Items are moved to the trash.' }, 'Delete');
-    if (answer !== 'Delete') {
+    const answer = await vscode.window.showWarningMessage(t('Delete {0}?', what), { modal: true, detail: t('Items are moved to the trash.') }, 'Delete');
+    if (answer !== t('Delete')) {
       return;
     }
     const edit = new vscode.WorkspaceEdit();
@@ -387,8 +388,8 @@ export class ProjectView implements vscode.Disposable, vscode.TreeDataProvider<N
       return;
     }
     const names = moves.map((m) => path.posix.basename(m.uri.path)).join(', ');
-    const answer = await vscode.window.showInformationMessage(`Move ${names} to '${vscode.workspace.asRelativePath(dest, false)}'?`, { modal: true, detail: 'References are updated when the language supports it.' }, 'Refactor');
-    if (answer !== 'Refactor') {
+    const answer = await vscode.window.showInformationMessage(t('Move {0} to \'{1}\'?', names, vscode.workspace.asRelativePath(dest, false)), { modal: true, detail: t('References are updated when the language supports it.') }, 'Refactor');
+    if (answer !== t('Refactor')) {
       return;
     }
     const edit = new vscode.WorkspaceEdit();

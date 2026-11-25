@@ -3,6 +3,7 @@ import { getSetting, onSettingsChanged } from '../config/settings';
 import { shortcutFor } from '../search/actions';
 import type { Branches } from './branches';
 import { VcsService } from './vcsService';
+import { t } from '../i18n/i18n';
 
 /**
  * IntelliJ's branch widget, in the status bar (bottom left): branch name, green ↗ outgoing and blue
@@ -29,12 +30,12 @@ export class BranchWidget implements vscode.Disposable {
       i.name = label;
       return i;
     };
-    this.name = item('name', 'Git Branch', 104.9);
+    this.name = item('name', t('Git Branch'), 104.9);
     this.name.command = 'unintellij.branches';
-    this.outgoing = item('outgoing', 'Git Outgoing Commits', 104.8);
+    this.outgoing = item('outgoing', t('Git Outgoing Commits'), 104.8);
     this.outgoing.color = new vscode.ThemeColor('unintellij.outgoingCommits');
     this.outgoing.command = 'unintellij.push';
-    this.incoming = item('incoming', 'Git Incoming Commits', 104.7);
+    this.incoming = item('incoming', t('Git Incoming Commits'), 104.7);
     this.incoming.color = new vscode.ThemeColor('unintellij.incomingCommits');
     this.incoming.command = 'unintellij.updateProject';
     const button = (id: string, label: string, icon: string, command: string, priority: number) => {
@@ -46,9 +47,9 @@ export class BranchWidget implements vscode.Disposable {
       return b;
     };
     this.buttons = [
-      button('update', 'Update Project…', 'repo-pull', 'unintellij.updateProject', 104.6),
-      button('push', 'Push…', 'repo-push', 'unintellij.push', 104.5),
-      button('fetch', 'Fetch', 'repo-fetch', 'unintellij.fetch', 104.4),
+      button('update', t('Update Project…'), 'repo-pull', 'unintellij.updateProject', 104.6),
+      button('push', t('Push…'), 'repo-push', 'unintellij.push', 104.5),
+      button('fetch', t('Fetch'), 'repo-fetch', 'unintellij.fetch', 104.4),
     ];
     this.disposables.push(
       this.name,
@@ -73,20 +74,21 @@ export class BranchWidget implements vscode.Disposable {
     const upstream = head.upstream ? `${head.upstream.remote}/${head.upstream.name}` : undefined;
     const shortcut = shortcutFor('unintellij.branches');
     this.name.text = `$(git-branch) ${name}`;
-    this.name.tooltip = `Git Branch: ${name}${upstream ? ` → ${upstream}` : ' (no upstream)'}${shortcut ? `\nBranches… (${shortcut})` : ''}`;
+    const tracking = upstream ? ` → ${upstream}` : ` ${t('(no upstream)')}`;
+    this.name.tooltip = t('Git Branch: {0}{1}{2}', name, tracking, shortcut ? `\n${t('Branches…')} (${shortcut})` : '');
     this.name.show();
-    this.count(this.outgoing, '↗', head.ahead, 'to push');
-    this.count(this.incoming, '↙', head.behind, `incoming from ${upstream}`);
+    this.count(this.outgoing, '↗', head.ahead, (n) => (n === 1 ? t('1 commit to push') : t('{0} commits to push', n)));
+    this.count(this.incoming, '↙', head.behind, (n) => (n === 1 ? t('1 incoming commit from {0}', upstream) : t('{0} incoming commits from {1}', n, upstream)));
     this.buttons.forEach((b) => b.show());
   }
 
-  private count(item: vscode.StatusBarItem, arrow: string, count: number | undefined, what: string): void {
+  private count(item: vscode.StatusBarItem, arrow: string, count: number | undefined, tooltip: (count: number) => string): void {
     if (!count) {
       item.hide();
       return;
     }
     item.text = `${arrow}${count}`;
-    item.tooltip = `${count} commit${count === 1 ? '' : 's'} ${what}`;
+    item.tooltip = tooltip(count);
     item.show();
   }
 

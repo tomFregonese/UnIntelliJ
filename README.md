@@ -87,6 +87,11 @@ IntelliJ fonts, and the project / branch / Run widgets in the title bar.
 - Disabling it removes the block and restores the original checksum exactly. While it is applied, safety copies
   (`*.unintellij-backup`) sit next to the modified files; they are deleted when it is disabled.
 
+## Language
+
+UnIntelliJ is in English by default. French is available in **Settings › Appearance › Language** (`unintellij.appearance.language`).
+Command titles in VS Code's Command Palette follow VS Code's own display language.
+
 ## Known limitations
 
 VS Code's extension API cannot reproduce everything; see [docs/SUIVI.md](docs/SUIVI.md) (in French) for the full list.

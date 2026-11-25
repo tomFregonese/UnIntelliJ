@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { initializeIconThemes } from './appearance/iconThemes';
+import { getSetting, onSettingsChanged } from './config/settings';
+import { setLanguage, t } from './i18n/i18n';
 import { ThemeSync } from './appearance/themeSync';
 import { registerEditorCommands } from './editor/commands';
 import { StatusDetails } from './editor/statusDetails';
@@ -42,6 +44,17 @@ export interface UnIntelliJApi {
 export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi> {
   const log = vscode.window.createOutputChannel('UnIntelliJ', { log: true });
   context.subscriptions.push(log);
+  // Before anything shows text: every UI string goes through t().
+  setLanguage(getSetting('appearance.language'));
+  context.subscriptions.push(
+    onSettingsChanged(['appearance.language'], async () => {
+      setLanguage(getSetting('appearance.language'));
+      const reload = t('Reload Window');
+      if ((await vscode.window.showInformationMessage(t('UnIntelliJ language changed. Reload the window to apply it everywhere.'), reload)) === reload) {
+        await vscode.commands.executeCommand('workbench.action.reloadWindow');
+      }
+    }),
+  );
 
   const version = (context.extension.packageJSON as { version: string }).version;
   log.info(`UnIntelliJ ${version} activated on VS Code ${vscode.version} (${process.platform})`);

@@ -1,11 +1,13 @@
 import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
+import { language, t } from '../i18n/i18n';
 import { detectIntegrations, IntegrationId } from '../integrations';
 import { formatKey, KEYMAP } from '../keymap/keymap';
 import { fieldKeys, PAGES } from './pages';
 import { applyPreset, PRESET, presetApplied, revertPreset } from './preset';
 import { FromWebview, SettingsModel, ToWebview } from './protocol';
 
+/** English: translated where shown. */
 const PURPOSES: Record<IntegrationId, string> = {
   git: 'Commit tool window, branches, Git log',
   java: 'Java classes and symbols in Search Everywhere, Java refactorings',
@@ -45,7 +47,7 @@ export function buildModel(state: vscode.Memento, initialPage = 'appearance'): S
     integrations: detectIntegrations().map((i) => ({
       name: i.name,
       extensionId: i.extensionId,
-      purpose: PURPOSES[i.id],
+      purpose: t(PURPOSES[i.id]),
       installed: i.installed,
       active: i.active,
       version: i.version,
@@ -127,7 +129,7 @@ export class SettingsPanel implements vscode.Disposable {
       }
     } catch (error) {
       this.log.error(`Settings: ${String(error)}`);
-      void vscode.window.showErrorMessage(`Could not apply settings: ${String(error)}`);
+      void vscode.window.showErrorMessage(t('Could not apply settings: {0}', String(error)));
     }
   }
 
@@ -150,7 +152,7 @@ export class SettingsPanel implements vscode.Disposable {
 <link rel="stylesheet" href="${style}">
 <title>Settings</title>
 </head>
-<body>
+<body data-lang="${language()}">
 <div id="app" class="loading">Loading…</div>
 <script nonce="${nonce}" src="${script}"></script>
 </body>

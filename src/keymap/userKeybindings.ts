@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { getSetting, onSettingsChanged } from '../config/settings';
 import { customKeybindings, Keybinding } from './keymap';
 import { replaceManagedEntries } from './keybindingsFile';
+import { t } from '../i18n/i18n';
 
 const MANAGED_KEY = 'keymap.managedUserKeybindings';
 /**
@@ -31,7 +32,7 @@ export class UserKeybindings implements vscode.Disposable {
   sync(): Promise<void> {
     this.running = this.running.then(() => this.write()).catch((error) => {
       this.log.error(`Keymap: could not update keybindings.json: ${String(error)}`);
-      void vscode.window.showErrorMessage(`UnIntelliJ could not update keybindings.json: ${String(error)}`);
+      void vscode.window.showErrorMessage(t('UnIntelliJ could not update keybindings.json: {0}', String(error)));
     });
     return this.running;
   }

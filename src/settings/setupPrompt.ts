@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { getSetting } from '../config/settings';
 import { hasJetBrainsMono, installJetBrainsMono } from '../appearance/fonts';
 import { applyPreset, appliedPresetVersion, PRESET_VERSION } from './preset';
+import { t } from '../i18n/i18n';
 
 /** Set when the user answered "Don't ask again" for this preset version. */
 const DISMISSED_KEY = 'settings.setupDismissedVersion';
@@ -26,16 +27,16 @@ export class SetupPrompt {
       return;
     }
     const isUpdate = appliedPresetVersion(state) > 0;
-    const apply = 'Apply';
-    const details = 'See Details';
-    const never = "Don't Ask Again";
+    const apply = t('Apply');
+    const details = t('See Details');
+    const never = t("Don't Ask Again");
     const answer = await vscode.window.showInformationMessage(
       isUpdate
-        ? 'UnIntelliJ: the IntelliJ-like settings were updated (editor font size and line spacing, terminal). Apply them?'
-        : 'UnIntelliJ: apply IntelliJ-like settings? Installs the JetBrains Mono font for your account and sets font sizes, autosave and the Islands theme.',
+        ? t('UnIntelliJ: the IntelliJ-like settings were updated (editor font size and line spacing, terminal). Apply them?')
+        : t('UnIntelliJ: apply IntelliJ-like settings? Installs the JetBrains Mono font for your account and sets font sizes, autosave and the Islands theme.'),
       apply,
       details,
-      'Later',
+      t('Later'),
       never,
     );
     if (answer === apply) {
@@ -52,10 +53,10 @@ export class SetupPrompt {
     const current = getSetting('appearance.theme');
     const theme = await vscode.window.showQuickPick(
       [
-        { label: 'Islands Light', id: 'islandsLight' as const, picked: current === 'islandsLight' },
-        { label: 'Islands Dark', id: 'islandsDark' as const, picked: current === 'islandsDark' },
+        { label: t('Islands Light'), id: 'islandsLight' as const, picked: current === 'islandsLight' },
+        { label: t('Islands Dark'), id: 'islandsDark' as const, picked: current === 'islandsDark' },
       ].sort((a) => (a.picked ? -1 : 1)),
-      { title: 'UnIntelliJ: Theme', placeHolder: 'Choose the IntelliJ theme' },
+      { title: t('UnIntelliJ: Theme'), placeHolder: t('Choose the IntelliJ theme') },
     );
     if (!theme) {
       return;
@@ -80,8 +81,8 @@ export class SetupPrompt {
       await this.checkFont();
       return;
     }
-    const restart = 'Restart Now';
-    const answer = await vscode.window.showInformationMessage('JetBrains Mono was installed for your account. Restart VS Code to use it in the editor and the terminal.', restart, 'Later');
+    const restart = t('Restart Now');
+    const answer = await vscode.window.showInformationMessage(t('JetBrains Mono was installed for your account. Restart VS Code to use it in the editor and the terminal.'), restart, 'Later');
     if (answer === restart) {
       await vscode.commands.executeCommand('workbench.action.quit');
     }
@@ -100,10 +101,10 @@ export class SetupPrompt {
     if (await hasJetBrainsMono()) {
       return;
     }
-    const install = 'Install for Me';
-    const download = 'Download Page';
+    const install = t('Install for Me');
+    const download = t('Download Page');
     const answer = await vscode.window.showWarningMessage(
-      'JetBrains Mono, the IntelliJ editor font, is not installed. UnIntelliJ can install it for your user account only (no admin rights needed).',
+      t('JetBrains Mono, the IntelliJ editor font, is not installed. UnIntelliJ can install it for your user account only (no admin rights needed).'),
       install,
       download,
     );
@@ -114,11 +115,11 @@ export class SetupPrompt {
         await installJetBrainsMono(this.context.extensionUri, this.log);
       } catch (error) {
         this.log.error(`Could not install JetBrains Mono: ${String(error)}`);
-        void vscode.window.showErrorMessage(`Could not install JetBrains Mono: ${String(error)}`);
+        void vscode.window.showErrorMessage(t('Could not install JetBrains Mono: {0}', String(error)));
         return;
       }
-      const reload = 'Restart Now';
-      if ((await vscode.window.showInformationMessage('JetBrains Mono installed. Restart VS Code to use it.', reload)) === reload) {
+      const reload = t('Restart Now');
+      if ((await vscode.window.showInformationMessage(t('JetBrains Mono installed. Restart VS Code to use it.'), reload)) === reload) {
         await vscode.commands.executeCommand('workbench.action.quit');
       }
     }

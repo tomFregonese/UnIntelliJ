@@ -5,6 +5,9 @@
 import { formatKey, keyFromEvent } from '../keymap/keymap';
 import type { Field, Page } from '../settings/pages';
 import type { FromWebview, KeymapRow, SettingsModel, ToWebview } from '../settings/protocol';
+import { setLanguage, t, type Language } from '../i18n/i18n';
+
+setLanguage((document.body.dataset.lang as Language | undefined) ?? 'en');
 
 declare function acquireVsCodeApi(): { postMessage(message: FromWebview): void };
 const vscode = acquireVsCodeApi();
@@ -66,7 +69,7 @@ function matches(text: string | undefined): boolean {
 }
 
 function pageMatches(page: Page): boolean {
-  return matches(page.title) || matches(page.keywords) || (page.fields ?? []).some((f) => matches(f.label) || matches(f.key));
+  return matches(page.title) || matches(t(page.title)) || matches(page.keywords) || (page.fields ?? []).some((f) => matches(f.label) || matches(f.key));
 }
 
 function visiblePages(): Page[] {
@@ -99,13 +102,13 @@ function renderField(field: Field): HTMLElement {
         'div',
         { className: `row checkbox-row${matches(field.label) && search ? ' found' : ''}`, 'data-key': field.key },
         control,
-        h('label', { for: id }, field.label),
-        field.help && h('div', { className: 'help' }, field.help),
+        h('label', { for: id }, t(field.label)),
+        field.help && h('div', { className: 'help' }, t(field.help)),
       );
     case 'select': {
       const select = h('select', { id, onChange: (e: Event) => setValue(field.key, field.options[(e.target as HTMLSelectElement).selectedIndex].value) });
       for (const option of field.options) {
-        select.append(h('option', { selected: same(option.value, current) }, option.label));
+        select.append(h('option', { selected: same(option.value, current) }, t(option.label)));
       }
       if (!field.options.some((o) => same(o.value, current))) {
         select.prepend(h('option', { selected: true, disabled: true }, current === undefined ? '' : String(current)));
@@ -155,9 +158,9 @@ function renderField(field: Field): HTMLElement {
   return h(
     'div',
     { className: `row${matches(field.label) && search ? ' found' : ''}`, 'data-key': field.key },
-    h('label', { for: id }, `${field.label}:`),
+    h('label', { for: id }, `${t(field.label)}:`),
     control,
-    field.help && h('div', { className: 'help' }, field.help),
+    field.help && h('div', { className: 'help' }, t(field.help)),
   );
 }
 
@@ -183,7 +186,7 @@ function renderKeymap(): HTMLElement {
       const toggle = h('input', {
         type: 'checkbox',
         checked: !disabled.has(row.id),
-        title: 'Enabled',
+        title: t('Enabled'),
         onChange: (e: Event) => {
           if ((e.target as HTMLInputElement).checked) {
             disabled.delete(row.id);
@@ -197,13 +200,13 @@ function renderKeymap(): HTMLElement {
       const isCustom = Boolean(customs[row.id]);
       const shortcut =
         recording === row.id
-          ? h('span', { className: 'recording' }, 'Press a shortcut… (Esc: cancel, Backspace: reset)')
-          : h('kbd', { className: isCustom ? 'custom-key' : '', title: isCustom ? `Default: ${row[os] ?? 'none'}` : '' }, shortcutText(row));
+          ? h('span', { className: 'recording' }, t('Press a shortcut… (Esc: cancel, Backspace: reset)'))
+          : h('kbd', { className: isCustom ? 'custom-key' : '', title: isCustom ? t('Default: {0}', row[os] ?? 'none') : '' }, shortcutText(row));
       const edit = h(
         'button',
         {
           className: 'tool edit',
-          title: 'Change shortcut',
+          title: t('Change shortcut'),
           onClick: () => {
             recording = row.id;
             fill();
@@ -216,7 +219,7 @@ function renderKeymap(): HTMLElement {
           'tr',
           { className: disabled.has(row.id) ? 'disabled' : '', 'data-action': row.id },
           h('td', {}, toggle),
-          h('td', {}, row.name),
+          h('td', {}, t(row.name)),
           h('td', {}, shortcut, ' ', edit),
           h('td', { className: 'muted' }, row.category),
           h('td', { className: 'muted mono' }, row.id),
@@ -256,14 +259,14 @@ function renderKeymap(): HTMLElement {
     h('input', {
       type: 'search',
       className: 'filter',
-      placeholder: 'Search by action name, ID or shortcut',
+      placeholder: t('Search by action name, ID or shortcut'),
       value: keymapSearch,
       onInput: (e: Event) => {
         keymapSearch = (e.target as HTMLInputElement).value;
         fill();
       },
     }),
-    h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Action'), h('th', {}, 'Shortcut'), h('th', {}, 'Group'), h('th', {}, 'ID'))), tbody),
+    h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, t('Action')), h('th', {}, t('Shortcut')), h('th', {}, t('Group')), h('th', {}, 'ID'))), tbody),
   );
 }
 
@@ -275,18 +278,18 @@ function renderPreset(): HTMLElement {
   return h(
     'div',
     { className: 'custom preset' },
-    h('h3', {}, 'IntelliJ-like VS Code settings'),
+    h('h3', {}, t('IntelliJ-like VS Code settings')),
     h('p', { className: 'help' }, 'VS Code options whose defaults differ from IntelliJ. Your previous values are kept and can be restored.'),
     h(
       'table',
       {},
-      h('tbody', {}, ...entries.map((e) => h('tr', {}, h('td', { className: 'mono' }, e.key), h('td', { className: 'mono' }, JSON.stringify(e.value)), h('td', { className: 'muted' }, e.reason)))),
+      h('tbody', {}, ...entries.map((e) => h('tr', {}, h('td', { className: 'mono' }, e.key), h('td', { className: 'mono' }, JSON.stringify(e.value)), h('td', { className: 'muted' }, t(e.reason))))),
     ),
     h(
       'div',
       { className: 'buttons-inline' },
-      h('button', { onClick: () => vscode.postMessage({ type: 'applyPreset' }) }, applied ? 'Re-apply' : 'Apply IntelliJ-like settings'),
-      applied && h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'revertPreset' }) }, 'Restore my previous settings'),
+      h('button', { onClick: () => vscode.postMessage({ type: 'applyPreset' }) }, applied ? t('Re-apply') : t('Apply IntelliJ-like settings')),
+      applied && h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'revertPreset' }) }, t('Restore my previous settings')),
     ),
   );
 }
@@ -295,15 +298,15 @@ function renderPlugins(): HTMLElement {
   return h(
     'div',
     { className: 'custom plugins' },
-    h('p', { className: 'help' }, 'UnIntelliJ works without any of these; each one enables more IntelliJ features when installed.'),
+    h('p', { className: 'help' }, t('UnIntelliJ works without any of these; each one enables more IntelliJ features when installed.')),
     ...model!.integrations.map((i) =>
       h(
         'div',
         { className: 'plugin' },
-        h('div', { className: 'plugin-name' }, i.name, h('span', { className: `badge ${i.active ? 'active' : i.installed ? 'installed' : 'missing'}` }, i.active ? 'Active' : i.installed ? 'Installed' : 'Not installed')),
+        h('div', { className: 'plugin-name' }, i.name, h('span', { className: `badge ${i.active ? 'active' : i.installed ? 'installed' : 'missing'}` }, i.active ? t('Active') : i.installed ? t('Installed') : t('Not installed'))),
         h('div', { className: 'muted' }, `${i.extensionId}${i.version ? ` · ${i.version}` : ''}`),
         h('div', {}, i.purpose),
-        !i.extensionId.startsWith('vscode.') && h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'showExtension', id: i.extensionId }) }, i.installed ? 'Details' : 'Show in Marketplace'),
+        !i.extensionId.startsWith('vscode.') && h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'showExtension', id: i.extensionId }) }, i.installed ? t('Details') : t('Show in Marketplace')),
       ),
     ),
   );
@@ -327,7 +330,7 @@ function render(): void {
       h(
         'li',
         { className: `${p.parent ? 'child' : 'root'}${p.id === page.id ? ' selected' : ''}`, tabindex: 0, onClick: () => ((currentPage = p.id), render()) },
-        p.title,
+        t(p.title),
       ),
     );
   }
@@ -335,7 +338,7 @@ function render(): void {
   const searchBox = h('input', {
     type: 'search',
     className: 'search',
-    placeholder: 'Search settings',
+    placeholder: t('Search settings'),
     value: search,
     onInput: (e: Event) => {
       search = (e.target as HTMLInputElement).value;
@@ -347,11 +350,11 @@ function render(): void {
   });
 
   const parent = page.parent ? model.pages.find((p) => p.id === page.parent) : undefined;
-  const content = h('main', { className: 'content' }, h('header', { className: 'breadcrumb' }, parent ? `${parent.title} › ` : '', h('strong', {}, page.title)));
+  const content = h('main', { className: 'content' }, h('header', { className: 'breadcrumb' }, parent ? `${t(parent.title)} › ` : '', h('strong', {}, t(page.title))));
   if (!page.fields && !page.custom) {
     // Group page: list its children, like IntelliJ.
     const children = model.pages.filter((p) => p.parent === page.id);
-    content.append(h('div', { className: 'group' }, ...children.map((c) => h('a', { href: '#', onClick: (e: Event) => (e.preventDefault(), (currentPage = c.id), render()) }, c.title))));
+    content.append(h('div', { className: 'group' }, ...children.map((c) => h('a', { href: '#', onClick: (e: Event) => (e.preventDefault(), (currentPage = c.id), render()) }, t(c.title)))));
   }
   const fields = h('div', { className: 'fields' }, ...(page.fields ?? []).map(renderField));
   content.append(fields);
@@ -367,8 +370,8 @@ function render(): void {
     'footer',
     {},
     h('button', { id: 'ok', onClick: () => vscode.postMessage({ type: 'apply', changes: pending, close: true }) }, 'OK'),
-    h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'cancel' }) }, 'Cancel'),
-    h('button', { id: 'apply', className: 'secondary', disabled: Object.keys(pending).length === 0, onClick: () => vscode.postMessage({ type: 'apply', changes: pending, close: false }) }, 'Apply'),
+    h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'cancel' }) }, t('Cancel')),
+    h('button', { id: 'apply', className: 'secondary', disabled: Object.keys(pending).length === 0, onClick: () => vscode.postMessage({ type: 'apply', changes: pending, close: false }) }, t('Apply')),
   );
 
   const app = document.getElementById('app')!;

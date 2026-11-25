@@ -121,3 +121,4 @@ Cocher et dater quand c'est réglé.
 - [x] JetBrains Mono installée par « Apply », sans repli Courier — §19.2
 - [x] Fond de l'éditeur vide sans logo VS Code (Islands+) — §19.4
 - [ ] Base de données PostgreSQL (§16) : **reportée** à la demande de l'utilisateur (gros morceau, à voir s'il reste du budget)
+- [x] Interface en anglais par défaut, français en option (`unintellij.appearance.language`), contrôle `check:i18n` en CI — §20. **Limite** : titres des commandes dans la palette = langue d'affichage de VS Code.

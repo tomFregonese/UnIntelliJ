@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { findPackageScripts, startConfiguration } from '../run/configurations';
 import { detectJsRunner, javaRunnables, jsTestCommand, jsTests, mavenTestCommand, packageScripts, Runnable } from './discovery';
+import { t } from '../i18n/i18n';
 
 /** What a gutter item runs. */
 type Action =
@@ -29,7 +30,7 @@ function findUp(file: vscode.Uri, marker: string): string | undefined {
 
 /** Runs a shell command as a task in the Run panel; resolves with its exit code. */
 function runTask(name: string, cwd: string, command: string, folder: vscode.WorkspaceFolder | undefined): Promise<number | undefined> {
-  const task = new vscode.Task({ type: 'unintellij-run', command }, folder ?? vscode.TaskScope.Workspace, name, 'UnIntelliJ', new vscode.ShellExecution(command, { cwd }));
+  const task = new vscode.Task({ type: 'unintellij-run', command }, folder ?? vscode.TaskScope.Workspace, name, t('UnIntelliJ'), new vscode.ShellExecution(command, { cwd }));
   task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Dedicated, clear: true };
   return new Promise((resolve, reject) => {
     vscode.tasks.executeTask(task).then((execution) => {
@@ -55,8 +56,8 @@ export class GutterRunner implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [this.controller];
 
   constructor(private readonly log: vscode.LogOutputChannel) {
-    this.controller.createRunProfile('Run', vscode.TestRunProfileKind.Run, (request, token) => this.run(request, token, false), true);
-    this.controller.createRunProfile('Debug', vscode.TestRunProfileKind.Debug, (request, token) => this.run(request, token, true), true);
+    this.controller.createRunProfile(t('Run'), vscode.TestRunProfileKind.Run, (request, token) => this.run(request, token, false), true);
+    this.controller.createRunProfile(t('Debug'), vscode.TestRunProfileKind.Debug, (request, token) => this.run(request, token, true), true);
     this.disposables.push(
       vscode.workspace.onDidOpenTextDocument((d) => this.schedule(d, 0)),
       vscode.workspace.onDidChangeTextDocument((e) => this.schedule(e.document, 500)),
@@ -168,7 +169,7 @@ export class GutterRunner implements vscode.Disposable {
         // Like IntelliJ, runs the script as a (temporary) run configuration; no pass/fail state.
         const pkg = (await findPackageScripts()).find((p) => p.packageJson.toString() === action.packageJson.toString());
         if (!pkg) {
-          throw new Error('package.json not found in the workspace');
+          throw new Error(t('package.json not found in the workspace'));
         }
         await startConfiguration(
           { kind: 'npm', id: `npm:${pkg.packageJson.toString()}:${action.script}`, name: action.script, script: action.script, command: '', packageJson: pkg.packageJson, folder: pkg.folder, packageManager: pkg.packageManager },
@@ -179,16 +180,16 @@ export class GutterRunner implements vscode.Disposable {
       case 'javaTest': {
         const dir = findUp(action.file, 'pom.xml');
         if (!dir) {
-          throw new Error('No pom.xml found: install "Test Runner for Java" to run tests of other build tools.');
+          throw new Error(t('No pom.xml found: install "Test Runner for Java" to run tests of other build tools.'));
         }
         if (debug) {
-          void vscode.window.showInformationMessage('Debugging Java tests needs the "Test Runner for Java" extension; running instead.');
+          void vscode.window.showInformationMessage(t('Debugging Java tests needs the "Test Runner for Java" extension; running instead.'));
         }
         const leaves = [...leavesOf(item)];
         leaves.forEach((l) => run.started(l));
         const command = mavenTestCommand(existsSync(path.join(dir, 'mvnw')), process.platform === 'win32', action.className, action.method);
         const code = await runTask(action.method ? `${action.className.split('.').pop()}.${action.method}` : action.className, dir, command, folder);
-        leaves.forEach((l) => (code === 0 ? run.passed(l) : run.failed(l, new vscode.TestMessage(`Maven exited with code ${code}. See the Run panel for details.`))));
+        leaves.forEach((l) => (code === 0 ? run.passed(l) : run.failed(l, new vscode.TestMessage(t('Maven exited with code {0}. See the Run panel for details.', code)))));
         return;
       }
       case 'javaMain': {
@@ -202,18 +203,18 @@ export class GutterRunner implements vscode.Disposable {
           void runTask(action.className.split('.').pop()!, dir, `${mvn} spring-boot:run`, folder);
           return;
         }
-        throw new Error('Running Java applications needs "Language Support for Java" and "Debugger for Java".');
+        throw new Error(t('Running Java applications needs "Language Support for Java" and "Debugger for Java".'));
       }
       case 'jsTest': {
         const dir = findUp(action.file, 'package.json');
         if (!dir) {
-          throw new Error('No package.json found for this test file.');
+          throw new Error(t('No package.json found for this test file.'));
         }
         const runner = detectJsRunner(JSON.parse(readFileSync(path.join(dir, 'package.json'), 'utf8')));
         const relative = path.relative(dir, action.file.fsPath).split(path.sep).join('/');
         const command = jsTestCommand(runner, relative, action.names);
         if (!command) {
-          throw new Error('No test runner (Vitest, Jest or Karma) found in package.json.');
+          throw new Error(t('No test runner (Vitest, Jest or Karma) found in package.json.'));
         }
         if (debug) {
           await vscode.debug.startDebugging(folder, { type: 'node-terminal', request: 'launch', name: item.label, command, cwd: dir });
@@ -223,7 +224,7 @@ export class GutterRunner implements vscode.Disposable {
         leaves.forEach((l) => run.started(l));
         const code = await runTask(item.label, dir, command, folder);
         this.log.info(`Gutter run '${command}' exited with ${code}`);
-        leaves.forEach((l) => (code === 0 ? run.passed(l) : run.failed(l, new vscode.TestMessage(`Exited with code ${code}. See the Run panel for details.`))));
+        leaves.forEach((l) => (code === 0 ? run.passed(l) : run.failed(l, new vscode.TestMessage(t('Exited with code {0}. See the Run panel for details.', code)))));
         return;
       }
     }

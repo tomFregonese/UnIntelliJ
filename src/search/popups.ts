@@ -5,6 +5,7 @@ import { fileIconPath } from './fileIcons';
 import { NavigationHistory } from './history';
 import { openLocation, SearchItem } from './searchEverywhere';
 import { symbolIconPath } from './symbolIcons';
+import { t } from '../i18n/i18n';
 
 /** Tool windows listed in the left column of IntelliJ's Recent Files popup. */
 const TOOL_WINDOW_ICONS: Record<string, string> = {
@@ -33,7 +34,7 @@ function runQuickPick(quickPick: vscode.QuickPick<SearchItem>): void {
   quickPick.show();
 }
 
-const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: 'Open to the Side' };
+const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: t('Open to the Side') };
 
 /**
  * IntelliJ's Recent Files (Ctrl+E) and Recent Locations (Ctrl+Shift+E). Invoking the shortcut
@@ -57,8 +58,8 @@ export class RecentPopups {
     (quickPick as unknown as { sortByLabel: boolean }).sortByLabel = false;
     const multiRoot = (vscode.workspace.workspaceFolders?.length ?? 0) > 1;
     const render = (): void => {
-      quickPick.title = editedOnly ? 'Recently Edited Files' : 'Recent Files';
-      quickPick.placeholder = `Type to filter · ${editedOnly ? 'Show all' : 'Show edited only'}: press the shortcut again`;
+      quickPick.title = editedOnly ? t('Recently Edited Files') : t('Recent Files');
+      quickPick.placeholder = t('Type to filter · {0}: press the shortcut again', editedOnly ? 'Show all' : 'Show edited only');
       const files: SearchItem[] = this.history.files(editedOnly).map((f) => {
         const uri = vscode.Uri.parse(f.uri);
         const relative = vscode.workspace.asRelativePath(uri, multiRoot);
@@ -83,7 +84,7 @@ export class RecentPopups {
         iconPath: new vscode.ThemeIcon(TOOL_WINDOW_ICONS[a.id]),
         open: () => vscode.commands.executeCommand(a.command, ...(a.args !== undefined ? [a.args] : [])),
       }));
-      quickPick.items = [...files, { label: 'Tool Windows', kind: vscode.QuickPickItemKind.Separator }, ...toolWindows];
+      quickPick.items = [...files, { label: t('Tool Windows'), kind: vscode.QuickPickItemKind.Separator }, ...toolWindows];
     };
     this.open = { kind: 'files', toggle: () => ((editedOnly = !editedOnly), render()) };
     quickPick.onDidHide(() => (this.open = undefined));
@@ -102,8 +103,8 @@ export class RecentPopups {
     quickPick.matchOnDetail = true;
     const multiRoot = (vscode.workspace.workspaceFolders?.length ?? 0) > 1;
     const render = (): void => {
-      quickPick.title = editedOnly ? 'Recently Changed Locations' : 'Recent Locations';
-      quickPick.placeholder = `Type to filter · ${editedOnly ? 'Show all' : 'Show changed only'}: press the shortcut again`;
+      quickPick.title = editedOnly ? t('Recently Changed Locations') : t('Recent Locations');
+      quickPick.placeholder = t('Type to filter · {0}: press the shortcut again', editedOnly ? 'Show all' : 'Show changed only');
       quickPick.items = this.history.locations(editedOnly).map((l) => {
         const uri = vscode.Uri.parse(l.uri);
         const relative = vscode.workspace.asRelativePath(uri, multiRoot);
@@ -152,8 +153,8 @@ export async function showFileStructure(extensionUri: vscode.Uri): Promise<void>
   const flat = flatten(documentSymbols);
   const quickPick = vscode.window.createQuickPick<SearchItem>();
   (quickPick as unknown as { sortByLabel: boolean }).sortByLabel = false;
-  quickPick.title = `File Structure · ${editor.document.fileName.split(/[\\/]/).pop()}`;
-  quickPick.placeholder = flat.length === 0 ? 'No structure available for this file' : 'Type to filter';
+  quickPick.title = t('File Structure · {0}', editor.document.fileName.split(/[\\/]/).pop());
+  quickPick.placeholder = flat.length === 0 ? t('No structure available for this file') : t('Type to filter');
   quickPick.matchOnDescription = true;
   const items: SearchItem[] = flat.map(({ symbol, depth }) => ({
     label: `${' '.repeat(depth)}${symbol.name}`,

@@ -19,3 +19,5 @@
 !fonts/*.ttf
 !fonts/OFL.txt
 !media/inspections/*.svg
+!package.nls.json
+!package.nls.fr.json

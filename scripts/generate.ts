@@ -6,6 +6,7 @@
  *   package.json  contributes.keybindings     ← src/keymap/keymap.ts
  *   docs/KEYMAP.md                            ← src/keymap/keymap.ts
  *   media/product-icons.css                   ← icons/product-icon-theme.json
+ *   package.nls.json, package.nls.fr.json     ← texts of the contributions (src/i18n)
  *   package.json  contributes.colors          ← src/theme/build.ts
  *   themes/*.json                             ← src/theme/palettes.ts (+ icons/symbol-colors.json)
  *
@@ -19,6 +20,7 @@ import { buildConfigurationContribution, CONFIGURATION_DEFAULTS } from '../src/c
 import { buildKeybindings, buildKeymapMarkdown } from '../src/keymap/keymap';
 import { buildColorContribution, buildColorTheme, themeFileName } from '../src/theme/build';
 import { ISLANDS_DARK, ISLANDS_LIGHT, PALETTES } from '../src/theme/palettes';
+import { localizeContributions } from '../src/i18n/nls';
 
 const root = join(__dirname, '..');
 const check = process.argv.includes('--check');
@@ -50,7 +52,12 @@ pkg.contributes.taskDefinitions = TASK_DEFINITIONS;
 pkg.contributes.keybindings = buildKeybindings();
 pkg.contributes.colors = buildColorContribution(ISLANDS_DARK, ISLANDS_LIGHT);
 pkg.contributes.configurationDefaults = CONFIGURATION_DEFAULTS;
+// Texts as %key% placeholders, translated in package.nls.json / package.nls.fr.json.
+const localized = localizeContributions(pkg.contributes);
+pkg.contributes = localized.value;
 emit(packagePath, json(pkg));
+emit(join(root, 'package.nls.json'), json(localized.en));
+emit(join(root, 'package.nls.fr.json'), json(localized.fr));
 
 // Keymap reference
 emit(join(root, 'docs', 'KEYMAP.md'), buildKeymapMarkdown());

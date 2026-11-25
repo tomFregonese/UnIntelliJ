@@ -8,6 +8,7 @@ import { NavigationHistory } from './history';
 import { matchFile, matchName, parseQuery, ParsedQuery, rank } from './matcher';
 import { searchText } from './ripgrep';
 import { symbolIconPath } from './symbolIcons';
+import { t } from '../i18n/i18n';
 
 export const TABS = ['all', 'classes', 'files', 'symbols', 'actions', 'text'] as const;
 export type TabId = (typeof TABS)[number];
@@ -22,7 +23,7 @@ export interface SearchItem extends vscode.QuickPickItem {
   open?(toSide: boolean): Thenable<unknown>;
 }
 
-const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: 'Open to the Side' };
+const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: t('Open to the Side') };
 
 /** Opens `uri`, optionally at a position, in the active or side editor group. */
 export async function openLocation(uri: vscode.Uri, toSide: boolean, position?: vscode.Position, length = 0): Promise<void> {
@@ -31,7 +32,7 @@ export async function openLocation(uri: vscode.Uri, toSide: boolean, position?: 
 }
 
 export function renderTabs(active: TabId, includeNonProject: boolean): string {
-  const tabs = TABS.map((t) => (t === active ? `[${TAB_LABELS[t]}]` : TAB_LABELS[t])).join('   ');
+  const tabs = TABS.map((tab) => (tab === active ? `[${t(TAB_LABELS[tab])}]` : t(TAB_LABELS[tab]))).join('   ');
   return `${tabs}${includeNonProject ? '   · Including non-project items' : ''}`;
 }
 
@@ -81,7 +82,7 @@ export class SearchEverywhere implements vscode.Disposable {
     quickPick.matchOnDetail = false;
     // Results are already ranked; keep our order (exists at runtime, not yet in the typings).
     (quickPick as unknown as { sortByLabel: boolean }).sortByLabel = false;
-    quickPick.placeholder = 'Type to search · Tab switches tabs · Shift Shift includes non-project items';
+    quickPick.placeholder = t('Type to search · Tab switches tabs · Shift Shift includes non-project items');
     if (initialValue !== undefined) {
       quickPick.value = initialValue;
     } else {
@@ -130,11 +131,11 @@ export class SearchEverywhere implements vscode.Disposable {
 
   private nonProjectButton(): vscode.QuickInputButton {
     return this.includeNonProject
-      ? { iconPath: new vscode.ThemeIcon('library'), tooltip: 'Including non-project items (click to exclude)' }
-      : { iconPath: new vscode.ThemeIcon('folder'), tooltip: 'Project items only (click to include non-project items)' };
+      ? { iconPath: new vscode.ThemeIcon('library'), tooltip: t('Including non-project items (click to exclude)') }
+      : { iconPath: new vscode.ThemeIcon('folder'), tooltip: t('Project items only (click to include non-project items)') };
   }
 
-  private findInFilesButton: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('search-view-icon'), tooltip: 'Open in Find Tool Window' };
+  private findInFilesButton: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('search-view-icon'), tooltip: t('Open in Find Tool Window') };
 
   private refreshChrome(): void {
     if (!this.quickPick) {
@@ -225,11 +226,11 @@ export class SearchEverywhere implements vscode.Disposable {
     ]);
     const recentUris = new Set(recent.map((r) => r.description + r.label));
     const sections: [string, SearchItem[]][] = [
-      ['Recent Files', recent],
-      ['Classes', classes],
-      ['Files', files.filter((f) => !recentUris.has(f.description + f.label))],
-      ['Symbols', symbols.filter((s) => !classes.some((c) => c.label === s.label && c.description === s.description))],
-      ['Actions', this.actionItems(raw, LIMITS.all)],
+      [t('Recent Files'), recent],
+      [t('Classes'), classes],
+      [t('Files'), files.filter((f) => !recentUris.has(f.description + f.label))],
+      [t('Symbols'), symbols.filter((s) => !classes.some((c) => c.label === s.label && c.description === s.description))],
+      [t('Actions'), this.actionItems(raw, LIMITS.all)],
     ];
     return sections.flatMap(([label, items]) => (items.length === 0 ? [] : [{ label, kind: vscode.QuickPickItemKind.Separator }, ...items]));
   }
@@ -325,7 +326,7 @@ export class SearchEverywhere implements vscode.Disposable {
         : rank(this.actions, (a) => bestWordMatch(query, a.searchText), (a) => a.label, limit);
     const items: SearchItem[] = ranked.map((a) => ({ label: a.label, description: a.description, open: () => a.run() }));
     if (this.tab === 'actions') {
-      items.push({ label: 'All Commands…', description: 'VS Code Command Palette', open: () => vscode.commands.executeCommand('workbench.action.quickOpen', `>${query}`) });
+      items.push({ label: t('All Commands…'), description: t('VS Code Command Palette'), open: () => vscode.commands.executeCommand('workbench.action.quickOpen', `>${query}`) });
     }
     return items;
   }
@@ -344,7 +345,7 @@ export class SearchEverywhere implements vscode.Disposable {
       token,
     });
     if (matches === undefined) {
-      return [{ label: 'Text search is not available in this VS Code build', description: 'Open in Find Tool Window', open: () => vscode.commands.executeCommand('workbench.action.findInFiles', { query: raw, triggerSearch: true }) }];
+      return [{ label: t('Text search is not available in this VS Code build'), description: t('Open in Find Tool Window'), open: () => vscode.commands.executeCommand('workbench.action.findInFiles', { query: raw, triggerSearch: true }) }];
     }
     const multiRoot = folders.length > 1;
     return matches.map((m) => {

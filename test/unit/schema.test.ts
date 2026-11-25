@@ -9,6 +9,7 @@ import {
   SETTING_KEYS,
   SETTINGS,
 } from '../../src/config/schema';
+import { localizeContributions } from '../../src/i18n/nls';
 
 describe('settings schema', () => {
   it('declares every setting in a known section', () => {
@@ -34,7 +35,7 @@ describe('settings schema', () => {
 
   it('matches contributes.configuration in package.json', () => {
     const pkg = JSON.parse(readFileSync(join(__dirname, '..', '..', 'package.json'), 'utf8'));
-    expect(pkg.contributes.configuration).toEqual(buildConfigurationContribution());
+    expect(pkg.contributes.configuration).toEqual(localizeContributions({ configuration: buildConfigurationContribution() }).value.configuration);
   });
 
   it('generates one configuration category per section, in order', () => {

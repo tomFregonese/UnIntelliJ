@@ -97,8 +97,7 @@ body {
   font-weight: 600;
 }
 
-.group.active .group-name::after {
-  content: ' (active)';
+.group .active-label {
   font-weight: normal;
   color: var(--vscode-descriptionForeground);
 }
