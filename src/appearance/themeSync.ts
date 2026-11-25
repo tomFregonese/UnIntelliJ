@@ -90,8 +90,11 @@ export class ThemeSync implements vscode.Disposable {
       }
       // A theme the user chose themselves is never replaced here: SetupPrompt asks once instead.
       const own = vscode.workspace.getConfiguration('workbench').inspect<string>('colorTheme')?.globalValue;
-      if (own === undefined || themeIdFromLabel(own)) {
+      if (own === undefined) {
         await this.applyToVsCode();
+      } else if (themeIdFromLabel(own)) {
+        // Already on an Islands theme chosen by the user: adopt it rather than replace it.
+        await this.reflectFromVsCode();
       }
       await this.state.update(INITIALIZED_KEY, true);
     });

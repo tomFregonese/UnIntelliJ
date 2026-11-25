@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { initializeIconThemes } from './appearance/iconThemes';
 import { getSetting, onSettingsChanged } from './config/settings';
 import { setLanguage, t } from './i18n/i18n';
 import { ThemeSync } from './appearance/themeSync';
@@ -93,7 +92,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);
   await themeSync.initialize();
-  await initializeIconThemes(context.globalState, log);
   // Not awaited: the notification stays until the user answers. Skipped in extension tests.
   if (context.extensionMode !== vscode.ExtensionMode.Test) {
     void setup.onStartup();

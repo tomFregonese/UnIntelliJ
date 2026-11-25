@@ -44,7 +44,8 @@ suite('Appearance', () => {
     assert.strictEqual(vscode.window.activeColorTheme.kind, vscode.ColorThemeKind.Dark);
   });
 
-  test('switches to the New UI file and product icons on first activation', () => {
+  test('uses the New UI file and product icons as VS Code defaults, without user values', () => {
+    assert.strictEqual(workbench().inspect('iconTheme')?.globalValue, undefined);
     assert.strictEqual(workbench().get('iconTheme'), 'unintellij-file-icons');
     assert.strictEqual(workbench().get('productIconTheme'), 'unintellij-product-icons');
   });
