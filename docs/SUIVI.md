@@ -145,12 +145,13 @@ Cocher et dater quand c'est réglé.
   - goals dans le widget Run.
   - Fait : Profiles à cocher, projets et modules imbriqués, Lifecycle, Plugins (goals des plugins courants), Dependencies directes, double-clic ou ▶ pour lancer, « Execute Maven Goal… », Reload, Offline, Skip Tests, wrapper `mvnw` utilisé s'il existe. Chaque goal lancé devient une configuration temporaire du widget Run (5 dernières, comme IntelliJ). **Écarts** : pas de pom effectif (plugins hérités du parent non listés), dépendances directes seulement (pas d'arbre transitif), le bouton Debug lance le goal sans débogueur.
 - [x] **5. Widget de branche en un seul bloc** : branche, ↙ entrants, ↗ sortants et icône de fetch dans une seule entrée cliquable. Le clic ouvre le popup Git : Update, Commit, Push, Fetch, nouvelle branche, branches locales et distantes. Fait ; **écart** : sans Islands+, les compteurs ↙/↗ ne sont plus colorés (une entrée de barre d'état n'a qu'une couleur) ; avec Islands+, ils restent bleu / vert.
-- [ ] **6. Proposer les extensions Java officielles, et seulement elles** :
+- [x] **6. Proposer les extensions Java officielles, et seulement elles** :
   - quand un projet Java / Maven est ouvert, une fenêtre propose une petite liste à cocher, jamais une installation forcée ;
   - **Language Support for Java** (Red Hat) : complétion, navigation, erreurs ;
   - **Debugger for Java** (Microsoft) : lancement et débogage, nécessaire au point 7 ;
   - **Spring Boot Tools** (Spring / Broadcom), facultatif : aide dans `application.properties`, beans, endpoints ;
   - pas d'« Extension Pack for Java », ni d'IntelliCode, ni de Maven for Java (la tool window Maven est la nôtre, elle appelle `mvn`).
+  - Fait : proposition à l'ouverture d'un projet Java (pom.xml, build.gradle ou .java), boutons Choisir… / Pas maintenant / Ne plus demander ; commande « Install Java Extensions… » ; Spring Boot Tools ajouté à Settings › Plugins.
 - [ ] **7. Lancer les configurations Eclipse du dépôt** (`*.launch`) depuis le widget Run et avec ▶, sans rien écrire dans le dépôt :
   - Java Application : classe main, arguments, VM args, variables d'environnement, dossier de travail ;
   - Maven (m2e) : goals et profils ;

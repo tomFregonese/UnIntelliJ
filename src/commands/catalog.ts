@@ -42,6 +42,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.inspection.error', title: 'Errors in This File', icon: { light: 'media/inspections/error-light.svg', dark: 'media/inspections/error-dark.svg' }, hidden: true },
   { command: 'unintellij.toggleReadOnly', title: 'Toggle Read-Only Attribute' },
   // Database
+  { command: 'unintellij.installJavaExtensions', title: 'Install Java Extensions…' },
   { command: 'unintellij.maven.reload', title: 'Reload All Maven Projects', icon: '$(refresh)' },
   { command: 'unintellij.maven.executeGoal', title: 'Execute Maven Goal…', icon: '$(terminal)' },
   { command: 'unintellij.maven.run', title: 'Run Maven Build', icon: '$(play)', hidden: true },

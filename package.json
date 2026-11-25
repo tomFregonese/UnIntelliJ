@@ -348,6 +348,11 @@
         "category": "%command.category%"
       },
       {
+        "command": "unintellij.installJavaExtensions",
+        "title": "%command.unintellij.installJavaExtensions%",
+        "category": "%command.category%"
+      },
+      {
         "command": "unintellij.maven.reload",
         "title": "%command.unintellij.maven.reload%",
         "category": "%command.category%",

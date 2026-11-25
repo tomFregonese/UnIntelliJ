@@ -21,6 +21,7 @@
   "command.unintellij.inspection.warning": "Avertissements dans ce fichier",
   "command.unintellij.inspection.error": "Erreurs dans ce fichier",
   "command.unintellij.toggleReadOnly": "Basculer la lecture seule",
+  "command.unintellij.installJavaExtensions": "Installer les extensions Java…",
   "command.unintellij.maven.reload": "Recharger tous les projets Maven",
   "command.unintellij.maven.executeGoal": "Exécuter un goal Maven…",
   "command.unintellij.maven.run": "Lancer le build Maven",

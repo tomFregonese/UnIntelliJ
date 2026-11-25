@@ -12,6 +12,7 @@ const PURPOSES: Record<IntegrationId, string> = {
   git: 'Commit tool window, branches, Git log',
   java: 'Java classes and symbols in Search Everywhere, Java refactorings',
   javaDebug: 'Run/Debug of Java applications',
+  springBoot: 'Spring Boot: application.properties completion, beans and endpoints (optional)',
   angular: 'Angular templates: completion, navigation',
 };
 

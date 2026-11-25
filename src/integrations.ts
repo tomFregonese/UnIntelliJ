@@ -8,6 +8,7 @@ export const INTEGRATIONS = {
   git: { extensionId: 'vscode.git', name: 'Git (built-in)' },
   java: { extensionId: 'redhat.java', name: 'Language Support for Java by Red Hat' },
   javaDebug: { extensionId: 'vscjava.vscode-java-debug', name: 'Debugger for Java' },
+  springBoot: { extensionId: 'vmware.vscode-spring-boot', name: 'Spring Boot Tools' },
   angular: { extensionId: 'Angular.ng-template', name: 'Angular Language Service' },
 } as const;
 

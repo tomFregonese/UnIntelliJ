@@ -13,6 +13,7 @@ import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
+import { JavaExtensions } from './settings/javaExtensions';
 import { MavenView } from './maven/mavenView';
 import { revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
@@ -69,10 +70,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   const navigation = registerNavigationCommands(context, log);
   const vcs = registerVcsCommands(context, log);
   const setup = new SetupPrompt(context, log);
+  const java = new JavaExtensions(context.globalState);
   context.subscriptions.push(
     ...navigation.disposables,
     ...registerEditorCommands(),
-    ...registerSettingsCommands(context, log, setup),
+    ...registerSettingsCommands(context, log, setup, java),
     ...vcs.disposables,
     syncDisabledActions(),
     userKeybindings,
@@ -97,6 +99,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   // Not awaited: the notification stays until the user answers. Skipped in extension tests.
   if (context.extensionMode !== vscode.ExtensionMode.Test) {
     void setup.onStartup();
+    void java.onStartup();
   }
 
   return {

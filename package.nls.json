@@ -21,6 +21,7 @@
   "command.unintellij.inspection.warning": "Warnings in This File",
   "command.unintellij.inspection.error": "Errors in This File",
   "command.unintellij.toggleReadOnly": "Toggle Read-Only Attribute",
+  "command.unintellij.installJavaExtensions": "Install Java Extensions…",
   "command.unintellij.maven.reload": "Reload All Maven Projects",
   "command.unintellij.maven.executeGoal": "Execute Maven Goal…",
   "command.unintellij.maven.run": "Run Maven Build",
