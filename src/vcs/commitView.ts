@@ -256,6 +256,7 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
     const nonce = randomBytes(16).toString('base64');
     const script = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'commit.js'));
     const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'commit.css'));
+    const controls = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'controls.css'));
     const iconStyle = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'product-icons.css'));
     return `<!DOCTYPE html>
 <html lang="en">
@@ -264,6 +265,7 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="${iconStyle}">
+<link rel="stylesheet" href="${controls}">
 <link rel="stylesheet" href="${style}">
 </head>
 <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>

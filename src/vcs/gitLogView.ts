@@ -249,6 +249,7 @@ export class GitLogView implements vscode.WebviewViewProvider, vscode.Disposable
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="${uri('media', 'product-icons.css')}">
+<link rel="stylesheet" href="${uri('media', 'controls.css')}">
 <link rel="stylesheet" href="${uri('media', 'git-log.css')}">
 </head>
 <body data-vscode-context='{"preventDefaultContextMenuItems": true}'>

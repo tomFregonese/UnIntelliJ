@@ -1,0 +1,85 @@
+/*
+ * IntelliJ New UI controls for webviews (Commit, Git Log, Settings), drawn after
+ * platform-resources/src/themes/expUI/icons/checkBox*.svg and radio*.svg:
+ * 16 px boxes with 3 px corners, filled blue when selected, 2 px focus ring.
+ */
+input[type='checkbox'],
+input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 6px 0 0;
+  box-sizing: border-box;
+  border: 1px solid var(--vscode-checkbox-border);
+  border-radius: 3px;
+  background: var(--vscode-checkbox-background);
+  vertical-align: -3px;
+  cursor: pointer;
+}
+
+input[type='radio'] {
+  border-radius: 50%;
+}
+
+input[type='checkbox']:checked,
+input[type='checkbox']:indeterminate,
+input[type='radio']:checked {
+  background: var(--vscode-button-background);
+  border-color: var(--vscode-button-background);
+}
+
+/* Check mark: the SVG path M8 12.5 L11 15.5 L16.5 9 (2 px, round) as a rotated corner. */
+input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--vscode-button-foreground);
+  border-width: 0 2px 2px 0;
+  border-radius: 0 0 1px 0;
+  transform: rotate(40deg);
+}
+
+input[type='checkbox']:indeterminate::after {
+  content: '';
+  position: absolute;
+  left: 2.5px;
+  top: 6px;
+  width: 9px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--vscode-button-foreground);
+}
+
+input[type='radio']:checked::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--vscode-button-foreground);
+}
+
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: 0;
+}
+
+input[type='checkbox']:disabled,
+input[type='radio']:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Labels next to controls: IntelliJ leaves 4-6 px between box and text. */
+label:has(> input[type='checkbox']),
+label:has(> input[type='radio']) {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}

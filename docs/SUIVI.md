@@ -100,19 +100,19 @@ Cocher et dater quand c'est réglé.
 
 ## Itération 2 — à faire (détail : cahier des charges §14)
 
-- [ ] Police et taille (illisible au travail) — §14.1
-- [ ] Couleurs exactes importées d'intellij-community — §14.2
-- [ ] Cases à cocher / contrôles IntelliJ dans les webviews — §14.3
+- [x] Police et taille — §14.1 : JetBrains Mono embarquée et installable « pour moi » (sans admin), 14 px Windows / 13 px macOS. **À calibrer sur le poste Windows** (capture côte à côte IntelliJ / VS Code).
+- [x] Couleurs exactes importées d'intellij-community — §14.2 (valeurs des thèmes ManyIslands Light/Dark et des schémas Light / Islands Dark)
+- [x] Cases à cocher / boutons radio IntelliJ dans les webviews — §14.3 (`media/controls.css`)
 - [ ] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4
 - [ ] Widget Run unique + fenêtre Edit Configurations, suppression de la tool window npm — §14.5
 - [ ] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6
 - [ ] Vue Project avec sélecteur « Project ▾ » (Project / Packages / Project Files / Open Files / Changed Files), remplace l'Explorateur — §15.1
 - [ ] Barre de gauche : Project, Commit, Git séparé (en bas si possible, sinon sous Commit) ; Structure et npm retirés — §15.2
-- [ ] Proposition automatique des réglages IntelliJ + vérification JetBrains Mono + choix Light/Dark au premier lancement — §15.3
-- [ ] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
+- [x] Proposition automatique des réglages IntelliJ + vérification JetBrains Mono + choix Light/Dark au premier lancement — §15.3
+- [x] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
 - [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
 - [ ] **Base de données PostgreSQL façon IntelliJ** : tool window Database, sources de données (mots de passe sécurisés, couleur par source), sélecteur source/schéma dans les fichiers `.sql`, `Ctrl+Entrée`, résultats en grille — §16 (PostgreSQL uniquement)
 - [ ] **Triangles verts ▶ dans la gouttière** : tests Java (méthode, classe, package, avec ✓/✗ après exécution), `main` / Spring Boot, scripts `package.json`, tests TS/JS, instructions SQL — §17
 - [ ] ▶ **dans la gouttière à gauche de la ligne**, pas au-dessus (API Testing pour tous les cas) — §17.5
-- [ ] Barre Git **pleine** (pas hachurée) dans la gouttière, réglée automatiquement — §18.1
+- [x] Barre Git **pleine** (pas hachurée) dans la gouttière, réglée automatiquement — §18.1 (`configurationDefaults`)
 - [ ] Popup de modification au clic (ancien contenu, Précédent / Suivant / Rollback / Show Diff) et diff complet façon IntelliJ — §18.2, §18.3

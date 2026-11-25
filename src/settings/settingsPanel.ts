@@ -139,12 +139,14 @@ export class SettingsPanel implements vscode.Disposable {
     const nonce = randomBytes(16).toString('base64');
     const script = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'settings.js'));
     const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'settings.css'));
+    const controls = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'controls.css'));
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="${controls}">
 <link rel="stylesheet" href="${style}">
 <title>Settings</title>
 </head>
