@@ -31,3 +31,12 @@ Cocher et dater quand c'est réglé.
 - [ ] **`Ctrl+K` (Commit) écrase le préfixe des raccourcis à deux temps de VS Code** (`Ctrl+K Ctrl+S`, `Ctrl+K Ctrl+0`…). Voulu pour coller à IntelliJ, mais ces commandes ne restent accessibles que par `Ctrl+Shift+A`.
 - [ ] **Équivalences approximatives** : Move Statement = Move Line ; Introduce Variable ouvre le menu « Extract » ; la tool window Run = Debug Console ; Paste from History absent (pas d'API presse-papiers).
 - [ ] Les raccourcis VS Code par défaut qui n'existent pas dans IntelliJ restent actifs (ex. `Ctrl+Shift+P`) — à décider : les laisser ou les neutraliser.
+
+## Lot 5 — Search Everywhere et popups
+
+- [ ] **Rendu non vérifié** : les onglets sont affichés dans le titre du popup (`[All]   Classes   Files…`) faute d'API d'onglets ; vérifier que c'est lisible et que l'ordre des résultats est bien le nôtre (propriété `sortByLabel` non documentée).
+- [ ] **Surlignage des caractères trouvés** : c'est VS Code qui surligne, avec son propre algorithme, pas toujours les mêmes lettres que notre matcher (pas d'API stable pour fournir les positions).
+- [ ] **Ouvrir à côté** : bouton sur chaque ligne ; pas de `Shift+Enter` (l'API ne transmet pas les modificateurs).
+- [ ] **Abréviations de classes sur très gros projets** : on interroge le serveur de langage avec la 1re lettre ; s'il tronque ses résultats, des classes peuvent manquer. À tester sur le projet Angular du travail.
+- [ ] **Actions** : les commandes internes de VS Code n'ont pas de titre accessible aux extensions ; l'entrée « All Commands… » ouvre la palette native pour elles.
+- [ ] **Java** : Classes/Symbols dépendent de l'extension Red Hat (jdtls) ; à tester quand elle sera installée.

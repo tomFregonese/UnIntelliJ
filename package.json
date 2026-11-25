@@ -242,6 +242,21 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.searchEverywhere.text",
+        "title": "Search Everywhere: Text",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.searchEverywhere.nextTab",
+        "title": "Search Everywhere: Next Tab",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.searchEverywhere.previousTab",
+        "title": "Search Everywhere: Previous Tab",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.nextMethod",
         "title": "Next Method",
         "category": "UnIntelliJ"
@@ -288,7 +303,16 @@
       }
     ],
     "menus": {
-      "commandPalette": []
+      "commandPalette": [
+        {
+          "command": "unintellij.searchEverywhere.nextTab",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.searchEverywhere.previousTab",
+          "when": "false"
+        }
+      ]
     },
     "keybindings": [
       {
@@ -1562,6 +1586,16 @@
         "key": "cmd+shift+n",
         "command": "workbench.action.files.newUntitledFile",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewScratchFile"
+      },
+      {
+        "key": "tab",
+        "command": "unintellij.searchEverywhere.nextTab",
+        "when": "inQuickOpen && unintellij.searchEverywhereVisible"
+      },
+      {
+        "key": "shift+tab",
+        "command": "unintellij.searchEverywhere.previousTab",
+        "when": "inQuickOpen && unintellij.searchEverywhereVisible"
       }
     ]
   },

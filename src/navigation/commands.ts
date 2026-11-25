@@ -1,23 +1,40 @@
 import * as vscode from 'vscode';
+import { FileIndex } from '../search/fileIndex';
+import { NavigationHistory } from '../search/history';
+import { RecentPopups, showFileStructure } from '../search/popups';
+import { SearchEverywhere, TabId } from '../search/searchEverywhere';
 
-/**
- * Navigation popups. Until Search Everywhere and the IntelliJ popups exist, they open the closest
- * VS Code built-in so that the keymap already works.
- */
-export function registerNavigationCommands(): vscode.Disposable[] {
-  const quickOpen = (prefix = '') => () => vscode.commands.executeCommand('workbench.action.quickOpen', prefix);
-  return [
-    vscode.commands.registerCommand('unintellij.searchEverywhere', quickOpen()),
-    vscode.commands.registerCommand('unintellij.findAction', quickOpen('>')),
-    vscode.commands.registerCommand('unintellij.gotoClass', quickOpen('#')),
-    vscode.commands.registerCommand('unintellij.gotoFile', quickOpen()),
-    vscode.commands.registerCommand('unintellij.gotoSymbol', quickOpen('#')),
-    vscode.commands.registerCommand('unintellij.fileStructure', quickOpen('@')),
-    vscode.commands.registerCommand('unintellij.recentFiles', () =>
-      vscode.commands.executeCommand('workbench.action.showAllEditorsByMostRecentlyUsed'),
-    ),
-    vscode.commands.registerCommand('unintellij.recentLocations', () =>
-      vscode.commands.executeCommand('workbench.action.quickOpenPreviousRecentlyUsedEditor'),
-    ),
-  ];
+export interface Navigation {
+  searchEverywhere: SearchEverywhere;
+  history: NavigationHistory;
+  disposables: vscode.Disposable[];
+}
+
+/** Search Everywhere, Go to Class/File/Symbol, Find Action, Recent Files/Locations, File Structure. */
+export function registerNavigationCommands(context: vscode.ExtensionContext, log: vscode.LogOutputChannel): Navigation {
+  const fileIndex = new FileIndex();
+  const history = new NavigationHistory(context.workspaceState);
+  const searchEverywhere = new SearchEverywhere(context.extensionUri, fileIndex, history, log);
+  const recent = new RecentPopups(context.extensionUri, history);
+  const open = (tab: TabId) => () => searchEverywhere.show(tab);
+  return {
+    searchEverywhere,
+    history,
+    disposables: [
+      fileIndex,
+      history,
+      searchEverywhere,
+      vscode.commands.registerCommand('unintellij.searchEverywhere', open('all')),
+      vscode.commands.registerCommand('unintellij.gotoClass', open('classes')),
+      vscode.commands.registerCommand('unintellij.gotoFile', open('files')),
+      vscode.commands.registerCommand('unintellij.gotoSymbol', open('symbols')),
+      vscode.commands.registerCommand('unintellij.findAction', open('actions')),
+      vscode.commands.registerCommand('unintellij.searchEverywhere.text', open('text')),
+      vscode.commands.registerCommand('unintellij.searchEverywhere.nextTab', () => searchEverywhere.cycleTab(1)),
+      vscode.commands.registerCommand('unintellij.searchEverywhere.previousTab', () => searchEverywhere.cycleTab(-1)),
+      vscode.commands.registerCommand('unintellij.recentFiles', () => recent.showRecentFiles()),
+      vscode.commands.registerCommand('unintellij.recentLocations', () => recent.showRecentLocations()),
+      vscode.commands.registerCommand('unintellij.fileStructure', showFileStructure),
+    ],
+  };
 }

@@ -195,8 +195,19 @@ export function disabledContextKey(actionId: string): string {
   return `unintellij.keymap.disabled.${actionId}`;
 }
 
-/** The `contributes.keybindings` entries for every action, for both keymaps. */
-export function buildKeybindings(actions: readonly KeymapAction[] = KEYMAP): Keybinding[] {
+/** Keybindings of UnIntelliJ's own UI (not IntelliJ actions): active whatever the keymap. */
+export const INTERNAL_KEYBINDINGS: readonly Keybinding[] = [
+  { key: 'tab', command: 'unintellij.searchEverywhere.nextTab', when: 'inQuickOpen && unintellij.searchEverywhereVisible' },
+  { key: 'shift+tab', command: 'unintellij.searchEverywhere.previousTab', when: 'inQuickOpen && unintellij.searchEverywhereVisible' },
+];
+
+/** Every `contributes.keybindings` entry: both keymaps, then internal bindings. */
+export function buildKeybindings(): Keybinding[] {
+  return [...buildKeymapBindings(), ...INTERNAL_KEYBINDINGS];
+}
+
+/** The keybindings of every IntelliJ action, for both keymaps. */
+export function buildKeymapBindings(actions: readonly KeymapAction[] = KEYMAP): Keybinding[] {
   const result: Keybinding[] = [];
   for (const os of ['windows', 'macos'] as const) {
     for (const action of actions) {
@@ -217,7 +228,7 @@ export function buildKeybindings(actions: readonly KeymapAction[] = KEYMAP): Key
 
 /** Commands implemented by UnIntelliJ that keybindings point to. */
 export function ownCommands(actions: readonly KeymapAction[] = KEYMAP): string[] {
-  const commands = actions.flatMap((a) => [a.command, ...(a.variants ?? []).map((v) => v.command)]);
+  const commands = [...actions.flatMap((a) => [a.command, ...(a.variants ?? []).map((v) => v.command)]), ...INTERNAL_KEYBINDINGS.map((k) => k.command)];
   return [...new Set(commands.filter((c) => c.startsWith('unintellij.')))].sort();
 }
 

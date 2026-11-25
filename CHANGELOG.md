@@ -13,3 +13,6 @@
 - Both icon themes are selected on first activation. Icons © JetBrains, Apache 2.0 — see `NOTICE`.
 - IntelliJ **Windows** and **macOS** default keymaps (~105 actions: navigation, editing, refactoring, tool windows, VCS, run/debug, tabs), chosen by `unintellij.keymap.layout` (`auto` follows the OS). Tool window shortcuts toggle like IntelliJ. Any action can be disabled through `unintellij.keymap.disabledActions`. Reference in `docs/KEYMAP.md`.
 - Commands: Next/Previous Method, Toggle Case, Update Project (merge or rebase per `unintellij.vcs.updateMethod`).
+- **Search Everywhere** (double Shift) with All, Classes, Files, Symbols, Actions and Text tabs (Tab/Shift+Tab to switch, IntelliJ shortcuts switch tabs while open, double Shift again includes non-project items). IntelliJ-style matching (camel humps, `dir/name`, `:line`), New UI file icons, symbol icons, open-to-side buttons. Text search uses VS Code's bundled ripgrep.
+- Go to Class / File / Symbol and Find Action open the matching tab; Find Action lists IntelliJ action names with shortcuts and toggleable options ("Soft-Wraps: ON").
+- **Recent Files** (Ctrl+E, again for edited only, with tool windows), **Recent Locations** (Ctrl+Shift+E) and **File Structure** (Ctrl+F12) popups.

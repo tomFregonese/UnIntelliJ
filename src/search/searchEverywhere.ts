@@ -1,0 +1,411 @@
+import * as vscode from 'vscode';
+import { getSetting } from '../config/settings';
+import { ActionEntry, collectActions } from './actions';
+import { excludedGlobs } from './excludes';
+import { fileIconPath } from './fileIcons';
+import { FileIndex, IndexedFile } from './fileIndex';
+import { NavigationHistory } from './history';
+import { matchFile, matchName, parseQuery, ParsedQuery, rank } from './matcher';
+import { searchText } from './ripgrep';
+
+export const TABS = ['all', 'classes', 'files', 'symbols', 'actions', 'text'] as const;
+export type TabId = (typeof TABS)[number];
+const TAB_LABELS: Record<TabId, string> = { all: 'All', classes: 'Classes', files: 'Files', symbols: 'Symbols', actions: 'Actions', text: 'Text' };
+
+export const VISIBLE_CONTEXT_KEY = 'unintellij.searchEverywhereVisible';
+
+const CLASS_KINDS = new Set([vscode.SymbolKind.Class, vscode.SymbolKind.Interface, vscode.SymbolKind.Enum, vscode.SymbolKind.Struct]);
+const LIMITS = { all: 5, tab: 100, text: 200 };
+
+export interface SearchItem extends vscode.QuickPickItem {
+  open?(toSide: boolean): Thenable<unknown>;
+}
+
+const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: 'Open to the Side' };
+
+export function symbolIcon(kind: vscode.SymbolKind): vscode.ThemeIcon {
+  const map: Partial<Record<vscode.SymbolKind, [string, string]>> = {
+    [vscode.SymbolKind.Class]: ['symbol-class', 'symbolIcon.classForeground'],
+    [vscode.SymbolKind.Interface]: ['symbol-interface', 'symbolIcon.interfaceForeground'],
+    [vscode.SymbolKind.Enum]: ['symbol-enum', 'symbolIcon.enumeratorForeground'],
+    [vscode.SymbolKind.EnumMember]: ['symbol-enum-member', 'symbolIcon.enumeratorMemberForeground'],
+    [vscode.SymbolKind.Struct]: ['symbol-structure', 'symbolIcon.structForeground'],
+    [vscode.SymbolKind.Method]: ['symbol-method', 'symbolIcon.methodForeground'],
+    [vscode.SymbolKind.Constructor]: ['symbol-method', 'symbolIcon.constructorForeground'],
+    [vscode.SymbolKind.Function]: ['symbol-function', 'symbolIcon.functionForeground'],
+    [vscode.SymbolKind.Field]: ['symbol-field', 'symbolIcon.fieldForeground'],
+    [vscode.SymbolKind.Property]: ['symbol-property', 'symbolIcon.propertyForeground'],
+    [vscode.SymbolKind.Variable]: ['symbol-variable', 'symbolIcon.variableForeground'],
+    [vscode.SymbolKind.Constant]: ['symbol-constant', 'symbolIcon.constantForeground'],
+    [vscode.SymbolKind.TypeParameter]: ['symbol-type-parameter', 'symbolIcon.typeParameterForeground'],
+    [vscode.SymbolKind.Module]: ['symbol-module', 'symbolIcon.moduleForeground'],
+    [vscode.SymbolKind.Namespace]: ['symbol-namespace', 'symbolIcon.namespaceForeground'],
+    [vscode.SymbolKind.Package]: ['symbol-package', 'symbolIcon.packageForeground'],
+  };
+  const [icon, color] = map[kind] ?? ['symbol-misc', 'foreground'];
+  return new vscode.ThemeIcon(icon, new vscode.ThemeColor(color));
+}
+
+/** Opens `uri`, optionally at a position, in the active or side editor group. */
+export async function openLocation(uri: vscode.Uri, toSide: boolean, position?: vscode.Position, length = 0): Promise<void> {
+  const selection = position ? new vscode.Range(position, position.translate(0, length)) : undefined;
+  await vscode.window.showTextDocument(uri, { viewColumn: toSide ? vscode.ViewColumn.Beside : vscode.ViewColumn.Active, selection, preview: false });
+}
+
+export function renderTabs(active: TabId, includeNonProject: boolean): string {
+  const tabs = TABS.map((t) => (t === active ? `[${TAB_LABELS[t]}]` : TAB_LABELS[t])).join('   ');
+  return `${tabs}${includeNonProject ? '   · Including non-project items' : ''}`;
+}
+
+/** IntelliJ's Search Everywhere popup (double Shift). */
+export class SearchEverywhere implements vscode.Disposable {
+  private quickPick: vscode.QuickPick<SearchItem> | undefined;
+  private tab: TabId = 'all';
+  private includeNonProject = false;
+  private generation = 0;
+  private cancellation: vscode.CancellationTokenSource | undefined;
+  private timer: ReturnType<typeof setTimeout> | undefined;
+  private actions: ActionEntry[] | undefined;
+  private readonly symbolCache = new Map<string, Promise<vscode.SymbolInformation[]>>();
+
+  constructor(
+    private readonly extensionUri: vscode.Uri,
+    private readonly fileIndex: FileIndex,
+    private readonly history: NavigationHistory,
+    private readonly log: vscode.LogOutputChannel,
+  ) {}
+
+  get visible(): boolean {
+    return this.quickPick !== undefined;
+  }
+
+  get activeTab(): TabId {
+    return this.tab;
+  }
+
+  /** Opens the popup on `tab`; when already open, switches tab or, for double Shift, toggles non-project items. */
+  show(tab: TabId, initialValue?: string): void {
+    if (this.quickPick) {
+      if (tab === this.tab && tab === 'all') {
+        this.includeNonProject = !this.includeNonProject;
+      }
+      this.switchTab(tab);
+      return;
+    }
+    this.tab = tab;
+    this.includeNonProject = getSetting('searchEverywhere.includeNonProjectItems');
+    this.actions = undefined;
+    this.symbolCache.clear();
+
+    const quickPick = vscode.window.createQuickPick<SearchItem>();
+    this.quickPick = quickPick;
+    quickPick.matchOnDescription = false;
+    quickPick.matchOnDetail = false;
+    // Results are already ranked; keep our order (exists at runtime, not yet in the typings).
+    (quickPick as unknown as { sortByLabel: boolean }).sortByLabel = false;
+    quickPick.placeholder = 'Type to search · Tab switches tabs · Shift Shift includes non-project items';
+    if (initialValue !== undefined) {
+      quickPick.value = initialValue;
+    } else {
+      const selection = vscode.window.activeTextEditor?.selection;
+      const selected = selection && !selection.isEmpty && selection.isSingleLine ? vscode.window.activeTextEditor!.document.getText(selection) : '';
+      quickPick.value = selected;
+    }
+
+    quickPick.onDidChangeValue(() => this.scheduleUpdate());
+    quickPick.onDidAccept(() => {
+      const item = quickPick.selectedItems[0] ?? quickPick.activeItems[0];
+      if (item?.open) {
+        quickPick.hide();
+        void item.open(false);
+      }
+    });
+    quickPick.onDidTriggerItemButton(({ item }) => {
+      quickPick.hide();
+      void item.open?.(true);
+    });
+    quickPick.onDidTriggerButton((button) => this.onButton(button));
+    quickPick.onDidHide(() => {
+      this.cancellation?.cancel();
+      clearTimeout(this.timer);
+      quickPick.dispose();
+      this.quickPick = undefined;
+      void vscode.commands.executeCommand('setContext', VISIBLE_CONTEXT_KEY, false);
+    });
+
+    void vscode.commands.executeCommand('setContext', VISIBLE_CONTEXT_KEY, true);
+    this.refreshChrome();
+    quickPick.show();
+    this.scheduleUpdate(0);
+  }
+
+  switchTab(tab: TabId): void {
+    this.tab = tab;
+    this.refreshChrome();
+    this.scheduleUpdate(0);
+  }
+
+  cycleTab(delta: 1 | -1): void {
+    const index = TABS.indexOf(this.tab);
+    this.switchTab(TABS[(index + delta + TABS.length) % TABS.length]);
+  }
+
+  private nonProjectButton(): vscode.QuickInputButton {
+    return this.includeNonProject
+      ? { iconPath: new vscode.ThemeIcon('library'), tooltip: 'Including non-project items (click to exclude)' }
+      : { iconPath: new vscode.ThemeIcon('folder'), tooltip: 'Project items only (click to include non-project items)' };
+  }
+
+  private findInFilesButton: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('search-view-icon'), tooltip: 'Open in Find Tool Window' };
+
+  private refreshChrome(): void {
+    if (!this.quickPick) {
+      return;
+    }
+    this.quickPick.title = renderTabs(this.tab, this.includeNonProject);
+    this.quickPick.buttons = this.tab === 'text' ? [this.nonProjectButton(), this.findInFilesButton] : [this.nonProjectButton()];
+  }
+
+  private onButton(button: vscode.QuickInputButton): void {
+    if (button === this.findInFilesButton) {
+      const query = this.quickPick?.value ?? '';
+      this.quickPick?.hide();
+      void vscode.commands.executeCommand('workbench.action.findInFiles', { query, triggerSearch: true });
+      return;
+    }
+    this.includeNonProject = !this.includeNonProject;
+    this.refreshChrome();
+    this.scheduleUpdate(0);
+  }
+
+  private scheduleUpdate(delay?: number): void {
+    clearTimeout(this.timer);
+    const wait = delay ?? (this.tab === 'text' ? 250 : this.tab === 'files' || this.tab === 'actions' ? 30 : 120);
+    this.timer = setTimeout(() => void this.update(), wait);
+  }
+
+  private async update(): Promise<void> {
+    const quickPick = this.quickPick;
+    if (!quickPick) {
+      return;
+    }
+    this.cancellation?.cancel();
+    const cancellation = new vscode.CancellationTokenSource();
+    this.cancellation = cancellation;
+    const generation = ++this.generation;
+    const raw = quickPick.value;
+    const query = parseQuery(raw);
+    quickPick.busy = true;
+    try {
+      const items = await this.itemsFor(this.tab, raw, query, cancellation.token);
+      if (generation !== this.generation || !this.quickPick) {
+        return;
+      }
+      quickPick.items = items.map((i) => ({ ...i, alwaysShow: true }));
+    } catch (error) {
+      this.log.error(`Search Everywhere failed: ${String(error)}`);
+    } finally {
+      if (generation === this.generation) {
+        quickPick.busy = false;
+      }
+    }
+  }
+
+  /** Results without UI, with the configured "include non-project items" default. */
+  search(tab: TabId, raw: string): Promise<SearchItem[]> {
+    this.symbolCache.clear();
+    this.includeNonProject = getSetting('searchEverywhere.includeNonProjectItems');
+    return this.itemsFor(tab, raw, parseQuery(raw), new vscode.CancellationTokenSource().token);
+  }
+
+  private async itemsFor(tab: TabId, raw: string, query: ParsedQuery, token: vscode.CancellationToken): Promise<SearchItem[]> {
+    switch (tab) {
+      case 'files':
+        return this.fileItems(query, LIMITS.tab);
+      case 'classes':
+        return this.symbolItems(query, true, LIMITS.tab);
+      case 'symbols':
+        return this.symbolItems(query, false, LIMITS.tab);
+      case 'actions':
+        return this.actionItems(raw, LIMITS.tab);
+      case 'text':
+        return this.textItems(raw, token);
+      case 'all':
+        return this.allItems(raw, query);
+    }
+  }
+
+  private async allItems(raw: string, query: ParsedQuery): Promise<SearchItem[]> {
+    if (raw.trim() === '') {
+      return this.recentItems(query, 15);
+    }
+    const [recent, classes, files, symbols] = await Promise.all([
+      this.recentItems(query, LIMITS.all),
+      this.symbolItems(query, true, LIMITS.all),
+      this.fileItems(query, LIMITS.all + 3),
+      this.symbolItems(query, false, LIMITS.all),
+    ]);
+    const recentUris = new Set(recent.map((r) => r.description + r.label));
+    const sections: [string, SearchItem[]][] = [
+      ['Recent Files', recent],
+      ['Classes', classes],
+      ['Files', files.filter((f) => !recentUris.has(f.description + f.label))],
+      ['Symbols', symbols.filter((s) => !classes.some((c) => c.label === s.label && c.description === s.description))],
+      ['Actions', this.actionItems(raw, LIMITS.all)],
+    ];
+    return sections.flatMap(([label, items]) => (items.length === 0 ? [] : [{ label, kind: vscode.QuickPickItemKind.Separator }, ...items]));
+  }
+
+  private fileItem(file: IndexedFile, query: ParsedQuery): SearchItem {
+    return {
+      label: file.name,
+      description: file.relativeDir,
+      iconPath: fileIconPath(this.extensionUri, file.name),
+      buttons: [OPEN_TO_SIDE],
+      open: (toSide) =>
+        openLocation(file.uri, toSide, query.line !== undefined ? new vscode.Position(Math.max(0, query.line - 1), Math.max(0, (query.column ?? 1) - 1)) : undefined),
+    };
+  }
+
+  private async fileItems(query: ParsedQuery, limit: number): Promise<SearchItem[]> {
+    if (query.name === '' && !query.path) {
+      return [];
+    }
+    const files = await this.fileIndex.files(this.includeNonProject);
+    return rank(files, (f) => matchFile(query, f.name, f.relativeDir)?.score, (f) => f.relativeDir + f.name, limit).map((f) => this.fileItem(f, query));
+  }
+
+  private async recentItems(query: ParsedQuery, limit: number): Promise<SearchItem[]> {
+    const current = vscode.window.activeTextEditor?.document.uri.toString();
+    const recent = this.history
+      .files()
+      .filter((f) => f.uri !== current)
+      .map((f) => vscode.Uri.parse(f.uri))
+      .map((uri) => {
+        const relative = vscode.workspace.asRelativePath(uri, (vscode.workspace.workspaceFolders?.length ?? 0) > 1);
+        const slash = relative.lastIndexOf('/');
+        return { uri, name: relative.slice(slash + 1), relativeDir: slash >= 0 ? relative.slice(0, slash) : '' };
+      });
+    const matching = query.name === '' && !query.path ? recent : recent.filter((f) => matchFile(query, f.name, f.relativeDir));
+    return matching.slice(0, limit).map((f) => this.fileItem(f, query));
+  }
+
+  private async symbolItems(query: ParsedQuery, classesOnly: boolean, limit: number): Promise<SearchItem[]> {
+    if (query.name.length === 0) {
+      return [];
+    }
+    const symbols = await this.workspaceSymbols(query.name);
+    const multiRoot = (vscode.workspace.workspaceFolders?.length ?? 0) > 1;
+    // Like IntelliJ, the Symbols tab includes classes too; only the Classes tab filters by kind.
+    const candidates = symbols.filter(
+      (s) => (!classesOnly || CLASS_KINDS.has(s.kind)) && (this.includeNonProject || isProjectFile(s.location.uri)),
+    );
+    const ranked = rank(candidates, (s) => matchName(query.name, s.name)?.score, (s) => s.name, limit);
+    return ranked.map((s) => ({
+      label: s.name,
+      description: [s.containerName, vscode.workspace.asRelativePath(s.location.uri, multiRoot)].filter(Boolean).join(' — '),
+      iconPath: symbolIcon(s.kind),
+      buttons: [OPEN_TO_SIDE],
+      open: (toSide) => openLocation(s.location.uri, toSide, s.location.range.start),
+    }));
+  }
+
+  /**
+   * Language servers filter workspace symbols themselves and do not understand IntelliJ
+   * abbreviations (`USvc`). Ask for the full query and for its first letter, then let our matcher
+   * filter and rank. Results are cached for the lifetime of the popup.
+   */
+  private async workspaceSymbols(name: string): Promise<vscode.SymbolInformation[]> {
+    const queries = [...new Set([name, name[0].toLowerCase()])];
+    const results = await Promise.all(queries.map((q) => this.providerSymbols(q)));
+    const seen = new Set<string>();
+    return results.flat().filter((s) => {
+      const key = `${s.name}|${s.location.uri.toString()}|${s.location.range.start.line}|${s.location.range.start.character}`;
+      return !seen.has(key) && (seen.add(key), true);
+    });
+  }
+
+  private providerSymbols(query: string): Promise<vscode.SymbolInformation[]> {
+    let result = this.symbolCache.get(query);
+    if (!result) {
+      result = Promise.resolve(vscode.commands.executeCommand<vscode.SymbolInformation[] | undefined>('vscode.executeWorkspaceSymbolProvider', query)).then(
+        (symbols) => symbols ?? [],
+      );
+      this.symbolCache.set(query, result);
+      // Empty results are often "server still loading": do not cache them.
+      void result.then((symbols) => symbols.length === 0 && this.symbolCache.delete(query));
+    }
+    return result;
+  }
+
+  private actionItems(raw: string, limit: number): SearchItem[] {
+    this.actions ??= collectActions();
+    const query = raw.trim();
+    const ranked =
+      query === ''
+        ? this.actions.slice(0, limit)
+        : rank(this.actions, (a) => bestWordMatch(query, a.searchText), (a) => a.label, limit);
+    const items: SearchItem[] = ranked.map((a) => ({ label: a.label, description: a.description, open: () => a.run() }));
+    if (this.tab === 'actions') {
+      items.push({ label: 'All Commands…', description: 'VS Code Command Palette', open: () => vscode.commands.executeCommand('workbench.action.quickOpen', `>${query}`) });
+    }
+    return items;
+  }
+
+  private async textItems(raw: string, token: vscode.CancellationToken): Promise<SearchItem[]> {
+    if (raw.length < 2) {
+      return [];
+    }
+    const folders = vscode.workspace.workspaceFolders?.map((f) => f.uri) ?? [];
+    const matches = await searchText({
+      query: raw,
+      folders,
+      excludeGlobs: excludedGlobs(this.includeNonProject),
+      includeIgnored: this.includeNonProject,
+      maxResults: LIMITS.text,
+      token,
+    });
+    if (matches === undefined) {
+      return [{ label: 'Text search is not available in this VS Code build', description: 'Open in Find Tool Window', open: () => vscode.commands.executeCommand('workbench.action.findInFiles', { query: raw, triggerSearch: true }) }];
+    }
+    const multiRoot = folders.length > 1;
+    return matches.map((m) => {
+      const name = m.uri.path.slice(m.uri.path.lastIndexOf('/') + 1);
+      return {
+        label: m.text.trim().slice(0, 150),
+        description: `${vscode.workspace.asRelativePath(m.uri, multiRoot)}:${m.line + 1}`,
+        iconPath: fileIconPath(this.extensionUri, name),
+        buttons: [OPEN_TO_SIDE],
+        open: (toSide) => openLocation(m.uri, toSide, new vscode.Position(m.line, m.character), m.length),
+      };
+    });
+  }
+
+  dispose(): void {
+    this.quickPick?.dispose();
+    this.cancellation?.dispose();
+    clearTimeout(this.timer);
+  }
+}
+
+/** Matches a multi-word action query ("reformat code") against an action's words. */
+function bestWordMatch(query: string, text: string): number | undefined {
+  let total = 0;
+  for (const word of query.split(/\s+/)) {
+    const match = matchName(word, text) ?? matchName(word.toLowerCase(), text.toLowerCase());
+    if (!match) {
+      return undefined;
+    }
+    total += match.score;
+  }
+  return total;
+}
+
+function isProjectFile(uri: vscode.Uri): boolean {
+  const folder = vscode.workspace.getWorkspaceFolder(uri);
+  if (!folder) {
+    return false;
+  }
+  const relative = uri.path.slice(folder.uri.path.length);
+  return !/\/(node_modules|dist|target|build|out|\.angular)\//.test(relative);
+}

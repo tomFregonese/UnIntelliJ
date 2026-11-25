@@ -22,6 +22,9 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.recentFiles', title: 'Recent Files' },
   { command: 'unintellij.recentLocations', title: 'Recent Locations' },
   { command: 'unintellij.fileStructure', title: 'File Structure' },
+  { command: 'unintellij.searchEverywhere.text', title: 'Search Everywhere: Text' },
+  { command: 'unintellij.searchEverywhere.nextTab', title: 'Search Everywhere: Next Tab', hidden: true },
+  { command: 'unintellij.searchEverywhere.previousTab', title: 'Search Everywhere: Previous Tab', hidden: true },
   // Editing
   { command: 'unintellij.nextMethod', title: 'Next Method' },
   { command: 'unintellij.previousMethod', title: 'Previous Method' },

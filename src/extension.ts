@@ -5,6 +5,7 @@ import { registerEditorCommands } from './editor/commands';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 import { syncDisabledActions } from './keymap/disabledActions';
 import { registerNavigationCommands } from './navigation/commands';
+import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { registerVcsCommands } from './vcs/commands';
 
@@ -12,6 +13,8 @@ export interface UnIntelliJApi {
   integrations(): IntegrationStatus[];
   /** Resolves once pending appearance synchronizations are done (used by tests). */
   appearanceIdle(): Promise<void>;
+  /** Search Everywhere results for a tab and query, without UI (used by tests). */
+  search(tab: TabId, query: string): Promise<vscode.QuickPickItem[]>;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi> {
@@ -26,8 +29,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   context.subscriptions.push(vscode.extensions.onDidChange(logIntegrations));
 
   // Commands first: a keybinding may be what activated the extension.
+  const navigation = registerNavigationCommands(context, log);
   context.subscriptions.push(
-    ...registerNavigationCommands(),
+    ...navigation.disposables,
     ...registerEditorCommands(),
     ...registerSettingsCommands(context),
     ...registerVcsCommands(),
@@ -39,7 +43,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   await themeSync.initialize();
   await initializeIconThemes(context.globalState, log);
 
-  return { integrations: detectIntegrations, appearanceIdle: () => themeSync.idle() };
+  return {
+    integrations: detectIntegrations,
+    appearanceIdle: () => themeSync.idle(),
+    search: (tab, query) => navigation.searchEverywhere.search(tab, query),
+  };
 }
 
 export function deactivate(): void {

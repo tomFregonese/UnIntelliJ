@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { COMMANDS } from '../../src/commands/catalog';
-import { buildKeybindings, buildKeymapMarkdown, CATEGORIES, formatKey, KEYMAP, KeymapOs, ownCommands } from '../../src/keymap/keymap';
+import { buildKeybindings, buildKeymapBindings, buildKeymapMarkdown, CATEGORIES, formatKey, KEYMAP, KeymapOs, ownCommands } from '../../src/keymap/keymap';
 
 const root = join(__dirname, '..', '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
@@ -76,8 +76,8 @@ describe('buildKeybindings', () => {
     expect(pkg.contributes.keybindings).toEqual(bindings);
   });
 
-  it('guards every binding with the keymap layout and the disabled-action context key', () => {
-    for (const binding of bindings) {
+  it('guards every IntelliJ binding with the keymap layout and the disabled-action context key', () => {
+    for (const binding of buildKeymapBindings()) {
       expect(binding.when).toMatch(/config\.unintellij\.keymap\.layout/);
       expect(binding.when).toMatch(/!unintellij\.keymap\.disabled\./);
     }
