@@ -66,6 +66,11 @@ export const MENUS = {
 
 export const TASK_DEFINITIONS = [
   {
+    type: 'unintellij-run',
+    required: ['command'],
+    properties: { command: { type: 'string', description: 'Command started from a gutter ▶ (tests, Spring Boot)' } },
+  },
+  {
     type: 'unintellij-npm',
     required: ['script', 'path'],
     properties: {

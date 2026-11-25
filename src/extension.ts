@@ -13,6 +13,7 @@ import { SetupPrompt } from './settings/setupPrompt';
 import { applyPreset, revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
 import { RunWidget } from './run/runWidget';
+import { GutterRunner } from './testing/gutterRunner';
 import { registerVcsCommands } from './vcs/commands';
 import type { CommitViewState } from './vcs/commitProtocol';
 import type { GitLogView } from './vcs/gitLogView';
@@ -61,6 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     syncDisabledActions(),
     userKeybindings,
     new RunWidget(context.workspaceState, context.extensionUri),
+    new GutterRunner(log),
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);

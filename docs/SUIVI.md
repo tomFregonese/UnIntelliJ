@@ -112,7 +112,7 @@ Cocher et dater quand c'est réglé.
 - [x] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
 - [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
 - [ ] **Base de données PostgreSQL façon IntelliJ** : tool window Database, sources de données (mots de passe sécurisés, couleur par source), sélecteur source/schéma dans les fichiers `.sql`, `Ctrl+Entrée`, résultats en grille — §16 (PostgreSQL uniquement)
-- [ ] **Triangles verts ▶ dans la gouttière** : tests Java (méthode, classe, package, avec ✓/✗ après exécution), `main` / Spring Boot, scripts `package.json`, tests TS/JS, instructions SQL — §17
-- [ ] ▶ **dans la gouttière à gauche de la ligne**, pas au-dessus (API Testing pour tous les cas) — §17.5
+- [x] **Triangles verts ▶ dans la gouttière** : scripts `package.json`, tests Java (méthode et classe, via Maven si « Test Runner for Java » est absent), `main` / `@SpringBootApplication`, tests TS/JS (Vitest, Jest ; Karma = fichier entier), ✓/✗ après exécution — §17. Restent : instructions SQL (avec §16), clic droit « lancer les tests du package », Debug des tests Java sans l'extension Microsoft, arbre de résultats détaillé (aujourd'hui code de sortie + sortie dans le terminal).
+- [x] ▶ **dans la gouttière à gauche de la ligne**, pas au-dessus (API Testing pour tous les cas) — §17.5
 - [x] Barre Git **pleine** (pas hachurée) dans la gouttière, réglée automatiquement — §18.1 (`configurationDefaults`)
 - [ ] Popup de modification au clic (ancien contenu, Précédent / Suivant / Rollback / Show Diff) et diff complet façon IntelliJ — §18.2, §18.3
