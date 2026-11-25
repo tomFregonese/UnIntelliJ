@@ -46,7 +46,7 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
 
   resolveWebviewView(view: vscode.WebviewView): void {
     this.view = view;
-    view.webview.options = { enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist'), vscode.Uri.joinPath(this.extensionUri, 'media')] };
+    view.webview.options = { enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist'), vscode.Uri.joinPath(this.extensionUri, 'media'), vscode.Uri.joinPath(this.extensionUri, 'icons')] };
     view.webview.html = this.html(view.webview);
     view.webview.onDidReceiveMessage((m: FromResultsWebview) => void this.onMessage(m));
     view.onDidDispose(() => (this.view = undefined));

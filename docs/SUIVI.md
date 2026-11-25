@@ -120,5 +120,5 @@ Cocher et dater quand c'est réglé.
 - [x] Commit : simple clic = aperçu du diff à droite avec le focus qui reste dans la liste, flèches = l'aperçu suit, Espace = coche, double-clic / Entrée = ouvre avec le curseur dans l'éditeur — §19.1
 - [x] JetBrains Mono installée par « Apply », sans repli Courier — §19.2
 - [x] Fond de l'éditeur vide sans logo VS Code (Islands+) — §19.4
-- [ ] Base de données PostgreSQL (§16) : **reportée** à la demande de l'utilisateur (gros morceau, à voir s'il reste du budget)
+- [x] Base de données PostgreSQL (§16) : sources de données (fenêtre Data Sources, mot de passe dans le trousseau, couleur, lecture seule, Test Connection), tool window Database (à gauche), fichiers `.sql` et consoles (source › schéma, Ctrl/Cmd+Entrée, ▶ par instruction, erreurs positionnées, teinte, complétion, auto-commit / Commit / Rollback, confirmation sans WHERE), panneau Services › Database (grille, NOTICE, annulation, copie, CSV, données de table filtrées et paginées), tests sur PostgreSQL réel en CI. Plus tard : édition des lignes, tunnel SSH, pgpass.
 - [x] Interface en anglais par défaut, français en option (`unintellij.appearance.language`), contrôle `check:i18n` en CI — §20. **Limite** : titres des commandes dans la palette = langue d'affichage de VS Code.

@@ -27,7 +27,7 @@ export class DataSourcesPanel implements vscode.Disposable {
     this.panel = vscode.window.createWebviewPanel('unintellij.dataSources', t('Data Sources'), vscode.ViewColumn.Active, {
       enableScripts: true,
       retainContextWhenHidden: true,
-      localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist'), vscode.Uri.joinPath(this.extensionUri, 'media')],
+      localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist'), vscode.Uri.joinPath(this.extensionUri, 'media'), vscode.Uri.joinPath(this.extensionUri, 'icons')],
     });
     this.panel.webview.html = this.html(this.panel.webview);
     this.panel.webview.onDidReceiveMessage((message: FromDataSourcesWebview) => void this.onMessage(message));

@@ -71,3 +71,11 @@ footer .errors {
   width: 100%;
   box-sizing: border-box;
 }
+
+.content .row.checkbox-row {
+  grid-template-columns: auto 1fr;
+}
+
+.content .row.checkbox-row .help {
+  padding-left: 24px;
+}
