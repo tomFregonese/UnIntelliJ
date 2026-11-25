@@ -1,0 +1,40 @@
+{
+  "dark": {
+    "symbolIcon.classForeground": "#548AF7",
+    "symbolIcon.interfaceForeground": "#57965C",
+    "symbolIcon.enumeratorForeground": "#A571E6",
+    "symbolIcon.enumeratorMemberForeground": "#C77D55",
+    "symbolIcon.methodForeground": "#DB5C5C",
+    "symbolIcon.functionForeground": "#DB5C5C",
+    "symbolIcon.constructorForeground": "#DB5C5C",
+    "symbolIcon.fieldForeground": "#C77D55",
+    "symbolIcon.propertyForeground": "#B589EC",
+    "symbolIcon.variableForeground": "#C77D55",
+    "symbolIcon.constantForeground": "#C77D55",
+    "symbolIcon.typeParameterForeground": "#548AF7",
+    "symbolIcon.namespaceForeground": "#CED0D6",
+    "symbolIcon.packageForeground": "#CED0D6",
+    "symbolIcon.moduleForeground": "#548AF7",
+    "symbolIcon.structForeground": "#548AF7",
+    "symbolIcon.eventForeground": "#DB5C5C"
+  },
+  "light": {
+    "symbolIcon.classForeground": "#3574F0",
+    "symbolIcon.interfaceForeground": "#208A3C",
+    "symbolIcon.enumeratorForeground": "#834DF0",
+    "symbolIcon.enumeratorMemberForeground": "#E66D17",
+    "symbolIcon.methodForeground": "#DB3B4B",
+    "symbolIcon.functionForeground": "#DB3B4B",
+    "symbolIcon.constructorForeground": "#DB3B4B",
+    "symbolIcon.fieldForeground": "#E66D17",
+    "symbolIcon.propertyForeground": "#834DF0",
+    "symbolIcon.variableForeground": "#E66D17",
+    "symbolIcon.constantForeground": "#E66D17",
+    "symbolIcon.typeParameterForeground": "#3574F0",
+    "symbolIcon.namespaceForeground": "#6C707E",
+    "symbolIcon.packageForeground": "#6C707E",
+    "symbolIcon.moduleForeground": "#3574F0",
+    "symbolIcon.structForeground": "#3574F0",
+    "symbolIcon.eventForeground": "#DB3B4B"
+  }
+}

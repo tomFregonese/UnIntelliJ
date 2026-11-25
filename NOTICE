@@ -1,0 +1,12 @@
+UnIntelliJ
+Copyright (c) 2026 UnIntelliJ contributors
+
+This product includes icons from IntelliJ Platform (intellij-community),
+https://github.com/JetBrains/intellij-community, platform/icons/src/expui:
+  Copyright 2000-2025 JetBrains s.r.o. and contributors.
+  Licensed under the Apache License, Version 2.0
+  (https://www.apache.org/licenses/LICENSE-2.0).
+The SVG files in icons/files/ are unmodified copies. The glyphs in
+icons/product-icons.woff are derived from them (converted to monochrome
+outlines). IntelliJ and JetBrains are trademarks of JetBrains s.r.o.;
+this project is not affiliated with or endorsed by JetBrains.

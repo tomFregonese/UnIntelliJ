@@ -33,6 +33,13 @@ All settings live under `unintellij.*` and are declared **once** in `src/config/
 After changing it, run `npm run gen:config`; CI fails if `package.json` is out of date.
 Read them with `getSetting()` from `src/config/settings.ts`, which falls back to the default for invalid values.
 
+### Icons
+
+Icons come from IntelliJ's New UI set (`platform/icons/src/expui` in intellij-community, Apache 2.0, see `NOTICE`).
+`icons/sources.json` maps VS Code icons to IntelliJ ones; `scripts/build-icons.py` copies the SVGs, builds the
+monochrome product icon font and extracts symbol colors. Its output is committed, so only regenerating icons needs Python
+(usage at the top of the script). Then run `npm run gen:themes` to pick up symbol colors.
+
 ### Optional integrations
 
 UnIntelliJ never requires another extension. `src/integrations.ts` lists the ones it can use

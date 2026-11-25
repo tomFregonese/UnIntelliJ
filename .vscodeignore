@@ -5,3 +5,8 @@
 !CHANGELOG.md
 !LICENSE
 !themes/*.json
+!icons/files/*.svg
+!icons/file-icon-theme.json
+!icons/product-icon-theme.json
+!icons/product-icons.woff
+!NOTICE

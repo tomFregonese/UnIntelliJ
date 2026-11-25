@@ -44,6 +44,11 @@ suite('Appearance', () => {
     assert.strictEqual(vscode.window.activeColorTheme.kind, vscode.ColorThemeKind.Dark);
   });
 
+  test('switches to the New UI file and product icons on first activation', () => {
+    assert.strictEqual(workbench().get('iconTheme'), 'unintellij-file-icons');
+    assert.strictEqual(workbench().get('productIconTheme'), 'unintellij-product-icons');
+  });
+
   test('applies the theme chosen in UnIntelliJ settings', async () => {
     await unintellij().update('appearance.theme', 'islandsLight', Global);
     await waitFor('Islands Light applied', () => workbench().get('colorTheme') === 'Islands Light');

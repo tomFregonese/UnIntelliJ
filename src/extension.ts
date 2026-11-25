@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { initializeIconThemes } from './appearance/iconThemes';
 import { ThemeSync } from './appearance/themeSync';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 
@@ -22,6 +23,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);
   await themeSync.initialize();
+  await initializeIconThemes(context.globalState, log);
 
   return { integrations: detectIntegrations, appearanceIdle: () => themeSync.idle() };
 }

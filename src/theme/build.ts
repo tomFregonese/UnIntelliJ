@@ -1,6 +1,7 @@
 /**
  * Builds VS Code color theme JSON from an Islands palette. Pure: no `vscode` import.
  */
+import symbolColors from '../../icons/symbol-colors.json';
 import type { ThemePalette } from './palettes';
 
 const TRANSPARENT = '#00000000';
@@ -357,6 +358,9 @@ export function buildWorkbenchColors(p: ThemePalette): Record<string, string> {
     'debugIcon.startForeground': ui.success,
     'testing.iconPassed': ui.success,
     'testing.iconFailed': ui.error,
+    // Symbol icon colors (Outline, completion, breadcrumbs), extracted from IntelliJ's node icons.
+    ...symbolColors[p.type],
+
     'welcomePage.tileBackground': ui.popup,
     'welcomePage.tileHoverBackground': ui.hover,
     'settings.headerForeground': ui.foreground,

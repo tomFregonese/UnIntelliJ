@@ -185,6 +185,20 @@
         "uiTheme": "vs",
         "path": "./themes/islands-light-color-theme.json"
       }
+    ],
+    "iconThemes": [
+      {
+        "id": "unintellij-file-icons",
+        "label": "UnIntelliJ (New UI)",
+        "path": "./icons/file-icon-theme.json"
+      }
+    ],
+    "productIconThemes": [
+      {
+        "id": "unintellij-product-icons",
+        "label": "UnIntelliJ (New UI)",
+        "path": "./icons/product-icon-theme.json"
+      }
     ]
   },
   "scripts": {
