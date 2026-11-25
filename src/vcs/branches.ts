@@ -17,7 +17,6 @@ const withShortcut = (label: string, command: string): string => {
 
 /** IntelliJ's branches popup, Push dialog, VCS Operations popup and branch widget. */
 export class Branches implements vscode.Disposable {
-  private readonly widget: vscode.StatusBarItem;
   private readonly disposables: vscode.Disposable[] = [];
   private lastHead: string | undefined;
 
@@ -25,26 +24,14 @@ export class Branches implements vscode.Disposable {
     private readonly vcs: VcsService,
     private readonly state: vscode.Memento,
   ) {
-    this.widget = vscode.window.createStatusBarItem('unintellij.branch', vscode.StatusBarAlignment.Left, 104);
-    this.widget.name = 'Git Branch';
-    this.widget.command = 'unintellij.branches';
-    this.disposables.push(this.widget, vcs.onDidChange(() => this.onChange()));
+    this.disposables.push(vcs.onDidChange(() => this.onChange()));
     this.onChange();
   }
 
   private onChange(): void {
-    const repository = this.vcs.repository;
-    const head = repository?.state.HEAD;
-    if (!repository || !head) {
-      this.widget.hide();
-      return;
-    }
-    const name = head.name ?? head.commit?.slice(0, 8) ?? '';
-    const tracking = [head.ahead ? `↑${head.ahead}` : '', head.behind ? `↓${head.behind}` : ''].filter(Boolean).join(' ');
-    this.widget.text = `$(git-branch) ${name}${tracking ? ` ${tracking}` : ''}`;
-    this.widget.tooltip = `Git Branch: ${name}${head.upstream ? ` → ${head.upstream.remote}/${head.upstream.name}` : ''}${hint(shortcutFor('unintellij.branches'))}`;
-    this.widget.show();
-    if (head.name && head.name !== this.lastHead) {
+    // Remembers recently used branches for the popup (the widget itself is BranchWidget).
+    const head = this.vcs.repository?.state.HEAD;
+    if (head?.name && head.name !== this.lastHead) {
       this.lastHead = head.name;
       const recent = [head.name, ...this.state.get<string[]>(RECENT_KEY, []).filter((b) => b !== head.name)].slice(0, 10);
       void this.state.update(RECENT_KEY, recent);
@@ -294,7 +281,19 @@ export class Branches implements vscode.Disposable {
     }
   }
 
-  // --- Update project and VCS operations popup ----------------------------------------------------
+  // --- Fetch, update project and VCS operations popup ---------------------------------------------
+
+  /** Fetches all remotes; `silent` is the background fetch (no progress, errors only logged). */
+  async fetch(silent = false): Promise<void> {
+    const repository = this.vcs.repository;
+    if (silent) {
+      await repository?.fetch({ all: true, prune: true });
+      return;
+    }
+    if (this.requireRepository()) {
+      await this.operation('Fetching', () => repository!.fetch({ all: true, prune: true }));
+    }
+  }
 
   async updateProject(): Promise<void> {
     if (!this.requireRepository()) {
@@ -338,8 +337,4 @@ export class Branches implements vscode.Disposable {
   dispose(): void {
     this.disposables.forEach((d) => d.dispose());
   }
-}
-
-function hint(shortcut: string | undefined): string {
-  return shortcut ? ` (${shortcut})` : '';
 }

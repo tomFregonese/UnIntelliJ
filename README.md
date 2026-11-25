@@ -93,6 +93,8 @@ VS Code's extension API cannot reproduce everything; see [docs/SUIVI.md](docs/SU
 The main ones: Search Everywhere tabs are shown in the popup title, tool window option toggles live in the `…` menu,
 the Run and branch widgets are in the status bar unless Islands+ is on, Java run configurations are not provided yet
 (existing `launch.json` configurations are listed), and partial (line-level) commits are not supported.
+VS Code's own branch entry cannot be hidden by an extension: right-click the status bar and uncheck **Source Control**
+to keep only UnIntelliJ's branch widget (Islands+ hides it automatically).
 
 ## Development
 

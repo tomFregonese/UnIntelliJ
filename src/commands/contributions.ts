@@ -68,6 +68,10 @@ export const MENUS = {
     ),
   ],
   'view/title': [
+    // IntelliJ's Update / Push / Fetch actions, also on the Commit and Git tool windows.
+    ...['unintellij.updateProject', 'unintellij.push', 'unintellij.fetch'].flatMap((command, i) =>
+      ['unintellij.commit', 'unintellij.gitLog'].map((view) => ({ command, when: `view == ${view}`, group: `navigation@${10 + i}` })),
+    ),
     ...structureToggle('sortAlphabetically', 'sortAlphabetically', 'sortByPosition', 1),
     ...structureToggle('showFields', 'showFields', 'hideFields', 2),
     ...structureToggle('autoscrollFromSource', 'enableAutoscroll', 'disableAutoscroll', 3),

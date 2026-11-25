@@ -106,3 +106,8 @@
   color: inherit !important;
   text-decoration: none !important;
 }
+
+/* VS Code's own branch entry duplicates UnIntelliJ's branch widget. */
+.monaco-workbench .part.statusbar .statusbar-item[id^='status.scm.'] {
+  display: none !important;
+}

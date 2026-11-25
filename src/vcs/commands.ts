@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Branches } from './branches';
+import { BranchWidget } from './branchWidget';
 import { CommitView } from './commitView';
 import { Conflicts } from './conflicts';
 import { GitLogView } from './gitLogView';
@@ -30,6 +31,8 @@ export function registerVcsCommands(context: vscode.ExtensionContext, log: vscod
       service,
       commitView,
       branches,
+      new BranchWidget(service, branches, log),
+      vscode.commands.registerCommand('unintellij.fetch', () => branches.fetch()),
       vscode.commands.registerCommand('unintellij.commit', () => commitView.focus()),
       vscode.commands.registerCommand('unintellij.push', () => branches.push()),
       vscode.commands.registerCommand('unintellij.updateProject', () => branches.updateProject()),

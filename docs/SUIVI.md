@@ -103,7 +103,7 @@ Cocher et dater quand c'est réglé.
 - [x] Police et taille — §14.1 : JetBrains Mono embarquée et installable « pour moi » (sans admin), 14 px Windows / 13 px macOS. **À calibrer sur le poste Windows** (capture côte à côte IntelliJ / VS Code).
 - [x] Couleurs exactes importées d'intellij-community — §14.2 (valeurs des thèmes ManyIslands Light/Dark et des schémas Light / Islands Dark)
 - [x] Cases à cocher / boutons radio IntelliJ dans les webviews — §14.3 (`media/controls.css`)
-- [ ] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4
+- [x] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4 (barre d'état, fetch périodique `vcs.backgroundFetchMinutes`, boutons aussi sur Commit et Git ; bouton de synchro natif coupé par `configurationDefaults`). **Limite** : l'entrée de branche native de VS Code ne peut pas être masquée par une extension → clic droit sur la barre d'état › décocher « Source Control » (Islands+ la masque).
 - [ ] Widget Run unique + fenêtre Edit Configurations, suppression de la tool window npm — §14.5
 - [ ] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6
 - [ ] Vue Project avec sélecteur « Project ▾ » (Project / Packages / Project Files / Open Files / Changed Files), remplace l'Explorateur — §15.1

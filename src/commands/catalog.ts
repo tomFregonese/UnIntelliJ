@@ -80,8 +80,9 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.git.resetToHere', title: 'Reset Current Branch to Here…', hidden: true },
   // Version control
   { command: 'unintellij.commit', title: 'Commit…' },
-  { command: 'unintellij.push', title: 'Push…' },
-  { command: 'unintellij.updateProject', title: 'Update Project…' },
+  { command: 'unintellij.push', title: 'Push…', icon: '$(repo-push)' },
+  { command: 'unintellij.fetch', title: 'Fetch', icon: '$(repo-fetch)' },
+  { command: 'unintellij.updateProject', title: 'Update Project…', icon: '$(repo-pull)' },
   { command: 'unintellij.vcsOperations', title: 'VCS Operations Popup…' },
   { command: 'unintellij.branches', title: 'Branches…' },
   { command: 'unintellij.newBranch', title: 'New Branch…' },

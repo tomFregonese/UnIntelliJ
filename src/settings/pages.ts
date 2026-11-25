@@ -128,7 +128,8 @@ export const PAGES: readonly Page[] = [
     fields: [
       selectFromSchema('unintellij.vcs.updateMethod', 'Update method'),
       { type: 'checkbox', key: 'unintellij.vcs.changelists.enabled', label: 'Enable changelists' },
-      { type: 'checkbox', key: 'git.autofetch', label: 'Fetch in the background' },
+      { type: 'checkbox', key: 'git.autofetch', label: "Fetch in the background (VS Code's autofetch)" },
+      { type: 'number', key: 'unintellij.vcs.backgroundFetchMinutes', label: 'Otherwise fetch every (minutes, 0 = never)', min: 0, max: 120, step: 1 },
       { type: 'checkbox', key: 'git.confirmSync', label: 'Confirm before synchronizing' },
     ],
   },

@@ -35,6 +35,7 @@ export interface Settings {
   'searchEverywhere.excludePatterns': string[];
   'vcs.updateMethod': UpdateMethod;
   'vcs.changelists.enabled': boolean;
+  'vcs.backgroundFetchMinutes': number;
 }
 
 export type SettingKey = keyof Settings;
@@ -161,6 +162,13 @@ export const SETTINGS: { [K in SettingKey]: SettingDefinition<Settings[K]> } = {
     default: true,
     markdownDescription: 'Enable changelists in the Commit tool window.',
   },
+  'vcs.backgroundFetchMinutes': {
+    section: 'vcs',
+    type: 'number',
+    default: 5,
+    markdownDescription:
+      'Fetch in the background every N minutes so that the branch widget shows incoming commits (blue ↙). `0` turns it off. Skipped while `#git.autofetch#` is on.',
+  },
 };
 
 export const SETTING_KEYS = Object.keys(SETTINGS) as SettingKey[];
@@ -229,4 +237,6 @@ export const CONFIGURATION_DEFAULTS: Record<string, unknown> = {
   // IntelliJ change markers are solid bars, VS Code's are hatched for added/modified lines.
   'scm.diffDecorationsGutterPattern': { added: false, modified: false },
   'scm.diffDecorationsGutterWidth': 3,
+  // UnIntelliJ's branch widget shows the ↗/↙ counts and the Update / Push / Fetch buttons.
+  'git.enableStatusBarSync': false,
 };

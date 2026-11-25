@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var LEFT = ['unintellij.project', 'unintellij.branch'];
+  var LEFT = ['unintellij.project', 'unintellij.branch.name', 'unintellij.branch.outgoing', 'unintellij.branch.incoming', 'unintellij.branch.update', 'unintellij.branch.push', 'unintellij.branch.fetch'];
   var RIGHT = ['unintellij.run.selector', 'unintellij.run.run', 'unintellij.run.debug', 'unintellij.run.stop'];
 
   function findItem(id) {

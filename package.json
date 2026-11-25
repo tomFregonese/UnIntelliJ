@@ -177,6 +177,12 @@
             "default": true,
             "markdownDescription": "Enable changelists in the Commit tool window.",
             "order": 2
+          },
+          "unintellij.vcs.backgroundFetchMinutes": {
+            "type": "number",
+            "default": 5,
+            "markdownDescription": "Fetch in the background every N minutes so that the branch widget shows incoming commits (blue ↙). `0` turns it off. Skipped while `#git.autofetch#` is on.",
+            "order": 3
           }
         }
       }
@@ -499,12 +505,20 @@
       {
         "command": "unintellij.push",
         "title": "Push…",
-        "category": "UnIntelliJ"
+        "category": "UnIntelliJ",
+        "icon": "$(repo-push)"
+      },
+      {
+        "command": "unintellij.fetch",
+        "title": "Fetch",
+        "category": "UnIntelliJ",
+        "icon": "$(repo-fetch)"
       },
       {
         "command": "unintellij.updateProject",
         "title": "Update Project…",
-        "category": "UnIntelliJ"
+        "category": "UnIntelliJ",
+        "icon": "$(repo-pull)"
       },
       {
         "command": "unintellij.vcsOperations",
@@ -734,6 +748,36 @@
         }
       ],
       "view/title": [
+        {
+          "command": "unintellij.updateProject",
+          "when": "view == unintellij.commit",
+          "group": "navigation@10"
+        },
+        {
+          "command": "unintellij.updateProject",
+          "when": "view == unintellij.gitLog",
+          "group": "navigation@10"
+        },
+        {
+          "command": "unintellij.push",
+          "when": "view == unintellij.commit",
+          "group": "navigation@11"
+        },
+        {
+          "command": "unintellij.push",
+          "when": "view == unintellij.gitLog",
+          "group": "navigation@11"
+        },
+        {
+          "command": "unintellij.fetch",
+          "when": "view == unintellij.commit",
+          "group": "navigation@12"
+        },
+        {
+          "command": "unintellij.fetch",
+          "when": "view == unintellij.gitLog",
+          "group": "navigation@12"
+        },
         {
           "command": "unintellij.structure.sortAlphabetically",
           "when": "view == unintellij.structure && !unintellij.structure.sortAlphabetically",
@@ -2213,7 +2257,8 @@
         "added": false,
         "modified": false
       },
-      "scm.diffDecorationsGutterWidth": 3
+      "scm.diffDecorationsGutterWidth": 3,
+      "git.enableStatusBarSync": false
     }
   },
   "scripts": {
