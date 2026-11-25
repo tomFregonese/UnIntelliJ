@@ -59,9 +59,9 @@ export function buildWorkbenchColors(p: ThemePalette): Record<string, string> {
     'commandCenter.border': ui.border,
     'commandCenter.activeBorder': ui.popupBorder,
     'activityBar.background': ui.frame,
-    'activityBar.foreground': ui.iconForeground,
-    'activityBar.inactiveForeground': ui.secondaryForeground,
-    'activityBar.activeBackground': ui.inactiveSelection,
+    'activityBar.foreground': ui.stripeSelectedForeground,
+    'activityBar.inactiveForeground': ui.iconForeground,
+    'activityBar.activeBackground': ui.stripeSelected,
     'activityBar.activeBorder': TRANSPARENT,
     'activityBar.activeFocusBorder': TRANSPARENT,
     'activityBar.border': ui.frame,
@@ -108,15 +108,15 @@ export function buildWorkbenchColors(p: ThemePalette): Record<string, string> {
     'editorGroupHeader.tabsBorder': ui.border,
     'editorGroupHeader.noTabsBackground': ui.island,
     'editorGroupHeader.border': TRANSPARENT,
-    'tab.activeBackground': ui.island,
-    'tab.unfocusedActiveBackground': ui.island,
+    'tab.activeBackground': ui.tabSelected,
+    'tab.unfocusedActiveBackground': ui.tabInactiveSelected,
     'tab.inactiveBackground': ui.island,
     'tab.activeForeground': ui.foreground,
     'tab.unfocusedActiveForeground': ui.foreground,
     'tab.inactiveForeground': ui.secondaryForeground,
     'tab.unfocusedInactiveForeground': ui.secondaryForeground,
-    'tab.activeBorder': ui.accent,
-    'tab.unfocusedActiveBorder': ui.disabledForeground,
+    'tab.activeBorder': TRANSPARENT,
+    'tab.unfocusedActiveBorder': TRANSPARENT,
     'tab.activeBorderTop': TRANSPARENT,
     'tab.unfocusedActiveBorderTop': TRANSPARENT,
     'tab.border': TRANSPARENT,
@@ -139,7 +139,7 @@ export function buildWorkbenchColors(p: ThemePalette): Record<string, string> {
     'list.focusOutline': TRANSPARENT,
     'list.inactiveFocusOutline': TRANSPARENT,
     'list.focusAndSelectionOutline': TRANSPARENT,
-    'list.hoverBackground': ui.hover,
+    'list.hoverBackground': ui.listHover,
     'list.highlightForeground': ui.matchHighlight,
     'list.focusHighlightForeground': ui.matchHighlight,
     'list.errorForeground': ui.error,
@@ -458,13 +458,34 @@ export function buildSemanticTokenColors(p: ThemePalette): ColorThemeJson['seman
   };
 }
 
+/** Colors contributed by UnIntelliJ (`contributes.colors`), used by its widgets and Islands+. */
+export const EXTENSION_COLORS: { id: string; description: string; value: (p: ThemePalette) => string }[] = [
+  { id: 'unintellij.tabSelectedBorder', description: 'Frame of the selected editor tab (Islands+).', value: (p) => p.ui.tabSelectedBorder },
+  { id: 'unintellij.tabInactiveSelectedBorder', description: 'Frame of the selected editor tab in an unfocused group (Islands+).', value: (p) => p.ui.tabInactiveSelectedBorder },
+  { id: 'unintellij.incomingCommits', description: 'Incoming commits count of the branch widget.', value: (p) => p.ui.accent },
+  { id: 'unintellij.outgoingCommits', description: 'Outgoing commits count of the branch widget.', value: (p) => p.ui.success },
+];
+
+export function buildExtensionColors(p: ThemePalette): Record<string, string> {
+  return Object.fromEntries(EXTENSION_COLORS.map((c) => [c.id, c.value(p)]));
+}
+
+/** `contributes.colors`: defaults for other themes come from the Islands palette of the same kind. */
+export function buildColorContribution(dark: ThemePalette, light: ThemePalette): { id: string; description: string; defaults: Record<string, string> }[] {
+  return EXTENSION_COLORS.map((c) => ({
+    id: c.id,
+    description: c.description,
+    defaults: { dark: c.value(dark), light: c.value(light), highContrast: c.value(dark), highContrastLight: c.value(light) },
+  }));
+}
+
 export function buildColorTheme(p: ThemePalette): ColorThemeJson {
   return {
     $schema: 'vscode://schemas/color-theme',
     name: p.label,
     type: p.type,
     semanticHighlighting: true,
-    colors: buildWorkbenchColors(p),
+    colors: { ...buildWorkbenchColors(p), ...buildExtensionColors(p) },
     tokenColors: buildTokenColors(p),
     semanticTokenColors: buildSemanticTokenColors(p),
   };

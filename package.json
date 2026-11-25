@@ -2165,6 +2165,48 @@
           }
         }
       }
+    ],
+    "colors": [
+      {
+        "id": "unintellij.tabSelectedBorder",
+        "description": "Frame of the selected editor tab (Islands+).",
+        "defaults": {
+          "dark": "#2E4D89",
+          "light": "#A7C5FF",
+          "highContrast": "#2E4D89",
+          "highContrastLight": "#A7C5FF"
+        }
+      },
+      {
+        "id": "unintellij.tabInactiveSelectedBorder",
+        "description": "Frame of the selected editor tab in an unfocused group (Islands+).",
+        "defaults": {
+          "dark": "#40434A",
+          "light": "#D1D3D9",
+          "highContrast": "#40434A",
+          "highContrastLight": "#D1D3D9"
+        }
+      },
+      {
+        "id": "unintellij.incomingCommits",
+        "description": "Incoming commits count of the branch widget.",
+        "defaults": {
+          "dark": "#3871E1",
+          "light": "#3871E1",
+          "highContrast": "#3871E1",
+          "highContrastLight": "#3871E1"
+        }
+      },
+      {
+        "id": "unintellij.outgoingCommits",
+        "description": "Outgoing commits count of the branch widget.",
+        "defaults": {
+          "dark": "#6DB083",
+          "light": "#338555",
+          "highContrast": "#6DB083",
+          "highContrastLight": "#338555"
+        }
+      }
     ]
   },
   "scripts": {

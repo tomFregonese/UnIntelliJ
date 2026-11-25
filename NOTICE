@@ -10,3 +10,8 @@ The SVG files in icons/files/, icons/symbols/, media/settings-*.svg, media/struc
 icons/product-icons.woff are derived from them (converted to monochrome
 outlines). IntelliJ and JetBrains are trademarks of JetBrains s.r.o.;
 this project is not affiliated with or endorsed by JetBrains.
+
+The color values in src/theme/palettes.ts (and the generated themes/*.json) are
+copied from the IntelliJ Platform themes and editor color schemes,
+platform/platform-resources/src/themes (islands/ManyIslands*.theme.json,
+islands/IslandSchemeDark.xml, expUI/expUI_lightScheme.xml), same license.

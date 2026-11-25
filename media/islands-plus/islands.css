@@ -42,9 +42,22 @@
   font-family: Inter, 'Segoe UI Variable Text', 'Segoe UI', -apple-system, system-ui, sans-serif;
 }
 
-/* Tabs: no separators, active tab marked by the theme's bottom border only. */
+/* Tabs: no separators; the selected tab is a rounded, framed pill like Islands. */
 .monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
   border-right: none !important;
+  border-radius: 6px;
+  margin: 4px 1px;
+  height: calc(100% - 8px) !important;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+  border-color: var(--vscode-unintellij-tabInactiveSelectedBorder);
+}
+
+.monaco-workbench .part.editor > .content .editor-group-container.active > .title .tabs-container > .tab.active {
+  border-color: var(--vscode-unintellij-tabSelectedBorder);
 }
 
 /* Rounded popups like IntelliJ. */

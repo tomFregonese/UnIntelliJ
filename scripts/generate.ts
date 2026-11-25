@@ -6,6 +6,7 @@
  *   package.json  contributes.keybindings     ← src/keymap/keymap.ts
  *   docs/KEYMAP.md                            ← src/keymap/keymap.ts
  *   media/product-icons.css                   ← icons/product-icon-theme.json
+ *   package.json  contributes.colors          ← src/theme/build.ts
  *   themes/*.json                             ← src/theme/palettes.ts (+ icons/symbol-colors.json)
  *
  * `--check` writes nothing and exits non-zero when something is out of date (used in CI).
@@ -16,8 +17,8 @@ import { buildCommandContribution, buildCommandPaletteMenu } from '../src/comman
 import { MENUS, TASK_DEFINITIONS, VIEW_CONTAINERS, VIEWS } from '../src/commands/contributions';
 import { buildConfigurationContribution } from '../src/config/schema';
 import { buildKeybindings, buildKeymapMarkdown } from '../src/keymap/keymap';
-import { buildColorTheme, themeFileName } from '../src/theme/build';
-import { PALETTES } from '../src/theme/palettes';
+import { buildColorContribution, buildColorTheme, themeFileName } from '../src/theme/build';
+import { ISLANDS_DARK, ISLANDS_LIGHT, PALETTES } from '../src/theme/palettes';
 
 const root = join(__dirname, '..');
 const check = process.argv.includes('--check');
@@ -47,6 +48,7 @@ pkg.contributes.viewsContainers = VIEW_CONTAINERS;
 pkg.contributes.views = VIEWS;
 pkg.contributes.taskDefinitions = TASK_DEFINITIONS;
 pkg.contributes.keybindings = buildKeybindings();
+pkg.contributes.colors = buildColorContribution(ISLANDS_DARK, ISLANDS_LIGHT);
 emit(packagePath, json(pkg));
 
 // Keymap reference
