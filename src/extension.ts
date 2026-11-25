@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
+import { ThemeSync } from './appearance/themeSync';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
 
 export interface UnIntelliJApi {
   integrations(): IntegrationStatus[];
+  /** Resolves once pending appearance synchronizations are done (used by tests). */
+  appearanceIdle(): Promise<void>;
 }
 
-export function activate(context: vscode.ExtensionContext): UnIntelliJApi {
+export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi> {
   const log = vscode.window.createOutputChannel('UnIntelliJ', { log: true });
   context.subscriptions.push(log);
 
@@ -16,9 +19,13 @@ export function activate(context: vscode.ExtensionContext): UnIntelliJApi {
   logIntegrations();
   context.subscriptions.push(vscode.extensions.onDidChange(logIntegrations));
 
-  return { integrations: detectIntegrations };
+  const themeSync = new ThemeSync(context.globalState, log);
+  context.subscriptions.push(themeSync);
+  await themeSync.initialize();
+
+  return { integrations: detectIntegrations, appearanceIdle: () => themeSync.idle() };
 }
 
 export function deactivate(): void {
-  // Nothing to clean up yet: everything is registered through context.subscriptions.
+  // Nothing to clean up: everything is registered through context.subscriptions.
 }
