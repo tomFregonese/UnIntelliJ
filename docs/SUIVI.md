@@ -132,7 +132,7 @@ Cocher et dater quand c'est réglé.
   - vérifié : thème, polices et réglages d'éditeur sont acceptés ; `window.titleBarStyle` est refusé (portée « application ») et reste celui de VS Code. Le patch automatique attend 20 s pour passer après le contrôle d'intégrité de VS Code. Sans UnIntelliJ, Islands+ se coupe au bout de 30 s au démarrage, tout de suite si on le désactive en cours de route.
   - **Écarts** : la taille de police par défaut est 14 sur tous les OS (une valeur par défaut ne peut pas dépendre de l'OS) ; JetBrains Mono reste installée après désinstallation (inoffensif).
   - **Limite** : avec le VS Code « System setup » du travail, Islands+ ne peut rien modifier sans droits admin. Il faut passer au « User setup », ou masquer à la main la branche native (clic droit sur la barre d'état, une seule fois).
-- [ ] **2. Vue Commit** : fichiers triés par ordre alphabétique.
+- [x] **2. Vue Commit** : fichiers triés par ordre alphabétique du nom (insensible à la casse, file2 avant file10), puis par dossier, dans chaque changelist et dans Unversioned Files.
 - [ ] **3. Database : choix des bases et des schémas** :
   - afficher toutes les bases du serveur, pas seulement celle de la connexion ;
   - choisir par cases à cocher les bases affichées (pas forcément toutes) ;

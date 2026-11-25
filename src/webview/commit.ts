@@ -68,13 +68,17 @@ interface Group {
   files: FileItem[];
 }
 
+/** IntelliJ's flat list order: by file name, case-insensitive and natural (file2 before file10), then by folder. */
+const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
+const byName = (a: FileItem, b: FileItem): number => collator.compare(a.name, b.name) || collator.compare(a.dir, b.dir);
+
 function groups(): Group[] {
   if (!state) {
     return [];
   }
-  const lists: Group[] = state.lists.filter((l) => l.files.length > 0 || state!.changelistsEnabled).map((l) => ({ ...l }));
+  const lists: Group[] = state.lists.filter((l) => l.files.length > 0 || state!.changelistsEnabled).map((l) => ({ ...l, files: [...l.files].sort(byName) }));
   if (state.unversioned.length > 0) {
-    lists.push({ id: UNVERSIONED, name: t('Unversioned Files'), active: false, files: state.unversioned });
+    lists.push({ id: UNVERSIONED, name: t('Unversioned Files'), active: false, files: [...state.unversioned].sort(byName) });
   }
   return lists;
 }

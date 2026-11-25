@@ -5,14 +5,14 @@ import type { CommitViewState, FromCommitView } from '../../src/vcs/commitProtoc
 const sent: FromCommitView[] = [];
 (globalThis as unknown as { acquireVsCodeApi: unknown }).acquireVsCodeApi = () => ({ postMessage: (m: FromCommitView) => sent.push(m), getState: () => undefined, setState: () => undefined });
 
-const file = (name: string, status: 'M' | 'A' | 'U') => ({ path: `/repo/src/${name}`, name, dir: 'src', status });
+const file = (name: string, status: 'M' | 'A' | 'U', dir = 'src') => ({ path: `/repo/${dir}/${name}`, name, dir, status });
 const state: CommitViewState = {
   available: true,
   repository: 'repo',
   branch: 'main',
   changelistsEnabled: true,
   lists: [
-    { id: 'default', name: 'Changes', active: true, files: [file('a.ts', 'M'), file('b.ts', 'A')] },
+    { id: 'default', name: 'Changes', active: true, files: [file('b.ts', 'A'), file('Z10.ts', 'M', 'lib'), file('a.ts', 'M', 'zz'), file('z2.ts', 'M')] },
     { id: 'feature', name: 'Feature', active: false, files: [file('c.ts', 'M')] },
   ],
   unversioned: [file('new.ts', 'U')],
@@ -43,6 +43,11 @@ describe('Commit tool window webview', () => {
     expect(row('a.ts').querySelector('.name')!.className).toContain('status-M');
   });
 
+  it('sorts files by name like IntelliJ (case-insensitive, natural), whatever their folder', () => {
+    const names = [...document.querySelectorAll('.row.file .name')].map((n) => n.textContent).slice(0, 4);
+    expect(names).toEqual(['a.ts', 'b.ts', 'z2.ts', 'Z10.ts']);
+  });
+
   it('marks the active changelist and shows counts', () => {
     const groups = [...document.querySelectorAll('.row.group')].map((g) => g.textContent);
     expect(groups[0]).toContain('Changes');
@@ -61,14 +66,14 @@ describe('Commit tool window webview', () => {
     message.value = 'Add login';
     message.dispatchEvent(new Event('input'));
     button('Commit').click();
-    expect(sent.at(-1)).toEqual({ type: 'commit', paths: ['/repo/src/a.ts', '/repo/src/b.ts', '/repo/src/c.ts'], message: 'Add login', amend: false, push: false });
+    expect(sent.at(-1)).toEqual({ type: 'commit', paths: expect.arrayContaining(['/repo/zz/a.ts', '/repo/src/b.ts', '/repo/src/z2.ts', '/repo/lib/Z10.ts', '/repo/src/c.ts']), message: 'Add login', amend: false, push: false });
   });
 
   it('attaches the selection to rows for the native context menu', async () => {
     row('a.ts').click();
     row('b.ts').dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true }));
     const context = JSON.parse(row('a.ts').dataset.vscodeContext!);
-    expect(context).toMatchObject({ webviewSection: 'file', paths: ['/repo/src/a.ts', '/repo/src/b.ts'] });
+    expect(context).toMatchObject({ webviewSection: 'file', paths: ['/repo/zz/a.ts', '/repo/src/b.ts'] });
   });
 
   it('asks for the last message when Amend is checked and clears after commit', async () => {
