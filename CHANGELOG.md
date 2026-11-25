@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0
 
 - IntelliJ-like settings and the Islands Dark theme are VS Code defaults: they apply while UnIntelliJ is enabled and go away when it is disabled or uninstalled. Values you set yourself (including with the former "Apply" button) are never changed.
 - Islands+ is on by default, switches itself off while UnIntelliJ is disabled and is removed on uninstall.
