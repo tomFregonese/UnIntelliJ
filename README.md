@@ -26,11 +26,16 @@ Requires VS Code 1.100 or later.
 
 ### What changes on first start
 
-UnIntelliJ switches VS Code to the **Islands Dark** theme (keeping *follow the OS* if you used it) and to the
-**UnIntelliJ (New UI)** file and product icon themes. Pick another theme or icon theme as usual to undo it.
+Everything applies by itself and goes away with the extension:
 
-Recommended next step: **Settings › Editor › General › Apply IntelliJ-like settings** (JetBrains Mono, continuous autosave, no minimap,
-ruler at 120, no rainbow brackets…). Your previous values are kept and can be restored from the same page.
+- **IntelliJ-like VS Code settings** (Islands Dark theme, JetBrains Mono at IntelliJ's size, continuous autosave,
+  no minimap, ruler at 120, no rainbow brackets…) are contributed as VS Code *defaults*: they apply while UnIntelliJ
+  is enabled and disappear when it is disabled or uninstalled. A value you set yourself always wins; the list is in
+  **Settings › Editor › General**.
+- **JetBrains Mono** is installed for your account (no admin rights) when it is missing.
+- **Islands+** is applied about 20 seconds after the first start (see below).
+
+If you already chose another theme yourself, UnIntelliJ asks once instead of replacing it.
 
 ## Everyday use
 
@@ -65,7 +70,7 @@ Everything is under **Settings** (`Ctrl+Alt+S`), or `unintellij.*` in VS Code's 
 |---|---|---|
 | `unintellij.appearance.theme` | `islandsDark` | Islands Dark or Light |
 | `unintellij.appearance.syncWithOs` | `false` | Follow the OS light/dark mode with the preferred themes |
-| `unintellij.appearance.islandsPlus.enabled` | `false` | See Islands+ below |
+| `unintellij.appearance.islandsPlus.enabled` | `true` | See Islands+ below |
 | `unintellij.keymap.layout` | `auto` | `auto` (by OS), `windows` or `macos` keymap |
 | `unintellij.keymap.disabledActions` | `[]` | IntelliJ action IDs whose shortcut is disabled |
 | `unintellij.keymap.customShortcuts` | `{}` | Reassigned shortcuts (edited in Settings › Keymap, written to keybindings.json) |
@@ -76,7 +81,7 @@ Everything is under **Settings** (`Ctrl+Alt+S`), or `unintellij.*` in VS Code's 
 
 ## Islands+
 
-VS Code has no API to change the *shape* of its interface. Islands+ (off by default) adds a stylesheet and a small
+VS Code has no API to change the *shape* of its interface. Islands+ (on by default) adds a stylesheet and a small
 script next to VS Code's `workbench.html`, references them from it, and updates the file checksum in `product.json`
 so that VS Code does not report a corrupt installation. You get rounded islands on the window frame, rounded popups,
 IntelliJ fonts, and the project / branch / Run widgets in the title bar.
@@ -84,7 +89,9 @@ IntelliJ fonts, and the project / branch / Run widgets in the title bar.
 - It needs **write access to VS Code's installation folder**. The Windows *System* installer (in `Program Files`)
   needs administrator rights: use the *User* installer, or start VS Code once as administrator after enabling it.
 - It is re-applied automatically after VS Code updates (you are asked to reload the window).
-- Disabling it removes the block and restores the original checksum exactly. While it is applied, safety copies
+- It switches itself off while UnIntelliJ is disabled (VS Code looks standard again, no restart needed) and is
+  removed from VS Code when UnIntelliJ is uninstalled.
+- Turning the setting off removes the block and restores the original checksum exactly. While it is applied, safety copies
   (`*.unintellij-backup`) sit next to the modified files; they are deleted when it is disabled.
 
 ## Language

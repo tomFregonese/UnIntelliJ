@@ -4,7 +4,7 @@ import { language, t } from '../i18n/i18n';
 import { detectIntegrations, IntegrationId } from '../integrations';
 import { formatKey, KEYMAP } from '../keymap/keymap';
 import { fieldKeys, PAGES } from './pages';
-import { applyPreset, PRESET, presetApplied, revertPreset } from './preset';
+import { presetApplied, presetState, revertPreset, useIntelliJValue } from './preset';
 import { FromWebview, SettingsModel, ToWebview } from './protocol';
 
 /** English: translated where shown. */
@@ -52,7 +52,7 @@ export function buildModel(state: vscode.Memento, initialPage = 'appearance'): S
       active: i.active,
       version: i.version,
     })),
-    preset: { applied: presetApplied(state), entries: PRESET.map((p) => ({ ...p })) },
+    preset: { applied: presetApplied(state), entries: presetState() },
     initialPage,
   };
 }
@@ -115,8 +115,8 @@ export class SettingsPanel implements vscode.Disposable {
         case 'cancel':
           this.panel?.dispose();
           break;
-        case 'applyPreset':
-          await applyPreset(this.context.globalState);
+        case 'useIntelliJValue':
+          await useIntelliJValue(message.key);
           refresh();
           break;
         case 'revertPreset':

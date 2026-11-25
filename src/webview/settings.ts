@@ -275,22 +275,32 @@ window.addEventListener('keydown', (event) => recordShortcut?.(event), true);
 
 function renderPreset(): HTMLElement {
   const { applied, entries } = model!.preset;
+  const status = (e: (typeof entries)[number]): HTMLElement =>
+    e.userValue === undefined
+      ? h('td', { className: 'muted' }, t('Automatic'))
+      : h(
+          'td',
+          {},
+          h('span', { className: 'mono' }, t('Your value: {0}', JSON.stringify(e.userValue))),
+          ' ',
+          h('button', { className: 'link', onClick: () => vscode.postMessage({ type: 'useIntelliJValue', key: e.key }) }, t('Use IntelliJ value')),
+        );
   return h(
     'div',
     { className: 'custom preset' },
     h('h3', {}, t('IntelliJ-like VS Code settings')),
-    h('p', { className: 'help' }, 'VS Code options whose defaults differ from IntelliJ. Your previous values are kept and can be restored.'),
+    h('p', { className: 'help' }, t('Applied automatically while UnIntelliJ is enabled and removed when it is disabled. Values you set yourself always take priority.')),
     h(
       'table',
       {},
-      h('tbody', {}, ...entries.map((e) => h('tr', {}, h('td', { className: 'mono' }, e.key), h('td', { className: 'mono' }, JSON.stringify(e.value)), h('td', { className: 'muted' }, t(e.reason))))),
+      h('tbody', {}, ...entries.map((e) => h('tr', {}, h('td', { className: 'mono' }, e.key), h('td', { className: 'mono' }, JSON.stringify(e.value)), status(e), h('td', { className: 'muted' }, t(e.reason))))),
     ),
-    h(
-      'div',
-      { className: 'buttons-inline' },
-      h('button', { onClick: () => vscode.postMessage({ type: 'applyPreset' }) }, applied ? t('Re-apply') : t('Apply IntelliJ-like settings')),
-      applied && h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'revertPreset' }) }, t('Restore my previous settings')),
-    ),
+    applied &&
+      h(
+        'div',
+        { className: 'buttons-inline' },
+        h('button', { className: 'secondary', onClick: () => vscode.postMessage({ type: 'revertPreset' }) }, t('Restore the values I had before "Apply"')),
+      ),
   );
 }
 

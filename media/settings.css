@@ -312,3 +312,15 @@ tr:hover button.tool.edit,
 button.tool.edit:focus-visible {
   opacity: 1;
 }
+
+/* Text button (preset "Use IntelliJ value") */
+button.link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+}
+button.link:hover {
+  text-decoration: underline;
+}

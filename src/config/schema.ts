@@ -114,9 +114,9 @@ export const SETTINGS: { [K in SettingKey]: SettingDefinition<Settings[K]> } = {
   'appearance.islandsPlus.enabled': {
     section: 'appearance',
     type: 'boolean',
-    default: false,
+    default: true,
     markdownDescription:
-      "**Islands+** (experimental): patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets. Modifies VS Code installation files and requires write access to them.",
+      "**Islands+**: patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets, and hide VS Code's own branch entry, Explorer and welcome logo. Modifies VS Code installation files and requires write access to them (not possible with the Windows \"System\" installer without admin rights). Turns itself off while UnIntelliJ is disabled and is removed when UnIntelliJ is uninstalled.",
   },
   'keymap.layout': {
     section: 'keymap',
@@ -244,13 +244,55 @@ export function buildConfigurationContribution(): unknown[] {
 }
 
 /**
- * Defaults of VS Code settings changed for everyone using UnIntelliJ (`contributes.configurationDefaults`):
- * only harmless look-alike tweaks; the user's own values still win.
+ * JetBrains Mono (installed by UnIntelliJ), then each OS's own coding font, never Courier New:
+ * that serif fallback is what VS Code shows when the first font is missing.
  */
-export const CONFIGURATION_DEFAULTS: Record<string, unknown> = {
+export const EDITOR_FONT = "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace";
+
+/**
+ * IntelliJ-like values of VS Code settings, contributed as defaults (`contributes.configurationDefaults`):
+ * VS Code applies them while UnIntelliJ is enabled and drops them by itself when it is disabled or
+ * uninstalled. A value the user set (including through the former "Apply" button) always wins.
+ */
+export const INTELLIJ_DEFAULTS: readonly { key: string; value: unknown; reason: string }[] = [
+  { key: 'workbench.colorTheme', value: 'Islands Dark', reason: 'IntelliJ default theme' },
+  { key: 'editor.fontFamily', value: EDITOR_FONT, reason: 'IntelliJ default editor font' },
+  { key: 'editor.fontSize', value: 14, reason: 'Same visual size as IntelliJ' },
+  { key: 'editor.lineHeight', value: 1.6, reason: 'IntelliJ line spacing (1.2 × JetBrains Mono line height)' },
+  { key: 'editor.fontLigatures', value: false, reason: 'Ligatures off, IntelliJ default' },
+  { key: 'terminal.integrated.fontFamily', value: EDITOR_FONT, reason: 'Terminal uses the editor font' },
+  { key: 'terminal.integrated.fontSize', value: 14, reason: 'Terminal font size' },
+  { key: 'terminal.integrated.lineHeight', value: 1.2, reason: 'IntelliJ terminal line spacing' },
+  { key: 'debug.console.fontSize', value: 14, reason: 'Console font size' },
+  { key: 'debug.console.fontFamily', value: EDITOR_FONT, reason: 'Console uses the editor font' },
+  { key: 'breadcrumbs.enabled', value: false, reason: 'The navigation bar is in the status bar, bottom left' },
+  { key: 'diffEditor.renderSideBySide', value: true, reason: 'Side-by-side diff like IntelliJ' },
+  { key: 'diffEditor.renderMarginRevertIcon', value: true, reason: 'Per-block revert arrows between the two sides (IntelliJ >> / <<)' },
+  { key: 'diffEditor.ignoreTrimWhitespace', value: false, reason: 'Whitespace changes are shown, IntelliJ default' },
+  { key: 'diffEditor.hideUnchangedRegions.enabled', value: false, reason: 'Whole file shown, like IntelliJ' },
+  { key: 'editor.minimap.enabled', value: false, reason: 'IntelliJ has no minimap' },
+  { key: 'editor.renderWhitespace', value: 'none', reason: 'Whitespaces hidden' },
+  { key: 'editor.rulers', value: [120], reason: 'Hard wrap guide at 120' },
+  { key: 'editor.bracketPairColorization.enabled', value: false, reason: 'No rainbow brackets' },
+  { key: 'editor.guides.bracketPairs', value: false, reason: 'No bracket pair guides' },
+  { key: 'editor.stickyScroll.enabled', value: true, reason: 'Sticky lines' },
+  { key: 'editor.linkedEditing', value: true, reason: 'Paired tags renamed together' },
+  { key: 'workbench.editor.enablePreview', value: false, reason: 'No preview tabs' },
+  { key: 'workbench.startupEditor', value: 'none', reason: 'Open the project, no welcome page' },
+  { key: 'files.autoSave', value: 'afterDelay', reason: 'IntelliJ saves continuously, no Save needed' },
+  { key: 'files.autoSaveDelay', value: 100, reason: 'Save almost immediately while typing' },
+  { key: 'problems.decorations.enabled', value: false, reason: 'File names keep their VCS color (blue = modified) instead of turning red on errors' },
+  { key: 'git.autofetch', value: true, reason: 'Background fetch' },
+  { key: 'debug.toolBarLocation', value: 'docked', reason: 'Debug toolbar in the Debug tool window' },
+  { key: 'workbench.tree.indent', value: 12, reason: 'Project tree indentation' },
+  { key: 'workbench.tree.renderIndentGuides', value: 'none', reason: 'No guides in the Project tree' },
+  { key: 'window.menuBarVisibility', value: 'compact', reason: 'Main menu behind a button, like the New UI (Windows, Linux)' },
+  { key: 'window.commandCenter', value: false, reason: 'IntelliJ has no command center: Search Everywhere is Double Shift' },
   // IntelliJ change markers are solid bars, VS Code's are hatched for added/modified lines.
-  'scm.diffDecorationsGutterPattern': { added: false, modified: false },
-  'scm.diffDecorationsGutterWidth': 3,
+  { key: 'scm.diffDecorationsGutterPattern', value: { added: false, modified: false }, reason: 'Solid change markers in the gutter' },
+  { key: 'scm.diffDecorationsGutterWidth', value: 3, reason: 'IntelliJ change marker width' },
   // UnIntelliJ's branch widget shows the ↗/↙ counts and the Update / Push / Fetch buttons.
-  'git.enableStatusBarSync': false,
-};
+  { key: 'git.enableStatusBarSync', value: false, reason: 'Sync is in the branch widget' },
+];
+
+export const CONFIGURATION_DEFAULTS: Record<string, unknown> = Object.fromEntries(INTELLIJ_DEFAULTS.map((d) => [d.key, d.value]));

@@ -135,3 +135,8 @@
 .monaco-workbench .part.statusbar .statusbar-item[id='status.problems'] {
   display: none !important;
 }
+
+/* Marker entry shown by UnIntelliJ while it runs (see islands.js): never visible. */
+.statusbar-item[id$="unintellij.alive"] {
+  display: none !important;
+}

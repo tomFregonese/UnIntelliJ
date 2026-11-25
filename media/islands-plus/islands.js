@@ -3,6 +3,10 @@
  * Moves UnIntelliJ's project, branch and run status bar items into the title bar, where IntelliJ's
  * New UI shows them. VS Code keeps updating the moved elements; if it re-inserts one in the status
  * bar, the observer moves it back. No HTML strings are used (VS Code enforces Trusted Types).
+ *
+ * Islands+ only applies while UnIntelliJ runs: the extension shows a hidden "unintellij.alive" status
+ * bar entry. When it is missing (UnIntelliJ disabled, or not started after a grace period), the
+ * stylesheet is switched off and VS Code looks standard again, without restarting.
  */
 (function () {
   'use strict';
@@ -58,9 +62,33 @@
     });
   }
 
+  var ALIVE = 'unintellij.alive';
+  /** Time UnIntelliJ gets to start before Islands+ is switched off (extensions start after the window). */
+  var GRACE_MS = 30000;
+  var started = Date.now();
+  var seen = false;
+
+  /** Switches the stylesheet and the moved widgets on or off; returns whether Islands+ is active. */
+  function checkAlive() {
+    var alive = !!findItem(ALIVE);
+    seen = seen || alive;
+    var active = alive || (!seen && Date.now() - started < GRACE_MS);
+    var sheet = document.querySelector('link[href$="unintellij-islands.css"]');
+    if (sheet && sheet.disabled === active) {
+      sheet.disabled = !active;
+    }
+    document.querySelectorAll('.unintellij-titlebar-widgets').forEach(function (element) {
+      element.style.display = active ? '' : 'none';
+    });
+    return active;
+  }
+
   var scheduled = false;
   function sync() {
     scheduled = false;
+    if (!checkAlive()) {
+      return;
+    }
     place(LEFT, 'left');
     place(RIGHT, 'right');
   }
@@ -71,4 +99,6 @@
       requestAnimationFrame(sync);
     }
   }).observe(document.documentElement, { childList: true, subtree: true });
+  // UnIntelliJ never started: switch off once the grace period is over, even if nothing changes.
+  window.setTimeout(sync, GRACE_MS + 500);
 })();

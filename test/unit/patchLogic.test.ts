@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { block, checksum, checksumKey, injectBlock, patchedVersion, removeBlock, updateChecksum } from '../../src/islandsPlus/patchLogic';
+import * as path from 'node:path';
+import { appRootCandidates, block, checksum, checksumKey, injectBlock, patchedVersion, removeBlock, updateChecksum } from '../../src/islandsPlus/patchLogic';
 
 const html = '<!DOCTYPE html>\n<html>\n<head></head>\n<body></body>\n<script src="./workbench.js" type="module"></script>\n</html>\n';
 
@@ -45,5 +46,16 @@ describe('checksums', () => {
 
   it('derives the checksum key from the path under out/', () => {
     expect(checksumKey('out/vs/code/electron-browser/workbench/workbench.html')).toBe('vs/code/electron-browser/workbench/workbench.html');
+  });
+});
+
+describe('uninstall hook', () => {
+  it('finds the app folder next to the executable on every OS', () => {
+    const p = path.posix;
+    const win = appRootCandidates('/vs/Code.exe', p.join, p.dirname, () => ['1a2b3c']);
+    expect(win).toContain('/vs/resources/app');
+    expect(win).toContain('/vs/1a2b3c/resources/app');
+    const mac = appRootCandidates('/Applications/Code.app/Contents/MacOS/Code', p.join, p.dirname, () => []);
+    expect(mac).toContain('/Applications/Code.app/Contents/Resources/app');
   });
 });

@@ -5,9 +5,9 @@ const watch = process.argv.includes('--watch');
 
 /** @type {import('esbuild').BuildOptions} */
 const extension = {
-  entryPoints: ['src/extension.ts'],
+  entryPoints: { extension: 'src/extension.ts', uninstall: 'src/islandsPlus/uninstall.ts' },
   bundle: true,
-  outfile: 'dist/extension.js',
+  outdir: 'dist',
   format: 'cjs',
   platform: 'node',
   target: 'node20',

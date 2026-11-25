@@ -2,11 +2,14 @@
 import { createHash } from 'node:crypto';
 
 /** Bump when the injected block or assets change, so existing patches are refreshed. */
-export const PATCH_VERSION = 1;
+export const PATCH_VERSION = 2;
 export const ASSET_CSS = 'unintellij-islands.css';
 export const ASSET_JS = 'unintellij-islands.js';
 const START = '<!-- UNINTELLIJ-ISLANDS-START';
 const END = '<!-- UNINTELLIJ-ISLANDS-END -->';
+
+/** Status bar entry UnIntelliJ shows while it runs: without it, the injected script turns Islands+ off. */
+export const ALIVE_ITEM = 'unintellij.alive';
 
 /** Locations of workbench.html relative to VS Code's `appRoot`, newest layout first. */
 export const WORKBENCH_CANDIDATES = [
@@ -69,4 +72,14 @@ export function updateChecksum(productJson: string, key: string, value: string):
 /** Checksum key of a workbench file: its path relative to `out/`. */
 export function checksumKey(relativePath: string): string {
   return relativePath.replace(/^out\//, '');
+}
+
+/**
+ * Candidate `appRoot`s of the VS Code installation running `execPath` (used by the uninstall hook,
+ * which runs in plain Node without the `vscode` API): Windows / Linux keep `resources/app` next to
+ * the executable (Windows may add a version folder), macOS has it in `Contents/Resources/app`.
+ */
+export function appRootCandidates(execPath: string, join: (...parts: string[]) => string, dirname: (p: string) => string, subfolders: (dir: string) => string[]): string[] {
+  const dir = dirname(execPath);
+  return [join(dir, 'resources', 'app'), join(dir, '..', 'Resources', 'app'), ...subfolders(dir).map((sub) => join(dir, sub, 'resources', 'app'))];
 }

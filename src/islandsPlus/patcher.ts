@@ -1,4 +1,5 @@
-import { copyFile, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import * as os from 'node:os';
 import { existsSync } from 'node:fs';
 import * as path from 'node:path';
 import { ASSET_CSS, ASSET_JS, checksum, checksumKey, injectBlock, PATCH_VERSION, patchedVersion, removeBlock, updateChecksum, WORKBENCH_CANDIDATES } from './patchLogic';
@@ -105,5 +106,37 @@ async function guard(file: string, action: () => Promise<void>): Promise<void> {
       throw new NotWritableError(file);
     }
     throw error;
+  }
+}
+
+/** Where the uninstall hook finds the installations Islands+ patched (it has no `vscode` API). */
+export const PATCHED_ROOTS_FILE = path.join(os.homedir(), '.unintellij', 'islands-plus-roots.json');
+
+export async function readPatchedRoots(file = PATCHED_ROOTS_FILE): Promise<string[]> {
+  try {
+    const roots: unknown = JSON.parse(await readFile(file, 'utf8'));
+    return Array.isArray(roots) ? roots.filter((r): r is string => typeof r === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Adds or removes `appRoot` in the list read by the uninstall hook. Best effort. */
+export async function recordPatchedRoot(appRoot: string, patched: boolean, file = PATCHED_ROOTS_FILE): Promise<void> {
+  const roots = new Set(await readPatchedRoots(file));
+  if (patched) {
+    roots.add(appRoot);
+  } else {
+    roots.delete(appRoot);
+  }
+  try {
+    if (roots.size === 0) {
+      await rm(file, { force: true });
+    } else {
+      await mkdir(path.dirname(file), { recursive: true });
+      await writeFile(file, JSON.stringify([...roots], null, 2));
+    }
+  } catch {
+    // The uninstall hook also finds the running installation from its executable.
   }
 }

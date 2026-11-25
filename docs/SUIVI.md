@@ -122,3 +122,36 @@ Cocher et dater quand c'est réglé.
 - [x] Fond de l'éditeur vide sans logo VS Code (Islands+) — §19.4
 - [x] Base de données PostgreSQL (§16) : sources de données (fenêtre Data Sources, mot de passe dans le trousseau, couleur, lecture seule, Test Connection), tool window Database (à gauche), fichiers `.sql` et consoles (source › schéma, Ctrl/Cmd+Entrée, ▶ par instruction, erreurs positionnées, teinte, complétion, auto-commit / Commit / Rollback, confirmation sans WHERE), panneau Services › Database (grille, NOTICE, annulation, copie, CSV, données de table filtrées et paginées), tests sur PostgreSQL réel en CI. Plus tard : édition des lignes, tunnel SSH, pgpass.
 - [x] Interface en anglais par défaut, français en option (`unintellij.appearance.language`), contrôle `check:i18n` en CI — §20. **Limite** : titres des commandes dans la palette = langue d'affichage de VS Code.
+
+## Retours du 2026-11-25 (après installation au travail) — à faire, point par point
+
+- [x] **1. Tout s'applique tout seul, et se retire tout seul** :
+  - les réglages du préréglage (police, taille, minimap…) et le thème passent en `configurationDefaults` : VS Code les applique tant que l'extension est active et les retire de lui-même quand elle est désactivée ou désinstallée ;
+  - **on ne touche jamais à ce que l'utilisateur a déjà réglé**, y compris les valeurs écrites par l'ancien bouton « Apply » : une valeur posée par l'utilisateur garde toujours la priorité, et rien n'est retiré ni désactivé à sa place (« Revert » reste disponible dans Settings) ;
+  - Islands+ actif par défaut, sauf si l'utilisateur l'a explicitement désactivé ; il est retiré à la désactivation (`deactivate`) et à la désinstallation (`vscode:uninstall`) ;
+  - vérifié : thème, polices et réglages d'éditeur sont acceptés ; `window.titleBarStyle` est refusé (portée « application ») et reste celui de VS Code. Le patch automatique attend 20 s pour passer après le contrôle d'intégrité de VS Code. Sans UnIntelliJ, Islands+ se coupe au bout de 30 s au démarrage, tout de suite si on le désactive en cours de route.
+  - **Écarts** : la taille de police par défaut est 14 sur tous les OS (une valeur par défaut ne peut pas dépendre de l'OS) ; JetBrains Mono reste installée après désinstallation (inoffensif).
+  - **Limite** : avec le VS Code « System setup » du travail, Islands+ ne peut rien modifier sans droits admin. Il faut passer au « User setup », ou masquer à la main la branche native (clic droit sur la barre d'état, une seule fois).
+- [ ] **2. Vue Commit** : fichiers triés par ordre alphabétique.
+- [ ] **3. Database : choix des bases et des schémas** :
+  - afficher toutes les bases du serveur, pas seulement celle de la connexion ;
+  - choisir par cases à cocher les bases affichées (pas forcément toutes) ;
+  - pour chaque base, choisir les schémas affichés par clic droit (« N of M », sélection par cases à cocher, comme IntelliJ) ;
+  - le sélecteur des fichiers `.sql` suit ce choix.
+- [ ] **4. Maven** : tool window Maven comme IntelliJ :
+  - Lifecycle (clean, validate, compile, test, package, verify, install…) ;
+  - Plugins et Dependencies ;
+  - double-clic pour lancer, Reload, options Offline et Skip Tests ;
+  - goals dans le widget Run.
+- [ ] **5. Widget de branche en un seul bloc** : branche, ↙ entrants, ↗ sortants et icône de fetch dans une seule entrée cliquable. Le clic ouvre le popup Git : Update, Commit, Push, Fetch, nouvelle branche, branches locales et distantes.
+- [ ] **6. Proposer les extensions Java officielles, et seulement elles** :
+  - quand un projet Java / Maven est ouvert, une fenêtre propose une petite liste à cocher, jamais une installation forcée ;
+  - **Language Support for Java** (Red Hat) : complétion, navigation, erreurs ;
+  - **Debugger for Java** (Microsoft) : lancement et débogage, nécessaire au point 7 ;
+  - **Spring Boot Tools** (Spring / Broadcom), facultatif : aide dans `application.properties`, beans, endpoints ;
+  - pas d'« Extension Pack for Java », ni d'IntelliCode, ni de Maven for Java (la tool window Maven est la nôtre, elle appelle `mvn`).
+- [ ] **7. Lancer les configurations Eclipse du dépôt** (`*.launch`) depuis le widget Run et avec ▶, sans rien écrire dans le dépôt :
+  - Java Application : classe main, arguments, VM args, variables d'environnement, dossier de travail ;
+  - Maven (m2e) : goals et profils ;
+  - JUnit ;
+  - variables Eclipse (`${workspace_loc:…}`, `${project_loc}`…) traduites ; les éléments non pris en charge sont signalés.

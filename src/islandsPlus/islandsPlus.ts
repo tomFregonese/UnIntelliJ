@@ -1,19 +1,20 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { getSetting, onSettingsChanged, setSetting } from '../config/settings';
-import { NotWritableError, WorkbenchPatcher } from './patcher';
+import { NotWritableError, recordPatchedRoot, WorkbenchPatcher } from './patcher';
+import { ALIVE_ITEM } from './patchLogic';
 import { t } from '../i18n/i18n';
 
-/** VS Code settings Islands+ adjusts to get IntelliJ's title bar; previous values are restored on disable. */
-const TITLE_BAR_SETTINGS: readonly { key: string; value: unknown; platforms?: NodeJS.Platform[] }[] = [
-  { key: 'window.titleBarStyle', value: 'custom' },
-  { key: 'window.commandCenter', value: false },
-  // IntelliJ's New UI hides the main menu behind a hamburger button.
-  { key: 'window.menuBarVisibility', value: 'compact', platforms: ['win32', 'linux'] },
-];
-
+/** Title bar settings written by Islands+ up to 0.3 (now VS Code defaults); restored on disable. */
 const SETTINGS_BACKUP_KEY = 'islandsPlus.settingsBackup';
 const FAILURE_KEY = 'islandsPlus.failedForVersion';
+/** Set once Islands+ was applied, to tell a re-apply after a VS Code update from a first install. */
+const APPLIED_KEY = 'islandsPlus.applied';
+/**
+ * VS Code checks its files against product.json about 5 s after startup, with the checksums it read
+ * at startup: patching before that check makes it report a "corrupt installation".
+ */
+const STARTUP_DELAY_MS = 20000;
 
 /**
  * Keeps VS Code's installation in line with `unintellij.appearance.islandsPlus.enabled`:
@@ -22,6 +23,8 @@ const FAILURE_KEY = 'islandsPlus.failedForVersion';
 export class IslandsPlus implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
   private readonly projectItem: vscode.StatusBarItem;
+  /** Present while UnIntelliJ runs: when it is disabled, the injected script turns Islands+ off. */
+  private readonly aliveItem: vscode.StatusBarItem;
   private running: Promise<void> = Promise.resolve();
 
   constructor(
@@ -34,7 +37,11 @@ export class IslandsPlus implements vscode.Disposable {
     this.projectItem.name = t('Project');
     this.projectItem.command = 'workbench.action.openRecent';
     this.projectItem.tooltip = t('Recent Projects');
+    this.aliveItem = vscode.window.createStatusBarItem(ALIVE_ITEM, vscode.StatusBarAlignment.Right, -100000);
+    this.aliveItem.name = 'UnIntelliJ Islands+';
+    this.aliveItem.text = 'UnIntelliJ';
     this.disposables.push(
+      this.aliveItem,
       this.projectItem,
       onSettingsChanged(['appearance.islandsPlus.enabled'], () => void this.reconcile(true)),
       vscode.workspace.onDidChangeWorkspaceFolders(() => this.updateProjectItem()),
@@ -49,6 +56,13 @@ export class IslandsPlus implements vscode.Disposable {
   static create(context: vscode.ExtensionContext, log: vscode.LogOutputChannel): IslandsPlus {
     const assets = path.join(context.extensionUri.fsPath, 'media', 'islands-plus');
     return new IslandsPlus(context.globalState, new WorkbenchPatcher(vscode.env.appRoot, assets), log);
+  }
+
+  /** On activation: marks a patched workbench as live now, patches or reverts once VS Code's integrity check is done. */
+  start(): void {
+    void this.updateAliveItem();
+    const timer = setTimeout(() => void this.reconcile(), STARTUP_DELAY_MS);
+    this.disposables.push({ dispose: () => clearTimeout(timer) });
   }
 
   /** Brings the installation in line with the setting. `userInitiated` is true for setting changes. */
@@ -69,6 +83,24 @@ export class IslandsPlus implements vscode.Disposable {
 
   private async doReconcile(userInitiated: boolean): Promise<void> {
     this.updateProjectItem();
+    try {
+      await this.reconcilePatch(userInitiated);
+    } finally {
+      await this.updateAliveItem();
+    }
+  }
+
+  /** The marker exists only in a patched workbench, where islands.css hides it. */
+  private async updateAliveItem(): Promise<void> {
+    const patched = IslandsPlus.supported() && (await this.patcher.status().catch(() => 'clean')) !== 'clean';
+    if (patched) {
+      this.aliveItem.show();
+    } else {
+      this.aliveItem.hide();
+    }
+  }
+
+  private async reconcilePatch(userInitiated: boolean): Promise<void> {
     const enabled = getSetting('appearance.islandsPlus.enabled');
     if (!IslandsPlus.supported()) {
       if (enabled && userInitiated) {
@@ -84,7 +116,7 @@ export class IslandsPlus implements vscode.Disposable {
       return;
     }
     if (enabled && status !== 'patched') {
-      await this.enable(userInitiated, status === 'clean' && !userInitiated);
+      await this.enable(userInitiated, status === 'clean' && !userInitiated && this.state.get<boolean>(APPLIED_KEY) === true);
     } else if (!enabled && status !== 'clean') {
       await this.disable();
     } else if (!enabled && userInitiated) {
@@ -101,8 +133,8 @@ export class IslandsPlus implements vscode.Disposable {
     } catch (error) {
       await this.state.update(FAILURE_KEY, vscode.version);
       if (error instanceof NotWritableError) {
-        const answer = await vscode.window.showErrorMessage(
-          t('Islands+ cannot modify VS Code: its installation folder is read-only for your account (typically the "System" installer on Windows). Use the "User" installer or run VS Code once as administrator to apply it.'),
+        const answer = await vscode.window.showWarningMessage(
+          t('Islands+ cannot modify VS Code: its installation folder is read-only for your account (typically the "System" installer on Windows). Use the "User" installer or run VS Code once as administrator to apply it. Meanwhile, hide VS Code\'s own branch entry by right-clicking the status bar and unchecking "Source Control".'),
           { detail: error.file },
           t('Disable Islands+'),
         );
@@ -114,10 +146,11 @@ export class IslandsPlus implements vscode.Disposable {
       throw error;
     }
     await this.state.update(FAILURE_KEY, undefined);
-    await this.applySettings();
+    await this.state.update(APPLIED_KEY, true);
+    await recordPatchedRoot(vscode.env.appRoot, true);
     this.log.info(`Islands+ applied to ${this.patcher.workbenchFile}`);
-    const message = afterUpdate ? 'VS Code was updated: Islands+ has been re-applied.' : t('Islands+ is installed.');
-    const answer = await vscode.window.showInformationMessage(t('{0} Reload the window to see it.', message), 'Reload Window');
+    const message = afterUpdate ? t('VS Code was updated: Islands+ has been re-applied.') : t('Islands+ is installed.');
+    const answer = await vscode.window.showInformationMessage(t('{0} Reload the window to see it.', message), t('Reload Window'));
     if (answer === t('Reload Window')) {
       await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
@@ -133,27 +166,13 @@ export class IslandsPlus implements vscode.Disposable {
       }
       throw error;
     }
+    await recordPatchedRoot(vscode.env.appRoot, false);
     await this.restoreSettings();
     this.log.info('Islands+ removed');
-    const answer = await vscode.window.showInformationMessage(t('Islands+ has been removed. Reload the window to restore the standard look.'), 'Reload Window');
+    const answer = await vscode.window.showInformationMessage(t('Islands+ has been removed. Reload the window to restore the standard look.'), t('Reload Window'));
     if (answer === t('Reload Window')) {
       await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
-  }
-
-  private async applySettings(): Promise<void> {
-    const config = vscode.workspace.getConfiguration();
-    const backup: Record<string, unknown> = this.state.get(SETTINGS_BACKUP_KEY) ?? {};
-    for (const { key, value, platforms } of TITLE_BAR_SETTINGS) {
-      if (platforms && !platforms.includes(process.platform)) {
-        continue;
-      }
-      if (!(key in backup)) {
-        backup[key] = config.inspect(key)?.globalValue ?? null;
-      }
-      await config.update(key, value, vscode.ConfigurationTarget.Global);
-    }
-    await this.state.update(SETTINGS_BACKUP_KEY, backup);
   }
 
   private async restoreSettings(): Promise<void> {
@@ -172,3 +191,4 @@ export class IslandsPlus implements vscode.Disposable {
     this.disposables.forEach((d) => d.dispose());
   }
 }
+

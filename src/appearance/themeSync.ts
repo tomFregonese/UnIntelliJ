@@ -4,6 +4,7 @@ import { getSetting, setSetting } from '../config/settings';
 import {
   AppearanceSettings,
   appearanceUpdatesFor,
+  themeIdFromLabel,
   vsCodeUpdatesFor,
   VsCodeThemeSettings,
 } from './themeLogic';
@@ -87,7 +88,11 @@ export class ThemeSync implements vscode.Disposable {
       if (!syncExplicit && readVsCode().autoDetectColorScheme) {
         await this.write(() => setSetting('appearance.syncWithOs', true));
       }
-      await this.applyToVsCode();
+      // A theme the user chose themselves is never replaced here: SetupPrompt asks once instead.
+      const own = vscode.workspace.getConfiguration('workbench').inspect<string>('colorTheme')?.globalValue;
+      if (own === undefined || themeIdFromLabel(own)) {
+        await this.applyToVsCode();
+      }
       await this.state.update(INITIALIZED_KEY, true);
     });
   }

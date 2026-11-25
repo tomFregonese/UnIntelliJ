@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- IntelliJ-like settings and the Islands Dark theme are VS Code defaults: they apply while UnIntelliJ is enabled and go away when it is disabled or uninstalled. Values you set yourself (including with the former "Apply" button) are never changed.
+- Islands+ is on by default, switches itself off while UnIntelliJ is disabled and is removed on uninstall.
+- JetBrains Mono is installed automatically when missing; users with their own theme are asked once instead of having it replaced.
+
 ## 0.3.0
 
 - Exact Islands Light / Dark colors from IntelliJ; JetBrains Mono installed for your account by the setup; IntelliJ font sizes.

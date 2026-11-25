@@ -29,7 +29,7 @@ export interface SettingsModel {
   platform: 'windows' | 'macos';
   keymap: KeymapRow[];
   integrations: IntegrationRow[];
-  preset: { applied: boolean; entries: { key: string; value: unknown; reason: string }[] };
+  preset: { applied: boolean; entries: { key: string; value: unknown; reason: string; userValue?: unknown }[] };
   /** Page shown when the window opens (later models keep the current page). */
   initialPage: string;
 }
@@ -38,7 +38,7 @@ export type FromWebview =
   | { type: 'ready' }
   | { type: 'apply'; changes: Record<string, unknown>; close: boolean }
   | { type: 'cancel' }
-  | { type: 'applyPreset' }
+  | { type: 'useIntelliJValue'; key: string }
   | { type: 'revertPreset' }
   | { type: 'showExtension'; id: string };
 

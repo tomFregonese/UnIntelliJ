@@ -22,14 +22,14 @@ suite('Settings window', () => {
     assert.strictEqual(config().inspect('editor.fontSize')?.globalValue, undefined);
   });
 
-  test('IntelliJ-like preset can be applied and reverted', async () => {
-    assert.strictEqual(config().inspect('editor.minimap.enabled')?.globalValue, undefined);
-    await api.settings.applyPreset();
+  test('IntelliJ-like settings are VS Code defaults, without user values', () => {
+    for (const key of ['editor.minimap.enabled', 'editor.rulers', 'workbench.colorTheme', 'editor.fontFamily']) {
+      assert.strictEqual(config().inspect(key)?.globalValue, undefined, key);
+    }
     assert.strictEqual(config().get('editor.minimap.enabled'), false);
     assert.deepStrictEqual(config().get('editor.rulers'), [120]);
-    await api.settings.revertPreset();
-    assert.strictEqual(config().inspect('editor.minimap.enabled')?.globalValue, undefined);
-    assert.strictEqual(config().inspect('editor.rulers')?.globalValue, undefined);
+    assert.strictEqual(config().get('workbench.colorTheme'), 'Islands Dark');
+    assert.match(config().get<string>('editor.fontFamily') ?? '', /JetBrains Mono/);
   });
 
   test('every field edits an existing VS Code setting', () => {

@@ -106,7 +106,7 @@
   "config.unintellij.appearance.preferredLightTheme.description": "Theme used when the OS is in light mode and `#unintellij.appearance.syncWithOs#` is enabled.",
   "config.unintellij.appearance.preferredLightTheme.enum.0": "Islands Dark",
   "config.unintellij.appearance.preferredLightTheme.enum.1": "Islands Light",
-  "config.unintellij.appearance.islandsPlus.enabled.description": "**Islands+** (experimental): patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets. Modifies VS Code installation files and requires write access to them.",
+  "config.unintellij.appearance.islandsPlus.enabled.description": "**Islands+**: patch VS Code's workbench CSS to get IntelliJ's rounded panels and title bar widgets, and hide VS Code's own branch entry, Explorer and welcome logo. Modifies VS Code installation files and requires write access to them (not possible with the Windows \"System\" installer without admin rights). Turns itself off while UnIntelliJ is disabled and is removed when UnIntelliJ is uninstalled.",
   "config.unintellij.keymap": "Keymap",
   "config.unintellij.keymap.layout.description": "Which IntelliJ default keymap to emulate.",
   "config.unintellij.keymap.layout.enum.0": "IntelliJ default keymap for the current operating system",

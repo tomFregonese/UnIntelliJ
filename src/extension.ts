@@ -14,7 +14,7 @@ import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
-import { applyPreset, revertPreset } from './settings/preset';
+import { revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
 import { ProjectView } from './project/projectView';
 import { RunWidget } from './run/runWidget';
@@ -37,7 +37,6 @@ export interface UnIntelliJApi {
   /** Settings window operations (used by tests). */
   settings: {
     applyChanges(changes: Record<string, unknown>): Promise<void>;
-    applyPreset(): Promise<void>;
     revertPreset(): Promise<void>;
   };
 }
@@ -85,8 +84,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);
-  // Not awaited: patching may prompt the user and must not delay activation.
-  void islandsPlus.reconcile();
+  // Not awaited: patching may prompt the user and must not delay activation. Extension tests never
+  // patch the VS Code installation running them.
+  if (context.extensionMode !== vscode.ExtensionMode.Test) {
+    islandsPlus.start();
+  }
 
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);
@@ -94,7 +96,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   await initializeIconThemes(context.globalState, log);
   // Not awaited: the notification stays until the user answers. Skipped in extension tests.
   if (context.extensionMode !== vscode.ExtensionMode.Test) {
-    void setup.maybeAsk();
+    void setup.onStartup();
   }
 
   return {
@@ -105,7 +107,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     keymap: { file: userKeybindings.file, sync: () => userKeybindings.sync() },
     settings: {
       applyChanges,
-      applyPreset: () => applyPreset(context.globalState),
       revertPreset: () => revertPreset(context.globalState),
     },
   };

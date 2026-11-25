@@ -1,5 +1,6 @@
 **
 !dist/extension.js
+!dist/uninstall.js
 !dist/webview/*.js
 !media/*.css
 !package.json

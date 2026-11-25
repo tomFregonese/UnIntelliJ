@@ -106,7 +106,7 @@
   "config.unintellij.appearance.preferredLightTheme.description": "Thème utilisé quand le système est en mode clair et que `#unintellij.appearance.syncWithOs#` est activé.",
   "config.unintellij.appearance.preferredLightTheme.enum.0": "Islands Dark",
   "config.unintellij.appearance.preferredLightTheme.enum.1": "Islands Light",
-  "config.unintellij.appearance.islandsPlus.enabled.description": "**Islands+** (expérimental) : modifie le CSS de VS Code pour obtenir les panneaux arrondis et les widgets de barre de titre d'IntelliJ. Modifie les fichiers d'installation de VS Code et nécessite d'y avoir accès en écriture.",
+  "config.unintellij.appearance.islandsPlus.enabled.description": "**Islands+** : modifie le CSS de VS Code pour obtenir les panneaux arrondis et les widgets de barre de titre d'IntelliJ, et masquer l'entrée de branche native, l'Explorateur et le logo d'accueil de VS Code. Modifie des fichiers d'installation de VS Code et demande d'y avoir accès en écriture (impossible avec l'installateur Windows « System » sans droits admin). Se coupe tout seul quand UnIntelliJ est désactivé et est retiré quand UnIntelliJ est désinstallé.",
   "config.unintellij.keymap": "Raccourcis clavier",
   "config.unintellij.keymap.layout.description": "Jeu de raccourcis IntelliJ à reproduire.",
   "config.unintellij.keymap.layout.enum.0": "Raccourcis IntelliJ par défaut du système actuel",
