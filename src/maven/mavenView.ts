@@ -1,9 +1,9 @@
-import { existsSync } from 'node:fs';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { mavenConfiguration } from '../run/configurations';
 import { MAVEN_RUNS_KEY, MavenRunData, rememberMavenRun } from '../run/runConfigLogic';
+import { findWrapper, wrapperCommand } from './wrapper';
 import { dependencyLabel, KNOWN_GOALS, LIFECYCLE, mavenArgs, Plugin, Pom, Profile, parsePom, projectLabel, splitCommandLine } from './pomLogic';
 
 export interface MavenProject {
@@ -298,7 +298,7 @@ export class MavenView implements vscode.TreeDataProvider<Node>, vscode.Disposab
   /** Runs goals with the tool window options, as a temporary run configuration of the Run widget. */
   async run(project: MavenProject, goals: string[]): Promise<void> {
     const { cwd, wrapper } = findWrapper(project.dir, project.folder?.uri.fsPath);
-    const executable = wrapper ? (process.platform === 'win32' ? '.\\mvnw.cmd' : './mvnw') : 'mvn';
+    const executable = wrapperCommand(wrapper);
     const options = this.options;
     const args = mavenArgs({ executable, goals, pomFile: path.relative(cwd, project.uri.fsPath).split(path.sep).join('/'), offline: options.offline, skipTests: options.skipTests, profiles: options.profiles });
     const run: MavenRunData = {
@@ -315,17 +315,5 @@ export class MavenView implements vscode.TreeDataProvider<Node>, vscode.Disposab
 
   dispose(): void {
     this.disposables.forEach((d) => d.dispose());
-  }
-}
-
-/** The closest Maven wrapper (mvnw) from the project up to the workspace folder; it is run from its own directory. */
-function findWrapper(dir: string, stop: string | undefined): { cwd: string; wrapper: boolean } {
-  for (let current = dir; ; current = path.dirname(current)) {
-    if (existsSync(path.join(current, 'mvnw')) || existsSync(path.join(current, 'mvnw.cmd'))) {
-      return { cwd: current, wrapper: true };
-    }
-    if (!stop || current === stop || path.dirname(current) === current || !current.startsWith(stop)) {
-      return { cwd: dir, wrapper: false };
-    }
   }
 }

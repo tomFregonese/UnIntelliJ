@@ -118,6 +118,7 @@ export class RunWidget implements vscode.Disposable {
       ['Maven', configurations.filter((c) => c.kind === 'maven')],
       ['npm', configurations.filter((c) => c.kind === 'npm' && c.saved)],
       ['npm scripts', configurations.filter((c) => c.kind === 'npm' && !c.saved)],
+      [t('Eclipse Launch Configurations'), configurations.filter((c) => c.kind === 'eclipse')],
       [t('Launch Configurations'), configurations.filter((c) => c.kind === 'launch')],
     ];
     for (const [label, group] of groups) {
@@ -126,7 +127,7 @@ export class RunWidget implements vscode.Disposable {
         items.push(
           ...group.map((c) => ({
             label: t('$({0}) {1}', configurationIcon(c).id, c.name),
-            description: c.kind === 'npm' ? c.command : c.kind === 'maven' ? c.args.join(' ') : c.type,
+            description: description(c),
             picked: c.id === this.selected?.id,
             configuration: c,
           })),
@@ -192,4 +193,19 @@ export class RunWidget implements vscode.Disposable {
 
 function hint(shortcut: string | undefined): string {
   return shortcut ? ` (${shortcut})` : '';
+}
+
+function description(configuration: RunConfiguration): string {
+  switch (configuration.kind) {
+    case 'npm':
+      return configuration.command;
+    case 'maven':
+      return configuration.args.join(' ');
+    case 'eclipse': {
+      const launch = configuration.launch;
+      return launch.mainType ?? launch.goals ?? (launch.kind === 'remote' ? `${launch.host ?? 'localhost'}:${launch.port ?? ''}` : launch.type);
+    }
+    default:
+      return configuration.type;
+  }
 }

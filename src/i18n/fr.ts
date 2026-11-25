@@ -769,4 +769,8 @@ export const FR: Record<string, string> = {
   "Spring Boot Tools (Spring)": "Spring Boot Tools (Spring)",
   "Optional: application.properties completion, beans and endpoints.": "Facultatif : complétion dans application.properties, beans et endpoints.",
   "Spring Boot: application.properties completion, beans and endpoints (optional)": "Spring Boot : complétion dans application.properties, beans et endpoints (facultatif)",
+  "Eclipse Launch Configurations": "Configurations de lancement Eclipse",
+  "Running {0} needs the official Java extensions (Red Hat Java and Debugger for Java).": "Lancer {0} demande les extensions Java officielles (Java de Red Hat et Debugger for Java).",
+  "{0}: Eclipse variables not supported, passed as is: {1}": "{0} : variables Eclipse non prises en charge, transmises telles quelles : {1}",
+  "{0}: this Eclipse launch type is not supported ({1}).": "{0} : ce type de lancement Eclipse n'est pas pris en charge ({1}).",
 };

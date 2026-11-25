@@ -4,41 +4,9 @@
  * before importing is enough for running goals.
  */
 
-export interface XmlElement {
-  name: string;
-  children: XmlElement[];
-  text: string;
-}
+import { parseXml, XmlElement } from '../xml';
 
-/** Small tolerant XML reader (elements and text; attributes, comments, CDATA and prolog are skipped). */
-export function parseXml(xml: string): XmlElement {
-  const root: XmlElement = { name: '#document', children: [], text: '' };
-  const stack: XmlElement[] = [root];
-  const pattern = /<!--[\s\S]*?-->|<!\[CDATA\[([\s\S]*?)\]\]>|<\?[\s\S]*?\?>|<!DOCTYPE[^>]*>|<\/\s*([\w.:-]+)\s*>|<\s*([\w.:-]+)((?:\s+[\w.:-]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>|([^<]+)/g;
-  for (const match of xml.matchAll(pattern)) {
-    const current = stack[stack.length - 1];
-    if (match[1] !== undefined) {
-      current.text += match[1];
-    } else if (match[2]) {
-      if (stack.length > 1 && current.name === match[2].replace(/^.*:/, '')) {
-        stack.pop();
-      }
-    } else if (match[3]) {
-      const element: XmlElement = { name: match[3].replace(/^.*:/, ''), children: [], text: '' };
-      current.children.push(element);
-      if (!match[5]) {
-        stack.push(element);
-      }
-    } else if (match[6]) {
-      current.text += decodeEntities(match[6]);
-    }
-  }
-  return root;
-}
-
-function decodeEntities(text: string): string {
-  return text.replace(/&(lt|gt|amp|quot|apos);/g, (_, e: string) => ({ lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" })[e]!);
-}
+export { parseXml };
 
 function child(element: XmlElement | undefined, name: string): XmlElement | undefined {
   return element?.children.find((c) => c.name === name);

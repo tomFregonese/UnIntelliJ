@@ -152,8 +152,9 @@ Cocher et dater quand c'est réglé.
   - **Spring Boot Tools** (Spring / Broadcom), facultatif : aide dans `application.properties`, beans, endpoints ;
   - pas d'« Extension Pack for Java », ni d'IntelliCode, ni de Maven for Java (la tool window Maven est la nôtre, elle appelle `mvn`).
   - Fait : proposition à l'ouverture d'un projet Java (pom.xml, build.gradle ou .java), boutons Choisir… / Pas maintenant / Ne plus demander ; commande « Install Java Extensions… » ; Spring Boot Tools ajouté à Settings › Plugins.
-- [ ] **7. Lancer les configurations Eclipse du dépôt** (`*.launch`) depuis le widget Run et avec ▶, sans rien écrire dans le dépôt :
+- [x] **7. Lancer les configurations Eclipse du dépôt** (`*.launch`) depuis le widget Run et avec ▶, sans rien écrire dans le dépôt :
   - Java Application : classe main, arguments, VM args, variables d'environnement, dossier de travail ;
   - Maven (m2e) : goals et profils ;
   - JUnit ;
   - variables Eclipse (`${workspace_loc:…}`, `${project_loc}`…) traduites ; les éléments non pris en charge sont signalés.
+  - Fait et vérifié : groupe « Eclipse Launch Configurations » dans le widget Run ; Java Application et Spring Boot (profil ajouté), Remote Java Application (attache du débogueur), Maven m2e, JUnit (via Surefire). Le projet Java est retrouvé via le débogueur (le nom Eclipse peut différer de l'artifactId). **Écarts** : types serveur (Tomcat…) non pris en charge (message) ; Debug d'un launch Maven/JUnit lance sans débogueur.
