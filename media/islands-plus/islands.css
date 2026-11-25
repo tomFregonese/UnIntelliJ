@@ -140,3 +140,11 @@
 .statusbar-item[id$="unintellij.alive"] {
   display: none !important;
 }
+
+/* Branch widget counts (colored by islands.js). */
+.unintellij-count.incoming {
+  color: var(--vscode-unintellij-incomingCommits);
+}
+.unintellij-count.outgoing {
+  color: var(--vscode-unintellij-outgoingCommits);
+}

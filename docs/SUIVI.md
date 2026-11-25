@@ -144,7 +144,7 @@ Cocher et dater quand c'est réglé.
   - double-clic pour lancer, Reload, options Offline et Skip Tests ;
   - goals dans le widget Run.
   - Fait : Profiles à cocher, projets et modules imbriqués, Lifecycle, Plugins (goals des plugins courants), Dependencies directes, double-clic ou ▶ pour lancer, « Execute Maven Goal… », Reload, Offline, Skip Tests, wrapper `mvnw` utilisé s'il existe. Chaque goal lancé devient une configuration temporaire du widget Run (5 dernières, comme IntelliJ). **Écarts** : pas de pom effectif (plugins hérités du parent non listés), dépendances directes seulement (pas d'arbre transitif), le bouton Debug lance le goal sans débogueur.
-- [ ] **5. Widget de branche en un seul bloc** : branche, ↙ entrants, ↗ sortants et icône de fetch dans une seule entrée cliquable. Le clic ouvre le popup Git : Update, Commit, Push, Fetch, nouvelle branche, branches locales et distantes.
+- [x] **5. Widget de branche en un seul bloc** : branche, ↙ entrants, ↗ sortants et icône de fetch dans une seule entrée cliquable. Le clic ouvre le popup Git : Update, Commit, Push, Fetch, nouvelle branche, branches locales et distantes. Fait ; **écart** : sans Islands+, les compteurs ↙/↗ ne sont plus colorés (une entrée de barre d'état n'a qu'une couleur) ; avec Islands+, ils restent bleu / vert.
 - [ ] **6. Proposer les extensions Java officielles, et seulement elles** :
   - quand un projet Java / Maven est ouvert, une fenêtre propose une petite liste à cocher, jamais une installation forcée ;
   - **Language Support for Java** (Red Hat) : complétion, navigation, erreurs ;

@@ -90,6 +90,7 @@ export class Branches implements vscode.Disposable {
       { label: t('$(repo-pull) Update Project…'), description: shortcutFor('unintellij.updateProject'), run: () => vscode.commands.executeCommand('unintellij.updateProject') },
       { label: t('$(git-commit) Commit…'), description: shortcutFor('unintellij.commit'), run: () => vscode.commands.executeCommand('unintellij.commit') },
       { label: t('$(repo-push) Push…'), description: shortcutFor('unintellij.push'), run: () => this.push() },
+      { label: t('$(repo-fetch) Fetch'), description: shortcutFor('unintellij.fetch'), run: () => vscode.commands.executeCommand('unintellij.fetch') },
       { label: t('$(add) New Branch…'), run: () => this.newBranch(current) },
       { label: t('$(tag) Checkout Tag or Revision…'), run: () => this.checkoutRevision() },
     ];

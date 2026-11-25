@@ -8,6 +8,7 @@
 - Commit tool window: files sorted alphabetically by name.
 - Database: data source › database › schema; choose the databases and schemas shown with checkboxes (right-click › Choose Databases… / Choose Schemas…); SQL files can target any database of the server.
 - Maven tool window: profiles, projects and modules, Lifecycle, Plugins, Dependencies; double-click to run a goal, Execute Maven Goal, offline and skip-tests toggles, Maven wrapper; goals become temporary run configurations in the Run widget.
+- Branch widget is a single block (branch, ↙/↗ counts, Update / Push / Fetch icons) that opens the Git popup, which now also has Fetch.
 - Icon themes are VS Code defaults too; an Islands theme you picked yourself is kept.
 
 ## 0.3.0

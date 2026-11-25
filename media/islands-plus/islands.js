@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var LEFT = ['unintellij.project', 'unintellij.branch.name', 'unintellij.branch.outgoing', 'unintellij.branch.incoming', 'unintellij.branch.update', 'unintellij.branch.push', 'unintellij.branch.fetch'];
+  var LEFT = ['unintellij.project', 'unintellij.branch.name'];
   var RIGHT = ['unintellij.run.selector', 'unintellij.run.run', 'unintellij.run.debug', 'unintellij.run.stop'];
 
   function findItem(id) {
@@ -62,6 +62,39 @@
     });
   }
 
+  /** IntelliJ colors the branch widget counts: blue ↙ incoming, green ↗ outgoing. */
+  function colorCounts() {
+    var item = findItem('unintellij.branch.name');
+    if (!item) {
+      return;
+    }
+    var walker = document.createTreeWalker(item, window.NodeFilter.SHOW_TEXT);
+    var nodes = [];
+    for (var node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (/[↙↗]\d/.test(node.nodeValue) && !(node.parentElement && node.parentElement.classList.contains('unintellij-count'))) {
+        nodes.push(node);
+      }
+    }
+    nodes.forEach(function (textNode) {
+      var parts = textNode.nodeValue.split(/([↙↗]\d+)/);
+      var fragment = document.createDocumentFragment();
+      parts.forEach(function (part) {
+        if (!part) {
+          return;
+        }
+        if (/^[↙↗]\d+$/.test(part)) {
+          var span = document.createElement('span');
+          span.className = 'unintellij-count ' + (part[0] === '↙' ? 'incoming' : 'outgoing');
+          span.textContent = part;
+          fragment.appendChild(span);
+        } else {
+          fragment.appendChild(document.createTextNode(part));
+        }
+      });
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
+  }
+
   var ALIVE = 'unintellij.alive';
   /** Time UnIntelliJ gets to start before Islands+ is switched off (extensions start after the window). */
   var GRACE_MS = 30000;
@@ -91,6 +124,7 @@
     }
     place(LEFT, 'left');
     place(RIGHT, 'right');
+    colorCounts();
   }
 
   new MutationObserver(function () {

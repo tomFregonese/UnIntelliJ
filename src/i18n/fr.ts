@@ -751,4 +751,6 @@ export const FR: Record<string, string> = {
   "Work Offline": "Travailler hors ligne",
   "Work Offline (on: click to go online)": "Hors ligne (actif : cliquer pour repasser en ligne)",
   "active by default": "actif par défaut",
+  "Click for Update Project{0}, Commit{1}, Push{2}, Fetch and branches{3}": "Clic : Update Project{0}, Commit{1}, Push{2}, Fetch et branches{3}",
+  "Git Branch: {0}{1}": "Branche Git : {0}{1}",
 };
