@@ -66,3 +66,11 @@ Cocher et dater quand c'est réglé.
 - [ ] **Vue Source Control native de VS Code toujours présente** à côté de notre Commit tool window : la masquer (clic droit sur la barre d'activité) ou la laisser ?
 - [ ] **Widget de branche dans la barre d'état** (en bas) en plus de celui de VS Code ; avec Islands+, le placer en haut comme dans IntelliJ.
 - [ ] **Push** = popup de confirmation (liste des commits + Push / Force Push) plutôt qu'un vrai dialogue ; suppression de branche distante via la commande native de VS Code.
+
+## Lot 9 — Git log, diff, conflits
+
+- [ ] **Rendu du graphe non vérifié à l'écran** (testé : placement des lignes, rendu SVG sous jsdom, dépôt réel temporaire).
+- [ ] **Log limité à 500 commits par page** (bouton « Load more ») ; sur un très gros dépôt, vérifier la fluidité.
+- [ ] **Diff et merge = éditeurs natifs de VS Code** aux couleurs IntelliJ (pas une réimplémentation du diff IntelliJ) ; F7 / Shift+F7 pour naviguer entre les différences.
+- [ ] **Conflits** : « Yours/Theirs » suivent Git (`--ours/--theirs`) ; pendant un rebase le sens est inversé, c'est rappelé dans le dialogue.
+- [ ] **Annotate (blame)** = décoration native de VS Code activée depuis VCS Operations (pas la colonne de gouttière d'IntelliJ).

@@ -18,7 +18,10 @@
     "test/unit/settingsWebview.test.ts",
     "test/unit/commitWebview.test.ts",
     "src/vcs/commitProtocol.ts",
-    "src/vcs/changesLogic.ts"
+    "src/vcs/changesLogic.ts",
+    "src/vcs/gitLogProtocol.ts",
+    "src/vcs/logLogic.ts",
+    "test/unit/gitLogWebview.test.ts"
   ],
   "exclude": []
 }

@@ -4,6 +4,7 @@
  */
 
 export const VIEW_CONTAINERS = {
+  panel: [{ id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' }],
   activitybar: [
     { id: 'unintellij-commit', title: 'Commit', icon: 'media/commit.svg' },
     { id: 'unintellij-structure', title: 'Structure', icon: 'media/structure.svg' },
@@ -12,6 +13,7 @@ export const VIEW_CONTAINERS = {
 };
 
 export const VIEWS = {
+  'unintellij-git': [{ type: 'webview', id: 'unintellij.gitLog', name: 'Log' }],
   'unintellij-commit': [{ type: 'webview', id: 'unintellij.commit', name: 'Commit' }],
   'unintellij-structure': [{ id: 'unintellij.structure', name: 'Structure' }],
   'unintellij-npm': [{ id: 'unintellij.npm', name: 'Scripts' }],
@@ -29,8 +31,19 @@ const commitMenu = (section: string, entries: [string, string][], extraWhen = ''
   entries.map(([command, group]) => ({ command, group, when: `webviewId == 'unintellij.commit' && webviewSection == '${section}'${extraWhen}` }));
 const CHANGELISTS_ON = ' && config.unintellij.vcs.changelists.enabled';
 
+const logMenu = (entries: [string, string][]) => entries.map(([command, group]) => ({ command, group, when: "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'" }));
+
 export const MENUS = {
   'webview/context': [
+    ...logMenu([
+      ['unintellij.git.copyRevision', '1_copy@1'],
+      ['unintellij.git.checkoutRevision', '2_branch@1'],
+      ['unintellij.git.newBranchHere', '2_branch@2'],
+      ['unintellij.git.newTag', '2_branch@3'],
+      ['unintellij.git.cherryPick', '3_change@1'],
+      ['unintellij.git.revertCommit', '3_change@2'],
+      ['unintellij.git.resetToHere', '3_change@3'],
+    ]),
     ...commitMenu('file', [
       ['unintellij.commit.showDiff', '1_diff@1'],
       ['unintellij.commit.jumpToSource', '1_diff@2'],

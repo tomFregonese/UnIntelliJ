@@ -14,6 +14,7 @@ import { NpmView } from './toolWindows/npm';
 import { StructureView } from './toolWindows/structure';
 import { registerVcsCommands } from './vcs/commands';
 import type { CommitViewState } from './vcs/commitProtocol';
+import type { GitLogView } from './vcs/gitLogView';
 import type { VcsService } from './vcs/vcsService';
 
 export interface UnIntelliJApi {
@@ -25,7 +26,7 @@ export interface UnIntelliJApi {
   /** Names of the top-level symbols shown in the Structure tool window (used by tests). */
   structure(): Promise<string[]>;
   /** Version control service and Commit tool window (used by tests). */
-  vcs: { service: VcsService; commitState(): CommitViewState };
+  vcs: { service: VcsService; commitState(): CommitViewState; gitLog: GitLogView };
   /** Settings window operations (used by tests). */
   settings: {
     applyChanges(changes: Record<string, unknown>): Promise<void>;
@@ -69,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     integrations: detectIntegrations,
     appearanceIdle: () => themeSync.idle(),
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
-    vcs: { service: vcs.service, commitState: () => vcs.commitView.state() },
+    vcs: { service: vcs.service, commitState: () => vcs.commitView.state(), gitLog: vcs.gitLog },
     structure: async () => (await structure.whenLoaded()).map((n) => n.symbol.name),
     settings: {
       applyChanges,

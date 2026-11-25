@@ -132,7 +132,7 @@ export const KEYMAP: readonly KeymapAction[] = [
   ...toolWindow('ActivateDebugToolWindow', 'Debug', 'alt+5', 'cmd+5', 'workbench.view.debug', sideBarShows('workbench.view.debug')),
   ...toolWindow('ActivateProblemsViewToolWindow', 'Problems', 'alt+6', 'cmd+6', 'workbench.actions.view.problems', panelShows('workbench.panel.markers')),
   ...toolWindow('ActivateStructureToolWindow', 'Structure', 'alt+7', 'cmd+7', containerCommand('unintellij-structure'), sideBarShows(containerCommand('unintellij-structure'))),
-  ...toolWindow('ActivateVersionControlToolWindow', 'Git', 'alt+9', 'cmd+9', 'workbench.view.scm', sideBarShows('workbench.view.scm')),
+  ...toolWindow('ActivateVersionControlToolWindow', 'Git', 'alt+9', 'cmd+9', containerCommand('unintellij-git'), panelShows(containerCommand('unintellij-git'))),
   ...toolWindow('ActivateCommitToolWindow', 'Commit', 'alt+0', 'cmd+0', containerCommand('unintellij-commit'), sideBarShows(containerCommand('unintellij-commit'))),
   ...toolWindow('ActivateTerminalToolWindow', 'Terminal', 'alt+f12', 'alt+f12', 'terminal.focus', 'terminalFocus'),
   { id: 'HideActiveWindow', name: 'Hide Active Tool Window', category: 'Tool Windows', windows: 'shift+escape', macos: 'shift+escape', command: 'workbench.action.closeSidebar', when: 'sideBarFocus', variants: [{ command: 'workbench.action.closePanel', when: 'panelFocus' }] },

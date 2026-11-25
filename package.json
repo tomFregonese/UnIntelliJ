@@ -428,6 +428,56 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.git.showLog",
+        "title": "Show Git Log",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.showFileHistory",
+        "title": "Show History for Current File",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.resolveConflicts",
+        "title": "Resolve Conflicts…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.copyRevision",
+        "title": "Copy Revision Number",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.checkoutRevision",
+        "title": "Checkout Revision",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.newBranchHere",
+        "title": "New Branch…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.newTag",
+        "title": "New Tag…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.cherryPick",
+        "title": "Cherry-Pick",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.revertCommit",
+        "title": "Revert Commit",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.git.resetToHere",
+        "title": "Reset Current Branch to Here…",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.commit",
         "title": "Commit…",
         "category": "UnIntelliJ"
@@ -547,9 +597,72 @@
         {
           "command": "unintellij.commit.deleteChangelist",
           "when": "false"
+        },
+        {
+          "command": "unintellij.git.copyRevision",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.checkoutRevision",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.newBranchHere",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.newTag",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.cherryPick",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.revertCommit",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.git.resetToHere",
+          "when": "false"
         }
       ],
       "webview/context": [
+        {
+          "command": "unintellij.git.copyRevision",
+          "group": "1_copy@1",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.checkoutRevision",
+          "group": "2_branch@1",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.newBranchHere",
+          "group": "2_branch@2",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.newTag",
+          "group": "2_branch@3",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.cherryPick",
+          "group": "3_change@1",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.revertCommit",
+          "group": "3_change@2",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
+        {
+          "command": "unintellij.git.resetToHere",
+          "group": "3_change@3",
+          "when": "webviewId == 'unintellij.gitLog' && webviewSection == 'commit'"
+        },
         {
           "command": "unintellij.commit.showDiff",
           "group": "1_diff@1",
@@ -1095,13 +1208,13 @@
       },
       {
         "key": "alt+9",
-        "command": "workbench.view.scm",
+        "command": "workbench.view.extension.unintellij-git",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow"
       },
       {
         "key": "alt+9",
-        "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (panelFocus && activePanel == 'workbench.view.extension.unintellij-git')"
       },
       {
         "key": "alt+0",
@@ -1741,13 +1854,13 @@
       },
       {
         "key": "cmd+9",
-        "command": "workbench.view.scm",
+        "command": "workbench.view.extension.unintellij-git",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow"
       },
       {
         "key": "cmd+9",
-        "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+        "command": "workbench.action.closePanel",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateVersionControlToolWindow && (panelFocus && activePanel == 'workbench.view.extension.unintellij-git')"
       },
       {
         "key": "cmd+0",
@@ -1971,6 +2084,13 @@
       }
     ],
     "viewsContainers": {
+      "panel": [
+        {
+          "id": "unintellij-git",
+          "title": "Git",
+          "icon": "media/git.svg"
+        }
+      ],
       "activitybar": [
         {
           "id": "unintellij-commit",
@@ -1990,6 +2110,13 @@
       ]
     },
     "views": {
+      "unintellij-git": [
+        {
+          "type": "webview",
+          "id": "unintellij.gitLog",
+          "name": "Log"
+        }
+      ],
       "unintellij-commit": [
         {
           "type": "webview",

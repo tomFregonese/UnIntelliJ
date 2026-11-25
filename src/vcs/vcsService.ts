@@ -197,13 +197,15 @@ export class VcsService implements vscode.Disposable {
     }
   }
 
-  /** Runs a git command in the repository root and refreshes the repository state. */
-  async git(args: readonly string[]): Promise<string> {
+  /** Runs a git command in the repository root; `refresh` reloads the repository state afterwards (for commands that change it). */
+  async git(args: readonly string[], refresh = true): Promise<string> {
     const repository = this.requireRepository();
     try {
       return (await runGit(this.api!.git.path, repository.rootUri.fsPath, args)).stdout;
     } finally {
-      await repository.status();
+      if (refresh) {
+        await repository.status();
+      }
     }
   }
 

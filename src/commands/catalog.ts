@@ -66,6 +66,17 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.commit.setActiveChangelist', title: 'Set Active Changelist', hidden: true },
   { command: 'unintellij.commit.renameChangelist', title: 'Edit Changelist…', hidden: true },
   { command: 'unintellij.commit.deleteChangelist', title: 'Delete Changelist', hidden: true },
+  // Git tool window (log)
+  { command: 'unintellij.git.showLog', title: 'Show Git Log' },
+  { command: 'unintellij.git.showFileHistory', title: 'Show History for Current File' },
+  { command: 'unintellij.git.resolveConflicts', title: 'Resolve Conflicts…' },
+  { command: 'unintellij.git.copyRevision', title: 'Copy Revision Number', hidden: true },
+  { command: 'unintellij.git.checkoutRevision', title: 'Checkout Revision', hidden: true },
+  { command: 'unintellij.git.newBranchHere', title: 'New Branch…', hidden: true },
+  { command: 'unintellij.git.newTag', title: 'New Tag…', hidden: true },
+  { command: 'unintellij.git.cherryPick', title: 'Cherry-Pick', hidden: true },
+  { command: 'unintellij.git.revertCommit', title: 'Revert Commit', hidden: true },
+  { command: 'unintellij.git.resetToHere', title: 'Reset Current Branch to Here…', hidden: true },
   // Version control
   { command: 'unintellij.commit', title: 'Commit…' },
   { command: 'unintellij.push', title: 'Push…' },

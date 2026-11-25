@@ -28,6 +28,7 @@
   "exclude": [
     "src/webview",
     "test/unit/settingsWebview.test.ts",
-    "test/unit/commitWebview.test.ts"
+    "test/unit/commitWebview.test.ts",
+    "test/unit/gitLogWebview.test.ts"
   ]
 }

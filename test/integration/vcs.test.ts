@@ -102,6 +102,25 @@ suite('Version control', function () {
     await eventually('no more changes', () => state().lists.every((l) => l.files.length === 0));
   });
 
+  test('Git log: commits with graph, path filter and details', async () => {
+    const log = await api.vcs.gitLog.load({ text: '', branch: 'all', author: 'all', since: 'all', path: '' }, 50);
+    assert.strictEqual(log.type, 'log');
+    if (log.type !== 'log') {
+      return;
+    }
+    assert.deepStrictEqual(log.commits.map((c) => c.subject), ['Commit a and c (amended)', 'Initial commit']);
+    assert.strictEqual(log.graph.length, 2);
+    assert.deepStrictEqual(log.commits[0].refs, [{ name: 'main', kind: 'head' }]);
+    assert.deepStrictEqual(log.authors, ['UnIntelliJ Tests']);
+
+    const history = await api.vcs.gitLog.load({ text: '', branch: 'HEAD', author: 'all', since: 'all', path: 'c.txt' }, 50);
+    assert.deepStrictEqual(history.type === 'log' && history.commits.map((c) => c.subject), ['Commit a and c (amended)']);
+
+    const details = await api.vcs.gitLog.details(log.commits[0].hash);
+    assert.deepStrictEqual(details.files.map((f) => `${f.status} ${f.path}`).sort(), ['A c.txt', 'M a.txt']);
+    assert.strictEqual(details.message, 'Commit a and c (amended)');
+  });
+
   test('git operations run in the repository and refresh its state', async () => {
     await api.vcs.service.git(['checkout', '-b', 'feature/login']);
     await eventually('branch switched', () => api.vcs.service.repository?.state.HEAD?.name === 'feature/login');

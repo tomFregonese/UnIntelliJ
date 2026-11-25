@@ -64,7 +64,7 @@ export class Branches implements vscode.Disposable {
   }
 
   private async branches(): Promise<BranchInfo[]> {
-    return parseRefs(await this.vcs.git(['for-each-ref', `--format=${REF_FORMAT}`, 'refs/heads', 'refs/remotes']));
+    return parseRefs(await this.vcs.git(['for-each-ref', `--format=${REF_FORMAT}`, 'refs/heads', 'refs/remotes'], false));
   }
 
   private current(): string | undefined {
@@ -228,8 +228,8 @@ export class Branches implements vscode.Disposable {
 
   private async compare(branch: string, current: string): Promise<void> {
     const [incoming, outgoing] = await Promise.all([
-      this.vcs.git(['log', `--format=${COMMIT_FORMAT}`, '-n', '200', `${current}..${branch}`]),
-      this.vcs.git(['log', `--format=${COMMIT_FORMAT}`, '-n', '200', `${branch}..${current}`]),
+      this.vcs.git(['log', `--format=${COMMIT_FORMAT}`, '-n', '200', `${current}..${branch}`], false),
+      this.vcs.git(['log', `--format=${COMMIT_FORMAT}`, '-n', '200', `${branch}..${current}`], false),
     ]);
     const item = (c: ReturnType<typeof parseCommits>[number]): Action => ({ label: c.subject, description: `${c.hash.slice(0, 8)} · ${c.author} · ${c.relativeDate}` });
     await vscode.window.showQuickPick(
@@ -274,7 +274,7 @@ export class Branches implements vscode.Disposable {
     if (!info?.upstream) {
       args.push('--not', '--remotes');
     }
-    const commits = parseCommits(await this.vcs.git(args));
+    const commits = parseCommits(await this.vcs.git(args, false));
     const target = `${remote}/${remoteBranch}`;
     const setUpstream = !info?.upstream;
     const items: Action[] = [
@@ -314,6 +314,8 @@ export class Branches implements vscode.Disposable {
       { label: withShortcut('$(repo-push) Push…', 'unintellij.push'), run: () => this.push() },
       { label: withShortcut('$(repo-pull) Update Project…', 'unintellij.updateProject'), run: () => this.updateProject() },
       { label: '$(repo-fetch) Fetch', run: () => vscode.commands.executeCommand('git.fetch') },
+      { label: '$(warning) Resolve Conflicts…', run: () => vscode.commands.executeCommand('unintellij.git.resolveConflicts') },
+      { label: '$(history) Show Git Log', run: () => vscode.commands.executeCommand('unintellij.git.showLog') },
       separator(''),
       file && { label: '$(discard) Rollback File…', run: () => vscode.commands.executeCommand('unintellij.commit.rollback', { webviewSection: 'file', paths: [file.fsPath], preventDefaultContextMenuItems: true }) },
       file && { label: '$(history) Show History', run: () => vscode.commands.executeCommand('unintellij.git.showFileHistory', file) },
