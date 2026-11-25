@@ -113,3 +113,6 @@ Cocher et dater quand c'est réglé.
 - [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
 - [ ] **Base de données PostgreSQL façon IntelliJ** : tool window Database, sources de données (mots de passe sécurisés, couleur par source), sélecteur source/schéma dans les fichiers `.sql`, `Ctrl+Entrée`, résultats en grille — §16 (PostgreSQL uniquement)
 - [ ] **Triangles verts ▶ dans la gouttière** : tests Java (méthode, classe, package, avec ✓/✗ après exécution), `main` / Spring Boot, scripts `package.json`, tests TS/JS, instructions SQL — §17
+- [ ] ▶ **dans la gouttière à gauche de la ligne**, pas au-dessus (API Testing pour tous les cas) — §17.5
+- [ ] Barre Git **pleine** (pas hachurée) dans la gouttière, réglée automatiquement — §18.1
+- [ ] Popup de modification au clic (ancien contenu, Précédent / Suivant / Rollback / Show Diff) et diff complet façon IntelliJ — §18.2, §18.3

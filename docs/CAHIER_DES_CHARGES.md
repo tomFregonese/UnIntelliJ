@@ -389,5 +389,28 @@ Comme IntelliJ Ultimate : partout où quelque chose est lançable, un **triangle
 
 ### 17.5 Technique
 
-- Triangles affichés via des décorations de gouttière avec les icônes New UI (`run`, `runAll`, `testPassed`, `testFailed`), et menu Run/Debug au clic. VS Code ne permet pas aux extensions de capter directement un clic dans la gouttière : le clic passe par CodeLens ou par l'API Testing de VS Code (qui affiche son propre ▶ dans la gouttière). Choisir le rendu le plus proche d'IntelliJ.
+- **Exigence : le ▶ est dans la gouttière, à gauche de la ligne, comme IntelliJ — pas de lien au-dessus de la ligne (CodeLens exclu).** Seulement si c'est réellement impossible pour un cas donné, on fait au plus proche.
+- Moyen : l'API Testing de VS Code est le seul mécanisme qui affiche un ▶ **cliquable** dans la gouttière (avec menu Run / Debug et état ✓/✗). On l'utilise pour **tous** les cas, y compris les scripts `package.json` et les instructions SQL, présentés comme des « éléments lançables ». Icônes stylées au plus près des icônes New UI (`run`, `runAll`, `testPassed`, `testFailed`).
+- Écart connu : dans VS Code le ▶ est à gauche des numéros de ligne (marge des glyphes), dans IntelliJ il est juste à droite. Rien d'autre n'est possible sans injection.
 - Détection : symboles du serveur de langage (jdtls pour Java, TypeScript pour Node) et analyse de `package.json`.
+
+## 18. Indicateurs de modification Git dans l'éditeur (itération 2)
+
+### 18.1 Barre de couleur dans la gouttière
+
+- Constat : dans VS Code, la barre bleue des lignes modifiées est **hachurée** (motif), dans IntelliJ elle est **pleine**.
+- Faire comme IntelliJ, **sans injection** : barres pleines pour ajouté (vert), modifié (bleu), supprimé (triangle gris), largeur proche d'IntelliJ — réglages VS Code `scm.diffDecorationsGutterPattern` (désactiver le motif pour `added` et `modified`) et `scm.diffDecorationsGutterWidth`, appliqués **automatiquement** (pas seulement via le préréglage), couleurs du thème calibrées sur IntelliJ (§14.2).
+
+### 18.2 Clic sur la barre : popup de modification comme IntelliJ
+
+Dans IntelliJ, un clic sur la barre ouvre un **petit popup** avec une barre d'outils : changement précédent / suivant, **Rollback** (revenir à la version d'origine de ce bloc), **Show Diff**, copier l'ancien contenu ; et l'**ancien contenu** du bloc affiché en dessous, avec les différences surlignées.
+
+- Reproduire ce popup au plus près : version d'origine du bloc, boutons Précédent / Suivant / Rollback / Show Diff / Copier, raccourcis IntelliJ (`Ctrl+Alt+Z` rollback, `Ctrl+Alt+Shift+↑/↓` navigation, `Ctrl+D` diff complet).
+- Contrainte : VS Code n'expose pas le clic dans la gouttière aux extensions ; le clic ouvre l'aperçu natif (« quick diff peek »). Options à évaluer à l'implémentation, de la plus fidèle à la plus simple :
+  1. Garder l'aperçu natif mais le rendre identique à IntelliJ via le thème (couleurs du peek) et nos actions dans sa barre d'outils.
+  2. Désactiver l'action native (`scm.diffDecorationsGutterAction: none`) et afficher notre propre popup (survol des lignes modifiées / commande `Ctrl+Alt+Shift+↑/↓`).
+
+### 18.3 Fenêtre de diff complète
+
+- **Show Diff** (depuis le popup, la Commit tool window ou `Ctrl+D`) : diff côte à côte façon IntelliJ — en-têtes « Base / Votre version » avec révisions, barre d'outils (précédent / suivant, « Accept / Revert » par bloc avec les flèches `>>` / `<<` entre les deux côtés, ignorer les espaces, mode côte à côte / unifié), couleurs IntelliJ (fond bleu pour modifié, vert pour ajouté, gris pour supprimé) et liens entre les blocs des deux côtés.
+- Base : éditeur de diff natif stylé par le thème + actions de bloc ; pour les flèches `>>`/`<<` entre les deux côtés, utiliser les actions de bloc natives de VS Code si disponibles, sinon les ajouter dans la barre d'outils.
