@@ -31,7 +31,7 @@ export interface KeymapAction {
   variants?: readonly { command: string; args?: unknown; when: string }[];
 }
 
-export const CATEGORIES = ['Navigation', 'Editing', 'Refactoring', 'Tool Windows', 'Version Control', 'Run and Debug', 'Tabs and Windows'] as const;
+export const CATEGORIES = ['Navigation', 'Editing', 'Refactoring', 'Tool Windows', 'Version Control', 'Run and Debug', 'Database', 'Tabs and Windows'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 const EDITOR = 'editorTextFocus';
@@ -86,6 +86,7 @@ export const KEYMAP: readonly KeymapAction[] = [
   { id: 'CodeCompletion', name: 'Basic Completion', category: 'Editing', windows: 'ctrl+space', macos: 'ctrl+space', command: 'editor.action.triggerSuggest', when: EDITOR_WRITABLE },
   { id: 'SmartTypeCompletion', name: 'Type-Matching Completion', category: 'Editing', windows: 'ctrl+shift+space', macos: 'ctrl+shift+space', command: 'editor.action.triggerSuggest', when: EDITOR_WRITABLE },
   { id: 'Generate', name: 'Generate…', category: 'Editing', windows: 'alt+insert', macos: 'cmd+n', command: 'editor.action.sourceAction', when: EDITOR_WRITABLE },
+  { id: 'Console.Jdbc.Execute', name: 'Execute (SQL)', category: 'Database', windows: 'ctrl+enter', macos: 'cmd+enter', command: 'unintellij.database.execute', when: "editorTextFocus && editorLangId == 'sql'" },
   { id: 'NewElement', name: 'New… (Project View)', category: 'Editing', windows: 'alt+insert', macos: 'cmd+n', command: 'unintellij.project.newFile', when: "focusedView == 'unintellij.project' && !inputFocus" },
   { id: '$Delete', name: 'Delete (Project View)', category: 'Editing', windows: 'delete', macos: 'cmd+backspace', command: 'unintellij.project.delete', when: "focusedView == 'unintellij.project' && !inputFocus" },
   { id: 'SurroundWith', name: 'Surround With…', category: 'Editing', windows: 'ctrl+alt+t', macos: 'cmd+alt+t', command: 'editor.action.surroundWithSnippet', when: EDITOR_WRITABLE },

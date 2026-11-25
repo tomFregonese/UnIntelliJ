@@ -3,6 +3,7 @@ import { initializeIconThemes } from './appearance/iconThemes';
 import { getSetting, onSettingsChanged } from './config/settings';
 import { setLanguage, t } from './i18n/i18n';
 import { ThemeSync } from './appearance/themeSync';
+import { registerDatabase } from './database/database';
 import { registerEditorCommands } from './editor/commands';
 import { StatusDetails } from './editor/statusDetails';
 import { detectIntegrations, formatIntegrations, IntegrationStatus } from './integrations';
@@ -79,6 +80,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     new RunWidget(context.workspaceState, context.extensionUri),
     new GutterRunner(log),
     new StatusDetails(),
+    ...registerDatabase(context),
     new ProjectView(context, vcs.service),
   );
   const islandsPlus = IslandsPlus.create(context, log);

@@ -147,6 +147,12 @@ UnIntelliJ reproduces IntelliJ's default **Windows** and **macOS** keymaps. The 
 | Evaluate Expression… | `Alt+F8` | `⌥F8` | `EvaluateExpression` |
 | Run to Cursor | `Alt+F9` | `⌥F9` | `RunToCursor` |
 
+## Database
+
+| Action | Windows | macOS | ID |
+|---|---|---|---|
+| Execute (SQL) | `Ctrl+Enter` | `⌘↩` | `Console.Jdbc.Execute` |
+
 ## Tabs and Windows
 
 | Action | Windows | macOS | ID |

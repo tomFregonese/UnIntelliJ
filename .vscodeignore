@@ -21,3 +21,4 @@
 !media/inspections/*.svg
 !package.nls.json
 !package.nls.fr.json
+!media/database/*.svg

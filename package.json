@@ -348,6 +348,84 @@
         "category": "%command.category%"
       },
       {
+        "command": "unintellij.database.addSource",
+        "title": "%command.unintellij.database.addSource%",
+        "category": "%command.category%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "unintellij.database.editSources",
+        "title": "%command.unintellij.database.editSources%",
+        "category": "%command.category%",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "unintellij.database.refresh",
+        "title": "%command.unintellij.database.refresh%",
+        "category": "%command.category%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "unintellij.database.disconnect",
+        "title": "%command.unintellij.database.disconnect%",
+        "category": "%command.category%",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "unintellij.database.newConsole",
+        "title": "%command.unintellij.database.newConsole%",
+        "category": "%command.category%",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "unintellij.database.openTable",
+        "title": "%command.unintellij.database.openTable%",
+        "category": "%command.category%",
+        "icon": "$(table)"
+      },
+      {
+        "command": "unintellij.database.copyName",
+        "title": "%command.unintellij.database.copyName%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "unintellij.database.selectSource",
+        "title": "%command.unintellij.database.selectSource%",
+        "category": "%command.category%",
+        "icon": "$(database)"
+      },
+      {
+        "command": "unintellij.database.execute",
+        "title": "%command.unintellij.database.execute%",
+        "category": "%command.category%",
+        "icon": "$(play)"
+      },
+      {
+        "command": "unintellij.database.executeFile",
+        "title": "%command.unintellij.database.executeFile%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "unintellij.database.cancel",
+        "title": "%command.unintellij.database.cancel%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "unintellij.database.toggleAutoCommit",
+        "title": "%command.unintellij.database.toggleAutoCommit%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "unintellij.database.commit",
+        "title": "%command.unintellij.database.commit%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "unintellij.database.rollback",
+        "title": "%command.unintellij.database.rollback%",
+        "category": "%command.category%"
+      },
+      {
         "command": "unintellij.project.selectMode",
         "title": "%command.unintellij.project.selectMode%",
         "category": "%command.category%",
@@ -622,6 +700,14 @@
           "when": "false"
         },
         {
+          "command": "unintellij.database.openTable",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.database.copyName",
+          "when": "false"
+        },
+        {
           "command": "unintellij.project.refresh",
           "when": "false"
         },
@@ -834,6 +920,16 @@
       ],
       "editor/title": [
         {
+          "command": "unintellij.database.execute",
+          "when": "resourceLangId == sql",
+          "group": "navigation@-200"
+        },
+        {
+          "command": "unintellij.database.selectSource",
+          "when": "resourceLangId == sql",
+          "group": "navigation@-199"
+        },
+        {
           "command": "unintellij.inspection.ok",
           "when": "unintellij.inspection == 'ok'",
           "group": "navigation@-100"
@@ -850,6 +946,31 @@
         }
       ],
       "view/title": [
+        {
+          "command": "unintellij.database.addSource",
+          "when": "view == unintellij.database",
+          "group": "navigation@1"
+        },
+        {
+          "command": "unintellij.database.refresh",
+          "when": "view == unintellij.database",
+          "group": "navigation@2"
+        },
+        {
+          "command": "unintellij.database.editSources",
+          "when": "view == unintellij.database",
+          "group": "navigation@3"
+        },
+        {
+          "command": "unintellij.database.newConsole",
+          "when": "view == unintellij.database",
+          "group": "navigation@4"
+        },
+        {
+          "command": "unintellij.database.disconnect",
+          "when": "view == unintellij.database",
+          "group": "navigation@5"
+        },
         {
           "command": "unintellij.project.selectMode",
           "when": "view == unintellij.project",
@@ -897,6 +1018,36 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "unintellij.database.openTable",
+          "when": "view == unintellij.database && viewItem == table",
+          "group": "inline@1"
+        },
+        {
+          "command": "unintellij.database.openTable",
+          "when": "view == unintellij.database && viewItem == table",
+          "group": "1_open@1"
+        },
+        {
+          "command": "unintellij.database.newConsole",
+          "when": "view == unintellij.database && viewItem =~ /^(source|schema)/",
+          "group": "1_open@2"
+        },
+        {
+          "command": "unintellij.database.copyName",
+          "when": "view == unintellij.database && viewItem =~ /^(table|schema|dataColumn|key|function|sequence|index)$/",
+          "group": "2_copy@1"
+        },
+        {
+          "command": "unintellij.database.editSources",
+          "when": "view == unintellij.database && viewItem =~ /^source/",
+          "group": "3_source@1"
+        },
+        {
+          "command": "unintellij.database.disconnect",
+          "when": "view == unintellij.database && viewItem == 'source connected'",
+          "group": "3_source@2"
+        },
         {
           "command": "unintellij.project.newFile",
           "when": "view == unintellij.project && viewItem =~ /^(file|folder)$/",
@@ -1114,6 +1265,11 @@
         "key": "alt+insert",
         "command": "editor.action.sourceAction",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Generate && (editorTextFocus && !editorReadonly)"
+      },
+      {
+        "key": "ctrl+enter",
+        "command": "unintellij.database.execute",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Console.Jdbc.Execute && (editorTextFocus && editorLangId == 'sql')"
       },
       {
         "key": "alt+insert",
@@ -1767,6 +1923,11 @@
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Generate && (editorTextFocus && !editorReadonly)"
       },
       {
+        "key": "cmd+enter",
+        "command": "unintellij.database.execute",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Console.Jdbc.Execute && (editorTextFocus && editorLangId == 'sql')"
+      },
+      {
         "key": "cmd+n",
         "command": "unintellij.project.newFile",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.NewElement && (focusedView == 'unintellij.project' && !inputFocus)"
@@ -2259,6 +2420,11 @@
           "id": "unintellij-project",
           "title": "%viewContainer.activitybar.unintellij-project%",
           "icon": "media/project.svg"
+        },
+        {
+          "id": "unintellij-database",
+          "title": "%viewContainer.activitybar.unintellij-database%",
+          "icon": "media/database.svg"
         }
       ],
       "panel": [
@@ -2266,6 +2432,11 @@
           "id": "unintellij-git",
           "title": "%viewContainer.panel.unintellij-git%",
           "icon": "media/git.svg"
+        },
+        {
+          "id": "unintellij-services",
+          "title": "%viewContainer.panel.unintellij-services%",
+          "icon": "media/database.svg"
         }
       ]
     },
@@ -2274,6 +2445,19 @@
         {
           "id": "unintellij.project",
           "name": "%view.unintellij.project%"
+        }
+      ],
+      "unintellij-database": [
+        {
+          "id": "unintellij.database",
+          "name": "%view.unintellij.database%"
+        }
+      ],
+      "unintellij-services": [
+        {
+          "type": "webview",
+          "id": "unintellij.dbResults",
+          "name": "%view.unintellij.dbResults%"
         }
       ],
       "unintellij-git": [
@@ -2396,6 +2580,7 @@
     "@eslint/js": "^10.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
     "@types/vscode": "1.100.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
@@ -2423,6 +2608,7 @@
     "theme": "dark"
   },
   "dependencies": {
-    "jsonc-parser": "^3.3.1"
+    "jsonc-parser": "^3.3.1",
+    "pg": "^8.23.1"
   }
 }

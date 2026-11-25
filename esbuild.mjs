@@ -11,7 +11,8 @@ const extension = {
   format: 'cjs',
   platform: 'node',
   target: 'node20',
-  external: ['vscode'],
+  // pg-native is an optional, compiled alternative to pg's JavaScript client: never used.
+  external: ['vscode', 'pg-native'],
   // Prefer ESM builds: jsonc-parser's UMD build uses dynamic requires esbuild cannot bundle.
   mainFields: ['module', 'main'],
   sourcemap: !production,
@@ -23,7 +24,7 @@ const extension = {
 /** Webview scripts run in the browser. */
 /** @type {import('esbuild').BuildOptions} */
 const webviews = {
-  entryPoints: { settings: 'src/webview/settings.ts', commit: 'src/webview/commit.ts', gitLog: 'src/webview/gitLog.ts', runConfigs: 'src/webview/runConfigs.ts' },
+  entryPoints: { settings: 'src/webview/settings.ts', commit: 'src/webview/commit.ts', gitLog: 'src/webview/gitLog.ts', runConfigs: 'src/webview/runConfigs.ts', dataSources: 'src/webview/dataSources.ts', results: 'src/webview/results.ts' },
   bundle: true,
   outdir: 'dist/webview',
   format: 'iife',

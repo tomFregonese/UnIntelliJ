@@ -1,0 +1,175 @@
+/* Database results panel (IntelliJ's Services › Database console results). */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--vscode-panel-background);
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.empty {
+  padding: 16px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px 6px 0;
+  overflow-x: auto;
+  flex: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--vscode-tab-inactiveForeground);
+}
+
+.tab.active {
+  background: var(--vscode-tab-activeBackground);
+  color: var(--vscode-tab-activeForeground);
+}
+
+.tab .close {
+  font-size: 12px;
+  opacity: 0;
+}
+
+.tab:hover .close,
+.tab.active .close {
+  opacity: 0.8;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.toolbar,
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  flex: none;
+}
+
+.status {
+  margin-left: 10px;
+  color: var(--vscode-descriptionForeground);
+}
+
+button.tool {
+  background: transparent;
+  color: var(--vscode-icon-foreground);
+  border: none;
+  padding: 3px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.tool:hover:not(:disabled) {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+button.tool:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.filter {
+  flex: 1;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-family: var(--vscode-editor-font-family);
+}
+
+.grid-wrap {
+  flex: 1;
+  overflow: auto;
+}
+
+table.grid {
+  border-collapse: collapse;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.95em;
+}
+
+.grid th,
+.grid td {
+  border: 1px solid var(--vscode-editorIndentGuide-background, var(--vscode-widget-border));
+  padding: 2px 8px;
+  white-space: pre;
+  max-width: 480px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.grid th {
+  position: sticky;
+  top: 0;
+  background: var(--vscode-editor-background);
+  font-weight: 600;
+}
+
+.grid td.num,
+.grid th.num {
+  color: var(--vscode-editorLineNumber-foreground);
+  text-align: right;
+}
+
+.grid td.null {
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+}
+
+.grid tbody tr:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+pre.error,
+pre.notices {
+  margin: 0;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  font-family: var(--vscode-editor-font-family);
+}
+
+.error,
+.error-text {
+  color: var(--vscode-errorForeground);
+}
+
+.notices {
+  color: var(--vscode-descriptionForeground);
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.muted {
+  color: var(--vscode-descriptionForeground);
+  padding: 0 6px;
+}

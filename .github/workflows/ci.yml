@@ -12,6 +12,16 @@ jobs:
   check:
     name: Lint, typecheck, unit tests
     runs-on: ubuntu-latest
+    services:
+      # Live database tests (test/unit/postgres.test.ts).
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['55432:5432']
+        options: --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries 20
+    env:
+      UNINTELLIJ_TEST_PG_PORT: 55432
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

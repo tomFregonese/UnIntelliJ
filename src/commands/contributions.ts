@@ -6,12 +6,21 @@
 export const VIEW_CONTAINERS = {
   // First in the activity bar: IntelliJ's Project tool window. VS Code's Explorer cannot host it
   // instead of its Folders view (that view cannot be hidden).
-  activitybar: [{ id: 'unintellij-project', title: 'Project', icon: 'media/project.svg' }],
-  panel: [{ id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' }],
+  activitybar: [
+    { id: 'unintellij-project', title: 'Project', icon: 'media/project.svg' },
+    // Left, under Commit; IntelliJ shows it on the right: drag it to the secondary side bar if wanted.
+    { id: 'unintellij-database', title: 'Database', icon: 'media/database.svg' },
+  ],
+  panel: [
+    { id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' },
+    { id: 'unintellij-services', title: 'Services', icon: 'media/database.svg' },
+  ],
 };
 
 export const VIEWS = {
   'unintellij-project': [{ id: 'unintellij.project', name: 'Project' }],
+  'unintellij-database': [{ id: 'unintellij.database', name: 'Database' }],
+  'unintellij-services': [{ type: 'webview', id: 'unintellij.dbResults', name: 'Database' }],
   'unintellij-git': [{ type: 'webview', id: 'unintellij.gitLog', name: 'Log' }],
   // In VS Code's Source Control container, whose native views UnIntelliJ hides (see scmViews.ts).
   // Expanded by default: contributed views are otherwise added collapsed at the bottom.
@@ -69,11 +78,18 @@ export const MENUS = {
   ],
   // IntelliJ's inspection widget at the top right of the editor (state from editor/statusDetails.ts).
   'editor/title': [
+    { command: 'unintellij.database.execute', when: "resourceLangId == sql", group: 'navigation@-200' },
+    { command: 'unintellij.database.selectSource', when: "resourceLangId == sql", group: 'navigation@-199' },
     { command: 'unintellij.inspection.ok', when: "unintellij.inspection == 'ok'", group: 'navigation@-100' },
     { command: 'unintellij.inspection.warning', when: "unintellij.inspection == 'warning'", group: 'navigation@-100' },
     { command: 'unintellij.inspection.error', when: "unintellij.inspection == 'error'", group: 'navigation@-100' },
   ],
   'view/title': [
+    { command: 'unintellij.database.addSource', when: 'view == unintellij.database', group: 'navigation@1' },
+    { command: 'unintellij.database.refresh', when: 'view == unintellij.database', group: 'navigation@2' },
+    { command: 'unintellij.database.editSources', when: 'view == unintellij.database', group: 'navigation@3' },
+    { command: 'unintellij.database.newConsole', when: 'view == unintellij.database', group: 'navigation@4' },
+    { command: 'unintellij.database.disconnect', when: 'view == unintellij.database', group: 'navigation@5' },
     { command: 'unintellij.project.selectMode', when: 'view == unintellij.project', group: 'navigation@0' },
     { command: 'unintellij.project.selectOpenedFile', when: 'view == unintellij.project', group: 'navigation@1' },
     { command: 'unintellij.project.refresh', when: 'view == unintellij.project', group: 'navigation@2' },
@@ -83,6 +99,12 @@ export const MENUS = {
     ),
   ],
   'view/item/context': [
+    { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: 'inline@1' },
+    { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: '1_open@1' },
+    { command: 'unintellij.database.newConsole', when: 'view == unintellij.database && viewItem =~ /^(source|schema)/', group: '1_open@2' },
+    { command: 'unintellij.database.copyName', when: 'view == unintellij.database && viewItem =~ /^(table|schema|dataColumn|key|function|sequence|index)$/', group: '2_copy@1' },
+    { command: 'unintellij.database.editSources', when: 'view == unintellij.database && viewItem =~ /^source/', group: '3_source@1' },
+    { command: 'unintellij.database.disconnect', when: 'view == unintellij.database && viewItem == \'source connected\'', group: '3_source@2' },
     { command: 'unintellij.project.newFile', when: PROJECT_ITEM, group: '1_new@1' },
     { command: 'unintellij.project.newFolder', when: PROJECT_ITEM, group: '1_new@2' },
     { command: 'unintellij.project.copyPath', when: PROJECT_ITEM, group: '2_copy@1' },

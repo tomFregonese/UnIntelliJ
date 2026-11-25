@@ -39,3 +39,35 @@ button.tool:hover:not(:disabled) {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Data Sources window */
+.color-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.test-ok {
+  color: var(--vscode-testing-iconPassed, #4e9d6c);
+  margin-left: 8px;
+}
+
+.test-error {
+  color: var(--vscode-errorForeground);
+  margin-left: 8px;
+}
+
+footer .errors {
+  flex: 1;
+  color: var(--vscode-errorForeground);
+  align-self: center;
+}
+
+.content input[type='password'],
+.content input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
+}
