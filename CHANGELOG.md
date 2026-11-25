@@ -18,3 +18,6 @@
 - **Recent Files** (Ctrl+E, again for edited only, with tool windows), **Recent Locations** (Ctrl+Shift+E) and **File Structure** (Ctrl+F12) popups.
 - **Settings** window (Ctrl+Alt+S / ⌘,) modeled on IntelliJ: tree with search, OK/Cancel/Apply, modified markers. Pages: Appearance, System Settings, Keymap (layout, searchable shortcut list, enable/disable per action), Editor › General and Font, Version Control › Git, Tools › Search Everywhere, Plugins (optional integrations and their status).
 - One-click **IntelliJ-like VS Code settings** preset (fonts, no minimap, ruler at 120, no rainbow brackets, autosave on focus loss…), with restore of previous values.
+- **Structure** tool window (Alt+7): symbols of the active file with IntelliJ icons and colors, sort alphabetically, show/hide fields, autoscroll from source.
+- **npm** tool window: scripts of every package.json (npm, yarn or pnpm detected), run or debug inline.
+- **Run widget** (status bar): selected run configuration (npm scripts and launch.json), Run (Shift+F10), Debug (Shift+F9), Stop (Ctrl+F2), Run…/Debug… pickers (Alt+Shift+F10/F9). Rerunning stops the previous run.

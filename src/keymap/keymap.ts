@@ -8,6 +8,8 @@
  * extension turns into the `unintellij.keymap.disabled.<id>` context keys.
  */
 
+import { containerCommand } from '../commands/contributions';
+
 export interface KeymapAction {
   /** IntelliJ action ID (as shown in Settings › Keymap). */
   id: string;
@@ -129,7 +131,7 @@ export const KEYMAP: readonly KeymapAction[] = [
   ...toolWindow('ActivateRunToolWindow', 'Run', 'alt+4', 'cmd+4', 'workbench.debug.action.toggleRepl'),
   ...toolWindow('ActivateDebugToolWindow', 'Debug', 'alt+5', 'cmd+5', 'workbench.view.debug', sideBarShows('workbench.view.debug')),
   ...toolWindow('ActivateProblemsViewToolWindow', 'Problems', 'alt+6', 'cmd+6', 'workbench.actions.view.problems', panelShows('workbench.panel.markers')),
-  ...toolWindow('ActivateStructureToolWindow', 'Structure', 'alt+7', 'cmd+7', 'outline.focus', "focusedView == 'outline'"),
+  ...toolWindow('ActivateStructureToolWindow', 'Structure', 'alt+7', 'cmd+7', containerCommand('unintellij-structure'), sideBarShows(containerCommand('unintellij-structure'))),
   ...toolWindow('ActivateVersionControlToolWindow', 'Git', 'alt+9', 'cmd+9', 'workbench.view.scm', sideBarShows('workbench.view.scm')),
   ...toolWindow('ActivateCommitToolWindow', 'Commit', 'alt+0', 'cmd+0', 'workbench.view.scm', sideBarShows('workbench.view.scm')),
   ...toolWindow('ActivateTerminalToolWindow', 'Terminal', 'alt+f12', 'alt+f12', 'terminal.focus', 'terminalFocus'),
@@ -153,9 +155,11 @@ export const KEYMAP: readonly KeymapAction[] = [
   { id: 'PreviousDiff', name: 'Previous Difference', category: 'Version Control', windows: 'shift+f7', macos: 'shift+f7', command: 'workbench.action.compareEditor.previousChange', when: 'textCompareEditorVisible && !inDebugMode' },
 
   // Run and debug
-  { id: 'Run', name: 'Run', category: 'Run and Debug', windows: 'shift+f10', macos: 'ctrl+r', command: 'workbench.action.debug.run', when: '!inDebugMode' },
-  { id: 'Debug', name: 'Debug', category: 'Run and Debug', windows: 'shift+f9', macos: 'ctrl+d', command: 'workbench.action.debug.start', when: '!inDebugMode' },
-  { id: 'Stop', name: 'Stop', category: 'Run and Debug', windows: 'ctrl+f2', macos: 'cmd+f2', command: 'workbench.action.debug.stop', when: DEBUGGING },
+  { id: 'Run', name: 'Run', category: 'Run and Debug', windows: 'shift+f10', macos: 'ctrl+r', command: 'unintellij.run' },
+  { id: 'Debug', name: 'Debug', category: 'Run and Debug', windows: 'shift+f9', macos: 'ctrl+d', command: 'unintellij.debug' },
+  { id: 'ChooseRunConfiguration', name: 'Run…', category: 'Run and Debug', windows: 'alt+shift+f10', macos: 'ctrl+alt+r', command: 'unintellij.runAnything' },
+  { id: 'ChooseDebugConfiguration', name: 'Debug…', category: 'Run and Debug', windows: 'alt+shift+f9', macos: 'ctrl+alt+d', command: 'unintellij.debugAnything' },
+  { id: 'Stop', name: 'Stop', category: 'Run and Debug', windows: 'ctrl+f2', macos: 'cmd+f2', command: 'unintellij.stop' },
   { id: 'Rerun', name: 'Rerun', category: 'Run and Debug', windows: 'ctrl+f5', macos: 'cmd+r', command: 'workbench.action.debug.restart', when: DEBUGGING },
   { id: 'ToggleLineBreakpoint', name: 'Toggle Line Breakpoint', category: 'Run and Debug', windows: 'ctrl+f8', macos: 'cmd+f8', command: 'editor.debug.action.toggleBreakpoint', when: 'editorTextFocus' },
   { id: 'ViewBreakpoints', name: 'View Breakpoints…', category: 'Run and Debug', windows: 'ctrl+shift+f8', macos: 'cmd+shift+f8', command: 'workbench.debug.viewlet.action.focusBreakpointsView' },

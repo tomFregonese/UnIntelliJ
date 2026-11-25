@@ -1,7 +1,8 @@
 /**
  * Regenerates every generated artifact from its TypeScript source of truth:
  *   package.json  contributes.configuration   ← src/config/schema.ts
- *   package.json  contributes.commands/menus  ← src/commands/catalog.ts
+ *   package.json  contributes.commands        ← src/commands/catalog.ts
+ *   package.json  views, menus, tasks         ← src/commands/contributions.ts
  *   package.json  contributes.keybindings     ← src/keymap/keymap.ts
  *   docs/KEYMAP.md                            ← src/keymap/keymap.ts
  *   themes/*.json                             ← src/theme/palettes.ts (+ icons/symbol-colors.json)
@@ -11,6 +12,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { buildCommandContribution, buildCommandPaletteMenu } from '../src/commands/catalog';
+import { MENUS, TASK_DEFINITIONS, VIEW_CONTAINERS, VIEWS } from '../src/commands/contributions';
 import { buildConfigurationContribution } from '../src/config/schema';
 import { buildKeybindings, buildKeymapMarkdown } from '../src/keymap/keymap';
 import { buildColorTheme, themeFileName } from '../src/theme/build';
@@ -39,7 +41,10 @@ const packagePath = join(root, 'package.json');
 const pkg = JSON.parse(readFileSync(packagePath, 'utf8'));
 pkg.contributes.configuration = buildConfigurationContribution();
 pkg.contributes.commands = buildCommandContribution();
-pkg.contributes.menus = { ...pkg.contributes.menus, commandPalette: buildCommandPaletteMenu() };
+pkg.contributes.menus = { commandPalette: buildCommandPaletteMenu(), ...MENUS };
+pkg.contributes.viewsContainers = VIEW_CONTAINERS;
+pkg.contributes.views = VIEWS;
+pkg.contributes.taskDefinitions = TASK_DEFINITIONS;
 pkg.contributes.keybindings = buildKeybindings();
 emit(packagePath, json(pkg));
 

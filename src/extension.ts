@@ -9,6 +9,9 @@ import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { applyPreset, revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
+import { RunWidget } from './run/runWidget';
+import { NpmView } from './toolWindows/npm';
+import { StructureView } from './toolWindows/structure';
 import { registerVcsCommands } from './vcs/commands';
 
 export interface UnIntelliJApi {
@@ -17,6 +20,8 @@ export interface UnIntelliJApi {
   appearanceIdle(): Promise<void>;
   /** Search Everywhere results for a tab and query, without UI (used by tests). */
   search(tab: TabId, query: string): Promise<vscode.QuickPickItem[]>;
+  /** Names of the top-level symbols shown in the Structure tool window (used by tests). */
+  structure(): Promise<string[]>;
   /** Settings window operations (used by tests). */
   settings: {
     applyChanges(changes: Record<string, unknown>): Promise<void>;
@@ -44,7 +49,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     ...registerSettingsCommands(context, log),
     ...registerVcsCommands(),
     syncDisabledActions(),
+    new RunWidget(context.workspaceState),
+    new NpmView(),
   );
+  const structure = new StructureView(context.globalState);
+  context.subscriptions.push(structure);
 
   const themeSync = new ThemeSync(context.globalState, log);
   context.subscriptions.push(themeSync);
@@ -55,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     integrations: detectIntegrations,
     appearanceIdle: () => themeSync.idle(),
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
+    structure: async () => (await structure.whenLoaded()).map((n) => n.symbol.name),
     settings: {
       applyChanges,
       applyPreset: () => applyPreset(context.globalState),

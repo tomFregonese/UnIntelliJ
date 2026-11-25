@@ -1,0 +1,8 @@
+{
+  "name": "fixture-app",
+  "private": true,
+  "scripts": {
+    "start": "node -e \"console.log('serving')\"",
+    "hello": "node -e \"console.log('hello from UnIntelliJ')\""
+  }
+}

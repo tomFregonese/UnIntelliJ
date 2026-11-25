@@ -48,3 +48,11 @@ Cocher et dater quand c'est réglé.
 - [ ] **Keymap : on peut désactiver un raccourci mais pas le réassigner** comme dans IntelliJ (il faudrait écrire dans `keybindings.json` de l'utilisateur). À décider si utile.
 - [ ] **JetBrains Mono** doit être installée sur le poste (Windows : installation « pour moi » possible sans droits admin) ; le préréglage la met en premier avec repli sur Consolas.
 - [ ] Le préréglage « IntelliJ-like » choisit `files.autoSave = onWindowChange` (sauvegarde quand la fenêtre perd le focus) : à valider avec tes habitudes.
+
+## Lot 7 — Structure, npm, Run
+
+- [ ] **Widget Run dans la barre d'état** (en bas à gauche) : la barre de titre n'est pas accessible sans Islands+. Avec Islands+ (lot 10), à déplacer en haut comme dans IntelliJ si faisable.
+- [ ] **npm : pas de double-clic pour lancer** (les arbres VS Code n'ont pas d'événement double-clic) : bouton ▶ en ligne, clic = afficher le script dans package.json.
+- [ ] **Options de Structure** (tri, champs, autoscroll) dans le menu « … » de la vue, avec ✓ dans le titre : VS Code n'a pas de boutons à bascule pour les extensions.
+- [ ] **Java (Run/Debug, Spring Boot, JUnit, Maven, Services)** : reporté en v2 comme prévu. Les configurations `launch.json` existantes apparaissent déjà dans le widget Run.
+- [ ] Debug d'un script npm = « JavaScript Debug Terminal » de VS Code : à essayer avec `ng serve` (le debug Angular se fait surtout côté navigateur).

@@ -133,6 +133,8 @@ UnIntelliJ reproduces IntelliJ's default **Windows** and **macOS** keymaps. The 
 |---|---|---|---|
 | Run | `Shift+F10` | `⌃R` | `Run` |
 | Debug | `Shift+F9` | `⌃D` | `Debug` |
+| Run… | `Alt+Shift+F10` | `⌃⌥R` | `ChooseRunConfiguration` |
+| Debug… | `Alt+Shift+F9` | `⌃⌥D` | `ChooseDebugConfiguration` |
 | Stop | `Ctrl+F2` | `⌘F2` | `Stop` |
 | Rerun | `Ctrl+F5` | `⌘R` | `Rerun` |
 | Toggle Line Breakpoint | `Ctrl+F8` | `⌘F8` | `ToggleLineBreakpoint` |

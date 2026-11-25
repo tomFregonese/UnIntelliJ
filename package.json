@@ -287,6 +287,102 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.run",
+        "title": "Run",
+        "category": "UnIntelliJ",
+        "icon": "$(play)"
+      },
+      {
+        "command": "unintellij.debug",
+        "title": "Debug",
+        "category": "UnIntelliJ",
+        "icon": "$(debug-alt)"
+      },
+      {
+        "command": "unintellij.stop",
+        "title": "Stop",
+        "category": "UnIntelliJ",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "unintellij.runAnything",
+        "title": "Run…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.debugAnything",
+        "title": "Debug…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.run.selectConfiguration",
+        "title": "Select Run/Debug Configuration…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.runConfiguration",
+        "title": "Run Configuration",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.sortAlphabetically",
+        "title": "Sort Alphabetically",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.sortByPosition",
+        "title": "✓ Sort Alphabetically",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.showFields",
+        "title": "Show Fields",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.hideFields",
+        "title": "✓ Show Fields",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.enableAutoscroll",
+        "title": "Autoscroll from Source",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.disableAutoscroll",
+        "title": "✓ Autoscroll from Source",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.structure.reveal",
+        "title": "Navigate to Symbol",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.npm.refresh",
+        "title": "Reload Scripts",
+        "category": "UnIntelliJ",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "unintellij.npm.run",
+        "title": "Run Script",
+        "category": "UnIntelliJ",
+        "icon": "$(play)"
+      },
+      {
+        "command": "unintellij.npm.debug",
+        "title": "Debug Script",
+        "category": "UnIntelliJ",
+        "icon": "$(debug-alt)"
+      },
+      {
+        "command": "unintellij.npm.open",
+        "title": "Show in package.json",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.commit",
         "title": "Commit…",
         "category": "UnIntelliJ"
@@ -321,6 +417,113 @@
         {
           "command": "unintellij.searchEverywhere.previousTab",
           "when": "false"
+        },
+        {
+          "command": "unintellij.runConfiguration",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.sortAlphabetically",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.sortByPosition",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.showFields",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.hideFields",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.enableAutoscroll",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.disableAutoscroll",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.structure.reveal",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.npm.refresh",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.npm.run",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.npm.debug",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.npm.open",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "unintellij.structure.sortAlphabetically",
+          "when": "view == unintellij.structure && !unintellij.structure.sortAlphabetically",
+          "group": "options@1"
+        },
+        {
+          "command": "unintellij.structure.sortByPosition",
+          "when": "view == unintellij.structure && unintellij.structure.sortAlphabetically",
+          "group": "options@1"
+        },
+        {
+          "command": "unintellij.structure.showFields",
+          "when": "view == unintellij.structure && !unintellij.structure.showFields",
+          "group": "options@2"
+        },
+        {
+          "command": "unintellij.structure.hideFields",
+          "when": "view == unintellij.structure && unintellij.structure.showFields",
+          "group": "options@2"
+        },
+        {
+          "command": "unintellij.structure.enableAutoscroll",
+          "when": "view == unintellij.structure && !unintellij.structure.autoscrollFromSource",
+          "group": "options@3"
+        },
+        {
+          "command": "unintellij.structure.disableAutoscroll",
+          "when": "view == unintellij.structure && unintellij.structure.autoscrollFromSource",
+          "group": "options@3"
+        },
+        {
+          "command": "unintellij.npm.refresh",
+          "when": "view == unintellij.npm",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "unintellij.npm.run",
+          "when": "view == unintellij.npm && viewItem == script",
+          "group": "inline@1"
+        },
+        {
+          "command": "unintellij.npm.debug",
+          "when": "view == unintellij.npm && viewItem == script",
+          "group": "inline@2"
+        },
+        {
+          "command": "unintellij.npm.run",
+          "when": "view == unintellij.npm && viewItem == script",
+          "group": "run@1"
+        },
+        {
+          "command": "unintellij.npm.debug",
+          "when": "view == unintellij.npm && viewItem == script",
+          "group": "run@2"
         }
       ]
     },
@@ -743,13 +946,13 @@
       },
       {
         "key": "alt+7",
-        "command": "outline.focus",
+        "command": "workbench.view.extension.unintellij-structure",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
       },
       {
         "key": "alt+7",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-structure')"
       },
       {
         "key": "alt+9",
@@ -868,18 +1071,28 @@
       },
       {
         "key": "shift+f10",
-        "command": "workbench.action.debug.run",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Run && (!inDebugMode)"
+        "command": "unintellij.run",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Run"
       },
       {
         "key": "shift+f9",
-        "command": "workbench.action.debug.start",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Debug && (!inDebugMode)"
+        "command": "unintellij.debug",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Debug"
+      },
+      {
+        "key": "alt+shift+f10",
+        "command": "unintellij.runAnything",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ChooseRunConfiguration"
+      },
+      {
+        "key": "alt+shift+f9",
+        "command": "unintellij.debugAnything",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ChooseDebugConfiguration"
       },
       {
         "key": "ctrl+f2",
-        "command": "workbench.action.debug.stop",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Stop && (inDebugMode)"
+        "command": "unintellij.stop",
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.Stop"
       },
       {
         "key": "ctrl+f5",
@@ -1379,13 +1592,13 @@
       },
       {
         "key": "cmd+7",
-        "command": "outline.focus",
+        "command": "workbench.view.extension.unintellij-structure",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
       },
       {
         "key": "cmd+7",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-structure')"
       },
       {
         "key": "cmd+9",
@@ -1504,18 +1717,28 @@
       },
       {
         "key": "ctrl+r",
-        "command": "workbench.action.debug.run",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Run && (!inDebugMode)"
+        "command": "unintellij.run",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Run"
       },
       {
         "key": "ctrl+d",
-        "command": "workbench.action.debug.start",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Debug && (!inDebugMode)"
+        "command": "unintellij.debug",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Debug"
+      },
+      {
+        "key": "ctrl+alt+r",
+        "command": "unintellij.runAnything",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ChooseRunConfiguration"
+      },
+      {
+        "key": "ctrl+alt+d",
+        "command": "unintellij.debugAnything",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ChooseDebugConfiguration"
       },
       {
         "key": "cmd+f2",
-        "command": "workbench.action.debug.stop",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Stop && (inDebugMode)"
+        "command": "unintellij.stop",
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.Stop"
       },
       {
         "key": "cmd+r",
@@ -1606,6 +1829,53 @@
         "key": "shift+tab",
         "command": "unintellij.searchEverywhere.previousTab",
         "when": "inQuickOpen && unintellij.searchEverywhereVisible"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "unintellij-structure",
+          "title": "Structure",
+          "icon": "media/structure.svg"
+        },
+        {
+          "id": "unintellij-npm",
+          "title": "npm",
+          "icon": "media/npm.svg"
+        }
+      ]
+    },
+    "views": {
+      "unintellij-structure": [
+        {
+          "id": "unintellij.structure",
+          "name": "Structure"
+        }
+      ],
+      "unintellij-npm": [
+        {
+          "id": "unintellij.npm",
+          "name": "Scripts"
+        }
+      ]
+    },
+    "taskDefinitions": [
+      {
+        "type": "unintellij-npm",
+        "required": [
+          "script",
+          "path"
+        ],
+        "properties": {
+          "script": {
+            "type": "string",
+            "description": "Script name in package.json"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path of the package.json"
+          }
+        }
       }
     ]
   },

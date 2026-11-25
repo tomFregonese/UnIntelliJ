@@ -8,6 +8,8 @@ export interface CommandDefinition {
   title: string;
   /** Hidden from the Command Palette (internal or context-only commands). */
   hidden?: boolean;
+  /** Codicon/product icon shown in view toolbars, e.g. `$(play)`. */
+  icon?: string;
 }
 
 export const COMMAND_CATEGORY = 'UnIntelliJ';
@@ -33,6 +35,27 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.showSettings', title: 'Settings…' },
   { command: 'unintellij.showKeymapSettings', title: 'Settings: Keymap' },
   { command: 'unintellij.applyRecommendedSettings', title: 'Apply IntelliJ-like VS Code Settings…' },
+  // Run
+  { command: 'unintellij.run', title: 'Run', icon: '$(play)' },
+  { command: 'unintellij.debug', title: 'Debug', icon: '$(debug-alt)' },
+  { command: 'unintellij.stop', title: 'Stop', icon: '$(debug-stop)' },
+  { command: 'unintellij.runAnything', title: 'Run…' },
+  { command: 'unintellij.debugAnything', title: 'Debug…' },
+  { command: 'unintellij.run.selectConfiguration', title: 'Select Run/Debug Configuration…' },
+  { command: 'unintellij.runConfiguration', title: 'Run Configuration', hidden: true },
+  // Structure tool window
+  { command: 'unintellij.structure.sortAlphabetically', title: 'Sort Alphabetically', hidden: true },
+  { command: 'unintellij.structure.sortByPosition', title: '✓ Sort Alphabetically', hidden: true },
+  { command: 'unintellij.structure.showFields', title: 'Show Fields', hidden: true },
+  { command: 'unintellij.structure.hideFields', title: '✓ Show Fields', hidden: true },
+  { command: 'unintellij.structure.enableAutoscroll', title: 'Autoscroll from Source', hidden: true },
+  { command: 'unintellij.structure.disableAutoscroll', title: '✓ Autoscroll from Source', hidden: true },
+  { command: 'unintellij.structure.reveal', title: 'Navigate to Symbol', hidden: true },
+  // npm tool window
+  { command: 'unintellij.npm.refresh', title: 'Reload Scripts', icon: '$(refresh)', hidden: true },
+  { command: 'unintellij.npm.run', title: 'Run Script', icon: '$(play)', hidden: true },
+  { command: 'unintellij.npm.debug', title: 'Debug Script', icon: '$(debug-alt)', hidden: true },
+  { command: 'unintellij.npm.open', title: 'Show in package.json', hidden: true },
   // Version control
   { command: 'unintellij.commit', title: 'Commit…' },
   { command: 'unintellij.push', title: 'Push…' },
@@ -42,7 +65,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
 ];
 
 export function buildCommandContribution(): unknown[] {
-  return COMMANDS.map(({ command, title }) => ({ command, title, category: COMMAND_CATEGORY }));
+  return COMMANDS.map(({ command, title, icon }) => ({ command, title, category: COMMAND_CATEGORY, ...(icon && { icon }) }));
 }
 
 export function buildCommandPaletteMenu(): unknown[] {
