@@ -36,6 +36,8 @@ export type FromCommitView =
   | { type: 'commit'; paths: string[]; message: string; amend: boolean; push: boolean }
   | { type: 'amend'; enabled: boolean; message: string }
   | { type: 'diff'; path: string }
+  /** Single click / arrow keys: diff in the editor, focus stays in the Commit tool window. */
+  | { type: 'preview'; path: string }
   | { type: 'refresh' }
   | { type: 'rollback'; paths: string[] }
   | { type: 'newChangelist' };

@@ -414,3 +414,23 @@ Dans IntelliJ, un clic sur la barre ouvre un **petit popup** avec une barre d'ou
 
 - **Show Diff** (depuis le popup, la Commit tool window ou `Ctrl+D`) : diff côte à côte façon IntelliJ — en-têtes « Base / Votre version » avec révisions, barre d'outils (précédent / suivant, « Accept / Revert » par bloc avec les flèches `>>` / `<<` entre les deux côtés, ignorer les espaces, mode côte à côte / unifié), couleurs IntelliJ (fond bleu pour modifié, vert pour ajouté, gris pour supprimé) et liens entre les blocs des deux côtés.
 - Base : éditeur de diff natif stylé par le thème + actions de bloc ; pour les flèches `>>`/`<<` entre les deux côtés, utiliser les actions de bloc natives de VS Code si disponibles, sinon les ajouter dans la barre d'outils.
+
+## 19. Retours après essai sur Mac (2026-11-25)
+
+### 19.1 Commit : aperçu au simple clic (priorité 1)
+
+- **Simple clic** sur un fichier de la Commit tool window : le diff du fichier s'affiche à droite, **le focus reste dans la liste**.
+- **Flèches haut / bas** : l'aperçu suit la sélection (un seul onglet d'aperçu, remplacé à chaque fois) ; **Espace** coche / décoche.
+- **Double-clic** (ou Entrée) : ouvre le fichier avec le curseur dans l'éditeur, comme IntelliJ ; cet onglet est conservé.
+
+### 19.2 Polices (priorité 1)
+
+- L'éditeur et le terminal doivent être en **JetBrains Mono**, à la taille d'IntelliJ / Rider : « Apply » installe la police pour l'utilisateur (sans droits admin) et propose de redémarrer ; plus jamais de repli sur Courier New.
+
+### 19.3 Deux icônes « dossier » dans la barre de gauche
+
+- « Project » (UnIntelliJ) et « Explorer » (VS Code) cohabitent car VS Code interdit aux extensions de masquer son panneau Folders. À documenter : clic droit sur la barre d'activité › décocher « Explorer » ; Islands+ le masque automatiquement.
+
+### 19.4 Fond de l'éditeur vide
+
+- Pas de logo VS Code (IntelliJ n'affiche que les raccourcis) : masqué avec Islands+ ; le logo IntelliJ (marque JetBrains) n'est pas utilisé.

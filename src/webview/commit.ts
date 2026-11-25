@@ -162,8 +162,13 @@ function renderFile(file: FileItem, section: RowContext['webviewSection']): HTML
           select(file.path, e);
         }
       },
-      onClick: (e: MouseEvent) => select(file.path, e),
-      onDblclick: () => vscode.postMessage({ type: 'diff', path: file.path }),
+      onClick: (e: MouseEvent) => {
+        select(file.path, e);
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && e.detail === 1) {
+          preview(file.path);
+        }
+      },
+      onDblclick: () => (clearTimeout(previewTimer), vscode.postMessage({ type: 'diff', path: file.path })),
     },
     box,
     file.icon && h('img', { className: 'file-icon dark', src: file.icon.dark, alt: '' }),
@@ -300,6 +305,14 @@ function render(): void {
   }
 }
 
+let previewTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** IntelliJ's diff preview: follows the selection, the list keeps the focus (debounced for arrow keys). */
+function preview(path: string): void {
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => vscode.postMessage({ type: 'preview', path }), 120);
+}
+
 function onListKey(e: KeyboardEvent): void {
   const files = visibleFiles();
   if (files.length === 0) {
@@ -315,6 +328,7 @@ function onListKey(e: KeyboardEvent): void {
       selection = new Set([next.path]);
       anchor = next.path;
       render();
+      preview(next.path);
     }
   } else if (e.key === ' ') {
     e.preventDefault();

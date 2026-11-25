@@ -27,7 +27,7 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
       vscode.window.registerWebviewViewProvider(COMMIT_VIEW, this, { webviewOptions: { retainContextWhenHidden: true } }),
       vcs.onDidChange(() => this.postState()),
       vscode.workspace.onDidChangeConfiguration((e) => e.affectsConfiguration('unintellij') && this.postState()),
-      vscode.commands.registerCommand('unintellij.commit.showDiff', (ctx: RowContext) => this.forPaths(ctx, (p) => Promise.all(p.map((x) => this.showDiff(x))))),
+      vscode.commands.registerCommand('unintellij.commit.showDiff', (ctx: RowContext) => this.forPaths(ctx, (p) => Promise.all(p.map((x) => this.showDiff(x, false))))),
       vscode.commands.registerCommand('unintellij.commit.jumpToSource', (ctx: RowContext) => this.forPaths(ctx, (p) => Promise.all(p.map((x) => vscode.window.showTextDocument(vscode.Uri.file(x), { preview: false }))))),
       vscode.commands.registerCommand('unintellij.commit.rollback', (ctx: RowContext) => this.forPaths(ctx, (p) => this.rollback(p))),
       vscode.commands.registerCommand('unintellij.commit.addToVcs', (ctx: RowContext) => this.forPaths(ctx, (p) => this.vcs.addToVcs(p))),
@@ -128,7 +128,10 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
           }
           break;
         case 'diff':
-          await this.showDiff(message.path);
+          await this.showDiff(message.path, false);
+          break;
+        case 'preview':
+          await this.showDiff(message.path, true);
           break;
         case 'rollback':
           await this.rollback(message.paths);
@@ -168,21 +171,33 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
     }
   }
 
-  private async showDiff(filePath: string): Promise<void> {
+  /**
+   * Shows a file's changes. As a preview (single click, arrow keys) the focus stays in the Commit
+   * tool window and the previous preview tab is replaced, even with preview editors turned off;
+   * otherwise (double click, Enter) the editor gets the focus and the tab is kept.
+   */
+  private async showDiff(filePath: string, asPreview: boolean): Promise<void> {
     const change = this.vcs.changes().find((c) => c.path === filePath);
     const uri = vscode.Uri.file(filePath);
     const api = this.vcs.gitApi;
+    const options = { preview: true, preserveFocus: asPreview };
+    const previous = this.previewTab;
     if (!change || !api || change.status === 'A' || change.status === 'U') {
-      await vscode.window.showTextDocument(uri, { preview: true });
-      return;
+      await vscode.window.showTextDocument(uri, options);
+    } else if (change.status === 'D') {
+      await vscode.window.showTextDocument(api.toGitUri(uri, 'HEAD'), options);
+    } else {
+      await vscode.commands.executeCommand('vscode.diff', api.toGitUri(uri, 'HEAD'), uri, `${path.basename(filePath)} (HEAD ↔ Local Changes)`, options);
     }
-    const head = api.toGitUri(uri, 'HEAD');
-    if (change.status === 'D') {
-      await vscode.window.showTextDocument(head, { preview: true });
-      return;
+    const active = vscode.window.tabGroups.activeTabGroup.activeTab;
+    if (previous && previous !== active && !previous.isDirty && !previous.isPinned && vscode.window.tabGroups.all.some((g) => g.tabs.includes(previous))) {
+      await vscode.window.tabGroups.close(previous, true);
     }
-    await vscode.commands.executeCommand('vscode.diff', head, uri, `${path.basename(filePath)} (HEAD ↔ Local Changes)`, { preview: true });
+    this.previewTab = asPreview ? active : undefined;
   }
+
+  /** Tab opened by the last diff preview, replaced by the next one. */
+  private previewTab: vscode.Tab | undefined;
 
   private async rollback(paths: readonly string[]): Promise<void> {
     if (paths.length === 0) {
