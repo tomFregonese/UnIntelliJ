@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { shortcutFor } from '../search/actions';
 import { collectRunConfigurations, configurationIcon, RunConfiguration, startConfiguration } from './configurations';
 import { EditConfigurationsPanel, SavedConfigurations } from './editConfigurations';
+import { MAVEN_RUNS_KEY, MavenRunData } from './runConfigLogic';
 import { t } from '../i18n/i18n';
 
 const SELECTED_KEY = 'run.selectedConfiguration';
@@ -54,6 +55,7 @@ export class RunWidget implements vscode.Disposable {
       this.saved,
       this.editor,
       this.saved.onDidChange(() => void this.restoreSelection()),
+      vscode.commands.registerCommand('unintellij.run.refreshConfigurations', () => this.restoreSelection()),
       vscode.commands.registerCommand('unintellij.run.selectConfiguration', () => this.pick('select')),
       vscode.commands.registerCommand('unintellij.run.editConfigurations', () => this.editor.show(this.selected?.id)),
       vscode.commands.registerCommand('unintellij.run', () => this.start(false)),
@@ -78,7 +80,7 @@ export class RunWidget implements vscode.Disposable {
 
   private async restoreSelection(): Promise<void> {
     const id = this.state.get<string>(SELECTED_KEY);
-    const configurations = await collectRunConfigurations(this.saved.all);
+    const configurations = await collectRunConfigurations(this.saved.all, this.state.get<MavenRunData[]>(MAVEN_RUNS_KEY, []));
     this.selected = configurations.find((c) => c.id === id) ?? configurations.find((c) => c.kind === 'npm' && c.script === 'start') ?? configurations[0];
     this.render();
   }
@@ -109,10 +111,11 @@ export class RunWidget implements vscode.Disposable {
   }
 
   private async pick(then: 'select' | 'run' | 'debug'): Promise<void> {
-    const configurations = await collectRunConfigurations(this.saved.all);
+    const configurations = await collectRunConfigurations(this.saved.all, this.state.get<MavenRunData[]>(MAVEN_RUNS_KEY, []));
     type Item = vscode.QuickPickItem & { configuration?: RunConfiguration };
     const items: Item[] = [];
     const groups: [string, RunConfiguration[]][] = [
+      ['Maven', configurations.filter((c) => c.kind === 'maven')],
       ['npm', configurations.filter((c) => c.kind === 'npm' && c.saved)],
       ['npm scripts', configurations.filter((c) => c.kind === 'npm' && !c.saved)],
       [t('Launch Configurations'), configurations.filter((c) => c.kind === 'launch')],
@@ -123,7 +126,7 @@ export class RunWidget implements vscode.Disposable {
         items.push(
           ...group.map((c) => ({
             label: t('$({0}) {1}', configurationIcon(c).id, c.name),
-            description: c.kind === 'npm' ? c.command : c.type,
+            description: c.kind === 'npm' ? c.command : c.kind === 'maven' ? c.args.join(' ') : c.type,
             picked: c.id === this.selected?.id,
             configuration: c,
           })),

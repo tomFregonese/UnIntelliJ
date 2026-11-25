@@ -1,7 +1,7 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { detectPackageManager, PackageManager, scriptCommandLine } from './packageManager';
-import { NpmConfigData, npmCommandLine, parseEnv } from './runConfigLogic';
+import { MavenRunData, NpmConfigData, npmCommandLine, parseEnv } from './runConfigLogic';
 
 export { scriptCommandLine };
 
@@ -21,7 +21,13 @@ export type RunConfiguration =
       env?: string;
       saved?: boolean;
     }
-  | { kind: 'launch'; id: string; name: string; folder: vscode.WorkspaceFolder | undefined; type: string };
+  | { kind: 'launch'; id: string; name: string; folder: vscode.WorkspaceFolder | undefined; type: string }
+  | { kind: 'maven'; id: string; name: string; folder: vscode.WorkspaceFolder | undefined; cwd: string; executable: string; args: string[] };
+
+export function mavenConfiguration(run: MavenRunData): RunConfiguration {
+  const folder = run.folder ? vscode.workspace.getWorkspaceFolder(vscode.Uri.parse(run.folder)) : undefined;
+  return { kind: 'maven', id: run.id, name: run.name, folder, cwd: run.cwd, executable: run.executable, args: run.args };
+}
 
 
 export interface PackageScripts {
@@ -63,8 +69,8 @@ export async function findPackageScripts(): Promise<PackageScripts[]> {
 }
 
 /** Saved configurations first (IntelliJ order), then every package.json script, then launch.json. */
-export async function collectRunConfigurations(saved: readonly NpmConfigData[] = []): Promise<RunConfiguration[]> {
-  const configurations: RunConfiguration[] = [];
+export async function collectRunConfigurations(saved: readonly NpmConfigData[] = [], maven: readonly MavenRunData[] = []): Promise<RunConfiguration[]> {
+  const configurations: RunConfiguration[] = maven.map(mavenConfiguration);
   const packages = await findPackageScripts();
   for (const config of saved) {
     const pkg = packages.find((p) => p.packageJson.toString() === config.packageJson);
@@ -116,6 +122,18 @@ export async function startConfiguration(configuration: RunConfiguration, debug:
     await vscode.debug.startDebugging(configuration.folder, configuration.name, { noDebug: !debug });
     return undefined;
   }
+  if (configuration.kind === 'maven') {
+    // Debugging a Maven goal needs the Java debugger: goals run the same way in both cases.
+    const task = new vscode.Task(
+      { type: 'unintellij-maven', args: configuration.args, cwd: configuration.cwd },
+      configuration.folder ?? vscode.TaskScope.Workspace,
+      configuration.name,
+      'maven',
+      new vscode.ShellExecution(configuration.executable, configuration.args, { cwd: configuration.cwd }),
+    );
+    task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Dedicated, clear: true };
+    return vscode.tasks.executeTask(task);
+  }
   const cwd = path.dirname(configuration.packageJson.fsPath);
   const commandLine = npmCommandLine(configuration.packageManager, configuration.script, configuration.args);
   const env = parseEnv(configuration.env ?? '');
@@ -136,5 +154,5 @@ export async function startConfiguration(configuration: RunConfiguration, debug:
 }
 
 export function configurationIcon(configuration: RunConfiguration): vscode.ThemeIcon {
-  return configuration.kind === 'npm' ? new vscode.ThemeIcon('package') : new vscode.ThemeIcon('debug-alt');
+  return configuration.kind === 'npm' ? new vscode.ThemeIcon('package') : configuration.kind === 'maven' ? new vscode.ThemeIcon('gear') : new vscode.ThemeIcon('debug-alt');
 }

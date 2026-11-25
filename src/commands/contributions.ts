@@ -10,6 +10,8 @@ export const VIEW_CONTAINERS = {
     { id: 'unintellij-project', title: 'Project', icon: 'media/project.svg' },
     // Left, under Commit; IntelliJ shows it on the right: drag it to the secondary side bar if wanted.
     { id: 'unintellij-database', title: 'Database', icon: 'media/database.svg' },
+    // IntelliJ shows it on the right: drag it to the secondary side bar if wanted.
+    { id: 'unintellij-maven', title: 'Maven', icon: 'media/maven.svg' },
   ],
   panel: [
     { id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' },
@@ -20,6 +22,7 @@ export const VIEW_CONTAINERS = {
 export const VIEWS = {
   'unintellij-project': [{ id: 'unintellij.project', name: 'Project' }],
   'unintellij-database': [{ id: 'unintellij.database', name: 'Database' }],
+  'unintellij-maven': [{ id: 'unintellij.maven', name: 'Maven', when: 'unintellij.mavenProjects' }],
   'unintellij-services': [{ type: 'webview', id: 'unintellij.dbResults', name: 'Database' }],
   'unintellij-git': [{ type: 'webview', id: 'unintellij.gitLog', name: 'Log' }],
   // In VS Code's Source Control container, whose native views UnIntelliJ hides (see scmViews.ts).
@@ -85,6 +88,12 @@ export const MENUS = {
     { command: 'unintellij.inspection.error', when: "unintellij.inspection == 'error'", group: 'navigation@-100' },
   ],
   'view/title': [
+    { command: 'unintellij.maven.reload', when: 'view == unintellij.maven', group: 'navigation@1' },
+    { command: 'unintellij.maven.executeGoal', when: 'view == unintellij.maven', group: 'navigation@2' },
+    { command: 'unintellij.maven.toggleOffline', when: 'view == unintellij.maven && !unintellij.maven.offline', group: 'navigation@3' },
+    { command: 'unintellij.maven.toggleOfflineOff', when: 'view == unintellij.maven && unintellij.maven.offline', group: 'navigation@3' },
+    { command: 'unintellij.maven.toggleSkipTests', when: 'view == unintellij.maven && !unintellij.maven.skipTests', group: 'navigation@4' },
+    { command: 'unintellij.maven.toggleSkipTestsOff', when: 'view == unintellij.maven && unintellij.maven.skipTests', group: 'navigation@4' },
     { command: 'unintellij.database.addSource', when: 'view == unintellij.database', group: 'navigation@1' },
     { command: 'unintellij.database.refresh', when: 'view == unintellij.database', group: 'navigation@2' },
     { command: 'unintellij.database.editSources', when: 'view == unintellij.database', group: 'navigation@3' },
@@ -99,6 +108,10 @@ export const MENUS = {
     ),
   ],
   'view/item/context': [
+    { command: 'unintellij.maven.run', when: 'view == unintellij.maven && viewItem == goal', group: 'inline@1' },
+    { command: 'unintellij.maven.run', when: 'view == unintellij.maven && viewItem == goal', group: '1_run@1' },
+    { command: 'unintellij.maven.executeGoal', when: 'view == unintellij.maven && viewItem =~ /^(project|goal)$/', group: '1_run@2' },
+    { command: 'unintellij.maven.openPom', when: 'view == unintellij.maven && viewItem == project', group: '2_open@1' },
     { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: 'inline@1' },
     { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: '1_open@1' },
     { command: 'unintellij.database.newConsole', when: 'view == unintellij.database && viewItem =~ /^(source|database|schema)/', group: '1_open@2' },
@@ -121,6 +134,14 @@ export const MENUS = {
 };
 
 export const TASK_DEFINITIONS = [
+  {
+    type: 'unintellij-maven',
+    required: ['args'],
+    properties: {
+      args: { type: 'array', description: 'Maven goals and options' },
+      cwd: { type: 'string', description: 'Directory Maven runs in' },
+    },
+  },
   {
     type: 'unintellij-run',
     required: ['command'],

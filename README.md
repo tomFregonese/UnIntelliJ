@@ -12,6 +12,7 @@ fingers still think in JetBrains shortcuts.
 - **Branches** popup, **Push** dialog, **VCS Operations** popup, **Conflicts** resolver
 - **Recent Files**, **Recent Locations**, **File Structure** popups
 - IntelliJ-style **Settings** window (Ctrl+Alt+S / ⌘,)
+- **Maven** tool window: Lifecycle, Plugins, Dependencies, Profiles, Execute Maven Goal, offline / skip tests
 - Optional **Islands+**: rounded islands and title bar widgets (patches VS Code, see below)
 
 No other extension is required. Java (Red Hat), Debugger for Java and Angular Language Service are used when installed.

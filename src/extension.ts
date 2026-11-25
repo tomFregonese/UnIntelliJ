@@ -13,6 +13,7 @@ import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
+import { MavenView } from './maven/mavenView';
 import { revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
 import { ProjectView } from './project/projectView';
@@ -80,6 +81,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     new StatusDetails(),
     ...registerDatabase(context),
     new ProjectView(context, vcs.service),
+    new MavenView(context.workspaceState),
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);

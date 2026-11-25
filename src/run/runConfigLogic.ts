@@ -54,3 +54,25 @@ export function uniqueName(base: string, taken: readonly string[]): string {
 export function newConfigId(): string {
   return `saved:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
+
+/** Maven goals run from the Maven tool window: IntelliJ keeps them as temporary run configurations. */
+export interface MavenRunData {
+  id: string;
+  /** "demo [clean,install]" */
+  name: string;
+  /** Directory the command runs in (the project's root, where the wrapper is). */
+  cwd: string;
+  executable: string;
+  args: string[];
+  /** Workspace folder URI (`Uri.toString()`). */
+  folder?: string;
+}
+
+export const MAVEN_RUNS_KEY = 'maven.recentRuns';
+/** IntelliJ keeps 5 temporary configurations by default. */
+export const MAX_MAVEN_RUNS = 5;
+
+/** Adds or moves `run` to the top of the recent Maven runs. */
+export function rememberMavenRun(runs: readonly MavenRunData[], run: MavenRunData): MavenRunData[] {
+  return [run, ...runs.filter((r) => r.id !== run.id)].slice(0, MAX_MAVEN_RUNS);
+}

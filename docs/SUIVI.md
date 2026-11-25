@@ -138,11 +138,12 @@ Cocher et dater quand c'est réglé.
   - choisir par cases à cocher les bases affichées (pas forcément toutes) ;
   - pour chaque base, choisir les schémas affichés par clic droit (« N of M », sélection par cases à cocher, comme IntelliJ) ;
   - le sélecteur des fichiers `.sql` suit ce choix.
-- [ ] **4. Maven** : tool window Maven comme IntelliJ :
+- [x] **4. Maven** : tool window Maven comme IntelliJ :
   - Lifecycle (clean, validate, compile, test, package, verify, install…) ;
   - Plugins et Dependencies ;
   - double-clic pour lancer, Reload, options Offline et Skip Tests ;
   - goals dans le widget Run.
+  - Fait : Profiles à cocher, projets et modules imbriqués, Lifecycle, Plugins (goals des plugins courants), Dependencies directes, double-clic ou ▶ pour lancer, « Execute Maven Goal… », Reload, Offline, Skip Tests, wrapper `mvnw` utilisé s'il existe. Chaque goal lancé devient une configuration temporaire du widget Run (5 dernières, comme IntelliJ). **Écarts** : pas de pom effectif (plugins hérités du parent non listés), dépendances directes seulement (pas d'arbre transitif), le bouton Debug lance le goal sans débogueur.
 - [ ] **5. Widget de branche en un seul bloc** : branche, ↙ entrants, ↗ sortants et icône de fetch dans une seule entrée cliquable. Le clic ouvre le popup Git : Update, Commit, Push, Fetch, nouvelle branche, branches locales et distantes.
 - [ ] **6. Proposer les extensions Java officielles, et seulement elles** :
   - quand un projet Java / Maven est ouvert, une fenêtre propose une petite liste à cocher, jamais une installation forcée ;
