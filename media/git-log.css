@@ -236,3 +236,27 @@ button.more {
   padding: 3px 10px;
   cursor: pointer;
 }
+
+/* Narrow (side bar): log above the commit details, author and date hidden (shown in the details). */
+@media (max-width: 700px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  }
+  .split > :nth-child(2) {
+    border-left: none !important;
+    border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+    overflow: auto;
+  }
+  .commit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .commit .author,
+  .commit .date {
+    display: none;
+  }
+  input[type='search'] {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}

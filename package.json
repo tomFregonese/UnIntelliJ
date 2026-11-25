@@ -2590,6 +2590,11 @@
           "icon": "media/project.svg"
         },
         {
+          "id": "unintellij-git",
+          "title": "%viewContainer.activitybar.unintellij-git%",
+          "icon": "media/git.svg"
+        },
+        {
           "id": "unintellij-database",
           "title": "%viewContainer.activitybar.unintellij-database%",
           "icon": "media/database.svg"
@@ -2601,11 +2606,6 @@
         }
       ],
       "panel": [
-        {
-          "id": "unintellij-git",
-          "title": "%viewContainer.panel.unintellij-git%",
-          "icon": "media/git.svg"
-        },
         {
           "id": "unintellij-services",
           "title": "%viewContainer.panel.unintellij-services%",

@@ -158,3 +158,4 @@ Cocher et dater quand c'est réglé.
   - JUnit ;
   - variables Eclipse (`${workspace_loc:…}`, `${project_loc}`…) traduites ; les éléments non pris en charge sont signalés.
   - Fait et vérifié : groupe « Eclipse Launch Configurations » dans le widget Run ; Java Application et Spring Boot (profil ajouté), Remote Java Application (attache du débogueur), Maven m2e, JUnit (via Surefire). Le projet Java est retrouvé via le débogueur (le nom Eclipse peut différer de l'artifactId). **Écarts** : types serveur (Tomcat…) non pris en charge (message) ; Debug d'un launch Maven/JUnit lance sans débogueur.
+- [x] **8. Git (historique) à gauche** : tool window Git déplacée du panneau du bas vers la barre de gauche, icône Git d'IntelliJ, Alt+9 / ⌘9 ; mise en page compacte dans la colonne (commits en haut, fichiers et message dessous).

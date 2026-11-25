@@ -11,6 +11,7 @@
 - Branch widget is a single block (branch, ↙/↗ counts, Update / Push / Fetch icons) that opens the Git popup, which now also has Fetch.
 - Java projects: UnIntelliJ offers the official Java extensions (Red Hat Java, Java Debugger, optional Spring Boot Tools) with checkboxes, never an extension pack.
 - Eclipse launch configurations (`*.launch`) in the Run widget: Java and Spring Boot applications, remote debug, Maven (m2e) and JUnit, with Eclipse variables resolved; nothing is written to the repository.
+- Git tool window (log) moved to the left activity bar with IntelliJ's Git icon (Alt+9 / ⌘9); compact layout in the side bar.
 - Icon themes are VS Code defaults too; an Islands theme you picked yourself is kept.
 
 ## 0.3.0

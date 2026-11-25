@@ -8,13 +8,14 @@ export const VIEW_CONTAINERS = {
   // instead of its Folders view (that view cannot be hidden).
   activitybar: [
     { id: 'unintellij-project', title: 'Project', icon: 'media/project.svg' },
+    // IntelliJ's Git tool window (log); left rather than at the bottom so that it is easy to find.
+    { id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' },
     // Left, under Commit; IntelliJ shows it on the right: drag it to the secondary side bar if wanted.
     { id: 'unintellij-database', title: 'Database', icon: 'media/database.svg' },
     // IntelliJ shows it on the right: drag it to the secondary side bar if wanted.
     { id: 'unintellij-maven', title: 'Maven', icon: 'media/maven.svg' },
   ],
   panel: [
-    { id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' },
     { id: 'unintellij-services', title: 'Services', icon: 'media/database.svg' },
   ],
 };
