@@ -111,3 +111,4 @@ Cocher et dater quand c'est réglé.
 - [ ] Proposition automatique des réglages IntelliJ + vérification JetBrains Mono + choix Light/Dark au premier lancement — §15.3
 - [ ] Calibrer d'abord **Islands Light** (thème utilisé au travail) — §15
 - [ ] Barre de navigation en bas à gauche, barre d'état épurée, widget d'inspection — §15.4
+- [ ] **Base de données PostgreSQL façon IntelliJ** : tool window Database, sources de données (mots de passe sécurisés, couleur par source), sélecteur source/schéma dans les fichiers `.sql`, `Ctrl+Entrée`, résultats en grille — §16 (PostgreSQL uniquement)

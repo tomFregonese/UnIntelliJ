@@ -322,3 +322,39 @@ Le titre de la tool window est un menu **« Project ▾ »** qui change la faço
 - Barre d'état à droite : uniquement position, fins de ligne, encodage, indentation, lecture seule.
 - Widget d'inspection de l'éditeur (avertissements / erreurs, navigation) : au plus près (barre de titre de l'éditeur ou barre d'état).
 - Onglets d'éditeur : onglet actif encadré bleu arrondi (thème Light), icônes de type de fichier.
+
+## 16. Base de données PostgreSQL façon IntelliJ (itération 2)
+
+Besoin : se connecter aux bases **PostgreSQL** (locales et distantes) et exécuter des scripts SQL directement depuis l'éditeur, avec le même fonctionnement que l'outil Database d'IntelliJ. **PostgreSQL uniquement** : pas d'autre moteur, pour garder cette partie simple.
+
+### 16.1 Tool window Database
+
+- Icône Database (logo IntelliJ) dans la barre de droite si possible, sinon sous les tool windows de gauche.
+- Arbre : **sources de données** → bases → schémas → tables / vues / fonctions / séquences → colonnes, index, clés (icônes IntelliJ). Barre d'outils : Ajouter (+), Rafraîchir, Se déconnecter, Propriétés, Nouvelle console.
+- Double-clic sur une table : grille de données (lecture, filtre `WHERE`, tri, pagination). Édition des lignes : plus tard.
+
+### 16.2 Sources de données
+
+- Fenêtre « Data Sources and Drivers » (webview) façon IntelliJ : nom, hôte, port, base, utilisateur, mot de passe, schémas visibles, SSL (mode, certificats), bouton **Test Connection**.
+- Plusieurs sources (local, recette, prod…), avec une **couleur** par source comme IntelliJ (rouge pour la prod) visible dans l'arbre et sur l'éditeur SQL.
+- Mots de passe dans le coffre sécurisé de VS Code (`SecretStorage`, donc Windows Credential Manager), jamais dans les réglages ni dans le dépôt.
+- Option lecture seule par source.
+- Import depuis `pgpass` / variables `PG*` : plus tard.
+
+### 16.3 Fichiers SQL et consoles
+
+- À l'ouverture d'un fichier `.sql` : bandeau « Aucune source de données : **Choisir** » ; en haut à droite de l'éditeur, sélecteurs **source** ▾ et **schéma** ▾ (comme IntelliJ). Association mémorisée par fichier.
+- **Console** par source (Nouvelle console) : éditeur SQL temporaire déjà attaché.
+- Exécution :
+  - `Ctrl+Entrée` : exécute l'instruction sous le curseur (ou la sélection), comme IntelliJ.
+  - Exécuter tout le fichier ; scripts à plusieurs instructions séparées par `;` (y compris blocs `$$ … $$`).
+  - Annuler la requête en cours.
+- Résultats dans le panneau du bas, onglet « Services / Database » : une grille par requête (onglets), nombre de lignes, durée, export CSV, copie ; sortie des `NOTICE`, erreurs avec position dans le fichier.
+- Transactions : mode auto-commit par défaut, bascule manuelle avec Commit / Rollback, confirmation avant `UPDATE`/`DELETE` sans `WHERE` comme IntelliJ.
+- Complétion des noms de tables et colonnes du schéma choisi ; coloration SQL PostgreSQL.
+
+### 16.4 Technique
+
+- Pilote `pg` (node-postgres) embarqué dans l'extension : pas d'installation de `psql` nécessaire.
+- Connexions ouvertes à la demande, fermées à la déconnexion et à la fermeture de VS Code ; délai d'attente configurable.
+- Tests : base PostgreSQL éphémère (conteneur en CI) pour la connexion, le découpage des scripts, l'exécution et l'annulation.
