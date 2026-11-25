@@ -72,6 +72,8 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.commit', title: 'Commit…' },
   { command: 'unintellij.push', title: 'Push…', icon: '$(repo-push)' },
   { command: 'unintellij.fetch', title: 'Fetch', icon: '$(repo-fetch)' },
+  { command: 'unintellij.change.showDiff', title: 'Show Diff', icon: '$(diff)', hidden: true },
+  { command: 'unintellij.change.copyOriginal', title: 'Copy Original Content', icon: '$(copy)', hidden: true },
   { command: 'unintellij.updateProject', title: 'Update Project…', icon: '$(repo-pull)' },
   { command: 'unintellij.vcsOperations', title: 'VCS Operations Popup…' },
   { command: 'unintellij.branches', title: 'Branches…' },

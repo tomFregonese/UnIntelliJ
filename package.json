@@ -462,6 +462,18 @@
         "icon": "$(repo-fetch)"
       },
       {
+        "command": "unintellij.change.showDiff",
+        "title": "Show Diff",
+        "category": "UnIntelliJ",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "unintellij.change.copyOriginal",
+        "title": "Copy Original Content",
+        "category": "UnIntelliJ",
+        "icon": "$(copy)"
+      },
+      {
         "command": "unintellij.updateProject",
         "title": "Update Project…",
         "category": "UnIntelliJ",
@@ -556,6 +568,14 @@
         {
           "command": "unintellij.git.resetToHere",
           "when": "false"
+        },
+        {
+          "command": "unintellij.change.showDiff",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.change.copyOriginal",
+          "when": "false"
         }
       ],
       "webview/context": [
@@ -648,6 +668,16 @@
           "command": "unintellij.commit.deleteChangelist",
           "group": "1_changelist@4",
           "when": "webviewId == 'unintellij.commit' && webviewSection == 'changelist' && config.unintellij.vcs.changelists.enabled"
+        }
+      ],
+      "scm/change/title": [
+        {
+          "command": "unintellij.change.showDiff",
+          "group": "navigation@1"
+        },
+        {
+          "command": "unintellij.change.copyOriginal",
+          "group": "navigation@2"
         }
       ],
       "view/title": [

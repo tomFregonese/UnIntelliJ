@@ -56,6 +56,11 @@ export const MENUS = {
       CHANGELISTS_ON,
     ),
   ],
+  // Change popup (quick diff peek): IntelliJ's Show Diff and Copy next to VS Code's own actions.
+  'scm/change/title': [
+    { command: 'unintellij.change.showDiff', group: 'navigation@1' },
+    { command: 'unintellij.change.copyOriginal', group: 'navigation@2' },
+  ],
   'view/title': [
     // IntelliJ's Update / Push / Fetch actions, also on the Commit and Git tool windows.
     ...['unintellij.updateProject', 'unintellij.push', 'unintellij.fetch'].flatMap((command, i) =>
