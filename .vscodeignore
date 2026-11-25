@@ -1,5 +1,7 @@
 **
 !dist/extension.js
+!dist/webview/*.js
+!media/*.css
 !package.json
 !README.md
 !CHANGELOG.md
@@ -10,3 +12,4 @@
 !icons/product-icon-theme.json
 !icons/product-icons.woff
 !NOTICE
+!media/*.svg

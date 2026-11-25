@@ -4,7 +4,7 @@ const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 
 /** @type {import('esbuild').BuildOptions} */
-const options = {
+const extension = {
   entryPoints: ['src/extension.ts'],
   bundle: true,
   outfile: 'dist/extension.js',
@@ -18,9 +18,26 @@ const options = {
   logLevel: 'info',
 };
 
+/** Webview scripts run in the browser. */
+/** @type {import('esbuild').BuildOptions} */
+const webviews = {
+  entryPoints: { settings: 'src/webview/settings.ts' },
+  bundle: true,
+  outdir: 'dist/webview',
+  format: 'iife',
+  platform: 'browser',
+  target: 'chrome120',
+  sourcemap: !production,
+  sourcesContent: false,
+  minify: production,
+  logLevel: 'info',
+};
+
 if (watch) {
-  const context = await esbuild.context(options);
-  await context.watch();
+  for (const options of [extension, webviews]) {
+    const context = await esbuild.context(options);
+    await context.watch();
+  }
 } else {
-  await esbuild.build(options);
+  await Promise.all([esbuild.build(extension), esbuild.build(webviews)]);
 }

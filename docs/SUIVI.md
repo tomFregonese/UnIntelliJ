@@ -40,3 +40,11 @@ Cocher et dater quand c'est réglé.
 - [ ] **Abréviations de classes sur très gros projets** : on interroge le serveur de langage avec la 1re lettre ; s'il tronque ses résultats, des classes peuvent manquer. À tester sur le projet Angular du travail.
 - [ ] **Actions** : les commandes internes de VS Code n'ont pas de titre accessible aux extensions ; l'entrée « All Commands… » ouvre la palette native pour elles.
 - [ ] **Java** : Classes/Symbols dépendent de l'extension Red Hat (jdtls) ; à tester quand elle sera installée.
+
+## Lot 6 — Fenêtre Settings
+
+- [ ] **Rendu non vérifié à l'écran** (testé dans un DOM simulé : arbre, champs, recherche, modifications en attente, keymap, plugins).
+- [ ] **Onglet d'éditeur, pas une vraie fenêtre modale** : VS Code ne permet pas aux extensions d'ouvrir un dialogue modal personnalisé.
+- [ ] **Keymap : on peut désactiver un raccourci mais pas le réassigner** comme dans IntelliJ (il faudrait écrire dans `keybindings.json` de l'utilisateur). À décider si utile.
+- [ ] **JetBrains Mono** doit être installée sur le poste (Windows : installation « pour moi » possible sans droits admin) ; le préréglage la met en premier avec repli sur Consolas.
+- [ ] Le préréglage « IntelliJ-like » choisit `files.autoSave = onWindowChange` (sauvegarde quand la fenêtre perd le focus) : à valider avec tes habitudes.

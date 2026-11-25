@@ -7,6 +7,8 @@ import { syncDisabledActions } from './keymap/disabledActions';
 import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
+import { applyPreset, revertPreset } from './settings/preset';
+import { applyChanges } from './settings/settingsPanel';
 import { registerVcsCommands } from './vcs/commands';
 
 export interface UnIntelliJApi {
@@ -15,6 +17,12 @@ export interface UnIntelliJApi {
   appearanceIdle(): Promise<void>;
   /** Search Everywhere results for a tab and query, without UI (used by tests). */
   search(tab: TabId, query: string): Promise<vscode.QuickPickItem[]>;
+  /** Settings window operations (used by tests). */
+  settings: {
+    applyChanges(changes: Record<string, unknown>): Promise<void>;
+    applyPreset(): Promise<void>;
+    revertPreset(): Promise<void>;
+  };
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi> {
@@ -33,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   context.subscriptions.push(
     ...navigation.disposables,
     ...registerEditorCommands(),
-    ...registerSettingsCommands(context),
+    ...registerSettingsCommands(context, log),
     ...registerVcsCommands(),
     syncDisabledActions(),
   );
@@ -47,6 +55,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     integrations: detectIntegrations,
     appearanceIdle: () => themeSync.idle(),
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
+    settings: {
+      applyChanges,
+      applyPreset: () => applyPreset(context.globalState),
+      revertPreset: () => revertPreset(context.globalState),
+    },
   };
 }
 

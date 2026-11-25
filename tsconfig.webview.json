@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [],
+    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "include": [
+    "src/webview",
+    "src/settings/pages.ts",
+    "src/settings/protocol.ts",
+    "src/config/schema.ts",
+    "test/unit/settingsWebview.test.ts"
+  ],
+  "exclude": []
+}

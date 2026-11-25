@@ -31,6 +31,8 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.toggleCase', title: 'Toggle Case' },
   // Settings
   { command: 'unintellij.showSettings', title: 'Settings…' },
+  { command: 'unintellij.showKeymapSettings', title: 'Settings: Keymap' },
+  { command: 'unintellij.applyRecommendedSettings', title: 'Apply IntelliJ-like VS Code Settings…' },
   // Version control
   { command: 'unintellij.commit', title: 'Commit…' },
   { command: 'unintellij.push', title: 'Push…' },

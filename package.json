@@ -277,6 +277,16 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.showKeymapSettings",
+        "title": "Settings: Keymap",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.applyRecommendedSettings",
+        "title": "Apply IntelliJ-like VS Code Settings…",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.commit",
         "title": "Commit…",
         "category": "UnIntelliJ"
@@ -1602,7 +1612,7 @@
   "scripts": {
     "build": "node esbuild.mjs",
     "watch": "node esbuild.mjs --watch",
-    "typecheck": "tsc -p . --noEmit",
+    "typecheck": "tsc -p . --noEmit && tsc -p tsconfig.webview.json",
     "lint": "eslint .",
     "test:unit": "vitest run",
     "compile:integration": "tsc -p tsconfig.integration.json",
@@ -1622,6 +1632,7 @@
     "@vscode/vsce": "^4.1.1",
     "esbuild": "^0.28.2",
     "eslint": "^10.15.0",
+    "jsdom": "^29.1.1",
     "mocha": "^12.0.3",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
