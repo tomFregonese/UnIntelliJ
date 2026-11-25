@@ -111,3 +111,13 @@
 .monaco-workbench .part.statusbar .statusbar-item[id^='status.scm.'] {
   display: none !important;
 }
+
+/* IntelliJ's left stripe only has Project and Commit on top: hide VS Code's other entries
+   (still reachable from the keyboard: Ctrl+Shift+F, Alt+5 / Cmd+5, Settings › Plugins). */
+.monaco-workbench .activitybar .action-item:has(.codicon-search-view-icon),
+.monaco-workbench .activitybar .action-item:has(.codicon-extensions-view-icon),
+.monaco-workbench .activitybar .action-item:has(.codicon-run-view-icon),
+.monaco-workbench .activitybar .action-item:has(.codicon-remote-explorer-view-icon),
+.monaco-workbench .activitybar .action-item:has(.codicon-testing-view-icon) {
+  display: none !important;
+}

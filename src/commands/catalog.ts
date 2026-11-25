@@ -44,18 +44,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.run.selectConfiguration', title: 'Select Run/Debug Configuration…' },
   { command: 'unintellij.runConfiguration', title: 'Run Configuration', hidden: true },
   // Structure tool window
-  { command: 'unintellij.structure.sortAlphabetically', title: 'Sort Alphabetically', hidden: true },
-  { command: 'unintellij.structure.sortByPosition', title: '✓ Sort Alphabetically', hidden: true },
-  { command: 'unintellij.structure.showFields', title: 'Show Fields', hidden: true },
-  { command: 'unintellij.structure.hideFields', title: '✓ Show Fields', hidden: true },
-  { command: 'unintellij.structure.enableAutoscroll', title: 'Autoscroll from Source', hidden: true },
-  { command: 'unintellij.structure.disableAutoscroll', title: '✓ Autoscroll from Source', hidden: true },
-  { command: 'unintellij.structure.reveal', title: 'Navigate to Symbol', hidden: true },
   // npm tool window
-  { command: 'unintellij.npm.refresh', title: 'Reload Scripts', icon: '$(refresh)', hidden: true },
-  { command: 'unintellij.npm.run', title: 'Run Script', icon: '$(play)', hidden: true },
-  { command: 'unintellij.npm.debug', title: 'Debug Script', icon: '$(debug-alt)', hidden: true },
-  { command: 'unintellij.npm.open', title: 'Show in package.json', hidden: true },
   // Commit tool window (context menu)
   { command: 'unintellij.commit.showDiff', title: 'Show Diff', hidden: true },
   { command: 'unintellij.commit.jumpToSource', title: 'Jump to Source', hidden: true },

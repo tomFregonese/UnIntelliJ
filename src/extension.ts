@@ -13,8 +13,6 @@ import { SetupPrompt } from './settings/setupPrompt';
 import { applyPreset, revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
 import { RunWidget } from './run/runWidget';
-import { NpmView } from './toolWindows/npm';
-import { StructureView } from './toolWindows/structure';
 import { registerVcsCommands } from './vcs/commands';
 import type { CommitViewState } from './vcs/commitProtocol';
 import type { GitLogView } from './vcs/gitLogView';
@@ -26,8 +24,6 @@ export interface UnIntelliJApi {
   appearanceIdle(): Promise<void>;
   /** Search Everywhere results for a tab and query, without UI (used by tests). */
   search(tab: TabId, query: string): Promise<vscode.QuickPickItem[]>;
-  /** Names of the top-level symbols shown in the Structure tool window (used by tests). */
-  structure(): Promise<string[]>;
   /** Version control service and Commit tool window (used by tests). */
   vcs: { service: VcsService; commitState(): CommitViewState; gitLog: GitLogView };
   /** User keybindings written for reassigned shortcuts (used by tests). */
@@ -65,11 +61,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     syncDisabledActions(),
     userKeybindings,
     new RunWidget(context.workspaceState),
-    new NpmView(),
   );
-  const structure = new StructureView(context.globalState, context.extensionUri);
   const islandsPlus = IslandsPlus.create(context, log);
-  context.subscriptions.push(structure, islandsPlus);
+  context.subscriptions.push(islandsPlus);
   // Not awaited: patching may prompt the user and must not delay activation.
   void islandsPlus.reconcile();
 
@@ -88,7 +82,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
     vcs: { service: vcs.service, commitState: () => vcs.commitView.state(), gitLog: vcs.gitLog },
     keymap: { file: userKeybindings.file, sync: () => userKeybindings.sync() },
-    structure: async () => (await structure.whenLoaded()).map((n) => n.symbol.name),
     settings: {
       applyChanges,
       applyPreset: () => applyPreset(context.globalState),

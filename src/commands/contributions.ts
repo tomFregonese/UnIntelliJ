@@ -5,10 +5,6 @@
 
 export const VIEW_CONTAINERS = {
   panel: [{ id: 'unintellij-git', title: 'Git', icon: 'media/git.svg' }],
-  activitybar: [
-    { id: 'unintellij-structure', title: 'Structure', icon: 'media/structure.svg' },
-    { id: 'unintellij-npm', title: 'npm', icon: 'media/npm.svg' },
-  ],
 };
 
 export const VIEWS = {
@@ -16,17 +12,10 @@ export const VIEWS = {
   // In VS Code's Source Control container, whose native views UnIntelliJ hides (see scmViews.ts).
   // Expanded by default: contributed views are otherwise added collapsed at the bottom.
   scm: [{ type: 'webview', id: 'unintellij.commit', name: 'Commit', visibility: 'visible' }],
-  'unintellij-structure': [{ id: 'unintellij.structure', name: 'Structure' }],
-  'unintellij-npm': [{ id: 'unintellij.npm', name: 'Scripts' }],
 };
 
 /** Activity bar container command for a container id, used by the keymap. */
 export const containerCommand = (id: string): string => `workbench.view.extension.${id}`;
-
-const structureToggle = (option: string, enable: string, disable: string, order: number) => [
-  { command: `unintellij.structure.${enable}`, when: `view == unintellij.structure && !unintellij.structure.${option}`, group: `options@${order}` },
-  { command: `unintellij.structure.${disable}`, when: `view == unintellij.structure && unintellij.structure.${option}`, group: `options@${order}` },
-];
 
 const commitMenu = (section: string, entries: [string, string][], extraWhen = '') =>
   entries.map(([command, group]) => ({ command, group, when: `webviewId == 'unintellij.commit' && webviewSection == '${section}'${extraWhen}` }));
@@ -72,16 +61,6 @@ export const MENUS = {
     ...['unintellij.updateProject', 'unintellij.push', 'unintellij.fetch'].flatMap((command, i) =>
       ['unintellij.commit', 'unintellij.gitLog'].map((view) => ({ command, when: `view == ${view}`, group: `navigation@${10 + i}` })),
     ),
-    ...structureToggle('sortAlphabetically', 'sortAlphabetically', 'sortByPosition', 1),
-    ...structureToggle('showFields', 'showFields', 'hideFields', 2),
-    ...structureToggle('autoscrollFromSource', 'enableAutoscroll', 'disableAutoscroll', 3),
-    { command: 'unintellij.npm.refresh', when: 'view == unintellij.npm', group: 'navigation' },
-  ],
-  'view/item/context': [
-    { command: 'unintellij.npm.run', when: 'view == unintellij.npm && viewItem == script', group: 'inline@1' },
-    { command: 'unintellij.npm.debug', when: 'view == unintellij.npm && viewItem == script', group: 'inline@2' },
-    { command: 'unintellij.npm.run', when: 'view == unintellij.npm && viewItem == script', group: 'run@1' },
-    { command: 'unintellij.npm.debug', when: 'view == unintellij.npm && viewItem == script', group: 'run@2' },
   ],
 };
 

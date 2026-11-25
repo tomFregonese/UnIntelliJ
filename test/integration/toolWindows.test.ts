@@ -5,33 +5,19 @@ import type { UnIntelliJApi } from '../../src/extension';
 const EXTENSION_ID = 'unintellij.unintellij';
 
 suite('Tool windows and Run', () => {
-  let api: UnIntelliJApi;
   const workspace = () => vscode.workspace.workspaceFolders![0].uri;
 
   suiteSetup(async () => {
-    api = await vscode.extensions.getExtension<UnIntelliJApi>(EXTENSION_ID)!.activate();
+    await vscode.extensions.getExtension<UnIntelliJApi>(EXTENSION_ID)!.activate();
   });
 
   suiteTeardown(async () => {
     await vscode.commands.executeCommand('workbench.action.closeAllEditors');
   });
 
-  test('Structure shows the symbols of the active file', async () => {
-    await vscode.window.showTextDocument(vscode.Uri.joinPath(workspace(), 'src/app/user/user.service.ts'));
-    let names: string[] = [];
-    for (let i = 0; i < 40 && !names.includes('UserService'); i++) {
-      // Make the view visible so it refreshes, then wait for the language server.
-      await vscode.commands.executeCommand('workbench.view.extension.unintellij-structure');
-      await vscode.window.showTextDocument(vscode.Uri.joinPath(workspace(), 'src/app/user/user.service.ts'));
-      names = await api.structure();
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
-    assert.deepStrictEqual(names, ['User', 'UserService']);
-  });
-
-  test('Alt+7 opens the Structure tool window container', async () => {
+  test('Alt+7 opens the Outline (the Structure tool window was dropped)', async () => {
     const keybindings = vscode.extensions.getExtension(EXTENSION_ID)!.packageJSON.contributes.keybindings as { key: string; command: string }[];
-    assert.ok(keybindings.some((k) => k.key === 'alt+7' && k.command === 'workbench.view.extension.unintellij-structure'));
+    assert.ok(keybindings.some((k) => k.key === 'alt+7' && k.command === 'outline.focus'));
   });
 
   test('runs an npm script as a task', async () => {

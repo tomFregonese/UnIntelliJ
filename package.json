@@ -340,64 +340,6 @@
         "category": "UnIntelliJ"
       },
       {
-        "command": "unintellij.structure.sortAlphabetically",
-        "title": "Sort Alphabetically",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.sortByPosition",
-        "title": "✓ Sort Alphabetically",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.showFields",
-        "title": "Show Fields",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.hideFields",
-        "title": "✓ Show Fields",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.enableAutoscroll",
-        "title": "Autoscroll from Source",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.disableAutoscroll",
-        "title": "✓ Autoscroll from Source",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.structure.reveal",
-        "title": "Navigate to Symbol",
-        "category": "UnIntelliJ"
-      },
-      {
-        "command": "unintellij.npm.refresh",
-        "title": "Reload Scripts",
-        "category": "UnIntelliJ",
-        "icon": "$(refresh)"
-      },
-      {
-        "command": "unintellij.npm.run",
-        "title": "Run Script",
-        "category": "UnIntelliJ",
-        "icon": "$(play)"
-      },
-      {
-        "command": "unintellij.npm.debug",
-        "title": "Debug Script",
-        "category": "UnIntelliJ",
-        "icon": "$(debug-alt)"
-      },
-      {
-        "command": "unintellij.npm.open",
-        "title": "Show in package.json",
-        "category": "UnIntelliJ"
-      },
-      {
         "command": "unintellij.commit.showDiff",
         "title": "Show Diff",
         "category": "UnIntelliJ"
@@ -548,50 +490,6 @@
         },
         {
           "command": "unintellij.runConfiguration",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.sortAlphabetically",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.sortByPosition",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.showFields",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.hideFields",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.enableAutoscroll",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.disableAutoscroll",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.structure.reveal",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.npm.refresh",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.npm.run",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.npm.debug",
-          "when": "false"
-        },
-        {
-          "command": "unintellij.npm.open",
           "when": "false"
         },
         {
@@ -777,63 +675,6 @@
           "command": "unintellij.fetch",
           "when": "view == unintellij.gitLog",
           "group": "navigation@12"
-        },
-        {
-          "command": "unintellij.structure.sortAlphabetically",
-          "when": "view == unintellij.structure && !unintellij.structure.sortAlphabetically",
-          "group": "options@1"
-        },
-        {
-          "command": "unintellij.structure.sortByPosition",
-          "when": "view == unintellij.structure && unintellij.structure.sortAlphabetically",
-          "group": "options@1"
-        },
-        {
-          "command": "unintellij.structure.showFields",
-          "when": "view == unintellij.structure && !unintellij.structure.showFields",
-          "group": "options@2"
-        },
-        {
-          "command": "unintellij.structure.hideFields",
-          "when": "view == unintellij.structure && unintellij.structure.showFields",
-          "group": "options@2"
-        },
-        {
-          "command": "unintellij.structure.enableAutoscroll",
-          "when": "view == unintellij.structure && !unintellij.structure.autoscrollFromSource",
-          "group": "options@3"
-        },
-        {
-          "command": "unintellij.structure.disableAutoscroll",
-          "when": "view == unintellij.structure && unintellij.structure.autoscrollFromSource",
-          "group": "options@3"
-        },
-        {
-          "command": "unintellij.npm.refresh",
-          "when": "view == unintellij.npm",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "unintellij.npm.run",
-          "when": "view == unintellij.npm && viewItem == script",
-          "group": "inline@1"
-        },
-        {
-          "command": "unintellij.npm.debug",
-          "when": "view == unintellij.npm && viewItem == script",
-          "group": "inline@2"
-        },
-        {
-          "command": "unintellij.npm.run",
-          "when": "view == unintellij.npm && viewItem == script",
-          "group": "run@1"
-        },
-        {
-          "command": "unintellij.npm.debug",
-          "when": "view == unintellij.npm && viewItem == script",
-          "group": "run@2"
         }
       ]
     },
@@ -1256,13 +1097,13 @@
       },
       {
         "key": "alt+7",
-        "command": "workbench.view.extension.unintellij-structure",
+        "command": "outline.focus",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
       },
       {
         "key": "alt+7",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-structure')"
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
       },
       {
         "key": "alt+9",
@@ -1902,13 +1743,13 @@
       },
       {
         "key": "cmd+7",
-        "command": "workbench.view.extension.unintellij-structure",
+        "command": "outline.focus",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow"
       },
       {
         "key": "cmd+7",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-structure')"
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateStructureToolWindow && (focusedView == 'outline')"
       },
       {
         "key": "cmd+9",
@@ -2148,18 +1989,6 @@
           "title": "Git",
           "icon": "media/git.svg"
         }
-      ],
-      "activitybar": [
-        {
-          "id": "unintellij-structure",
-          "title": "Structure",
-          "icon": "media/structure.svg"
-        },
-        {
-          "id": "unintellij-npm",
-          "title": "npm",
-          "icon": "media/npm.svg"
-        }
       ]
     },
     "views": {
@@ -2176,18 +2005,6 @@
           "id": "unintellij.commit",
           "name": "Commit",
           "visibility": "visible"
-        }
-      ],
-      "unintellij-structure": [
-        {
-          "id": "unintellij.structure",
-          "name": "Structure"
-        }
-      ],
-      "unintellij-npm": [
-        {
-          "id": "unintellij.npm",
-          "name": "Scripts"
         }
       ]
     },

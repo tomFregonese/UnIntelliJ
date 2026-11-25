@@ -105,7 +105,7 @@ Cocher et dater quand c'est réglé.
 - [x] Cases à cocher / boutons radio IntelliJ dans les webviews — §14.3 (`media/controls.css`)
 - [x] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4 (barre d'état, fetch périodique `vcs.backgroundFetchMinutes`, boutons aussi sur Commit et Git ; bouton de synchro natif coupé par `configurationDefaults`). **Limite** : l'entrée de branche native de VS Code ne peut pas être masquée par une extension → clic droit sur la barre d'état › décocher « Source Control » (Islands+ la masque).
 - [ ] Widget Run unique + fenêtre Edit Configurations, suppression de la tool window npm — §14.5
-- [ ] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6
+- [x] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6 (tool windows npm et Structure supprimées ; Alt+7 → Outline natif, Ctrl+F12 conservé ; `panel.alignment: left` dans le préréglage ; Recherche / Run & Debug / Extensions / Remote / Testing masqués sous Islands+). **Limite** sans Islands+ : VS Code ne laisse pas une extension retirer ses icônes natives → clic droit sur la barre d'activité › décocher.
 - [ ] Vue Project avec sélecteur « Project ▾ » (Project / Packages / Project Files / Open Files / Changed Files), remplace l'Explorateur — §15.1
 - [ ] Barre de gauche : Project, Commit, Git séparé (en bas si possible, sinon sous Commit) ; Structure et npm retirés — §15.2
 - [x] Proposition automatique des réglages IntelliJ + vérification JetBrains Mono + choix Light/Dark au premier lancement — §15.3

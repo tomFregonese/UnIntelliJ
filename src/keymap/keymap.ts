@@ -131,7 +131,7 @@ export const KEYMAP: readonly KeymapAction[] = [
   ...toolWindow('ActivateRunToolWindow', 'Run', 'alt+4', 'cmd+4', 'workbench.debug.action.toggleRepl'),
   ...toolWindow('ActivateDebugToolWindow', 'Debug', 'alt+5', 'cmd+5', 'workbench.view.debug', sideBarShows('workbench.view.debug')),
   ...toolWindow('ActivateProblemsViewToolWindow', 'Problems', 'alt+6', 'cmd+6', 'workbench.actions.view.problems', panelShows('workbench.panel.markers')),
-  ...toolWindow('ActivateStructureToolWindow', 'Structure', 'alt+7', 'cmd+7', containerCommand('unintellij-structure'), sideBarShows(containerCommand('unintellij-structure'))),
+  ...toolWindow('ActivateStructureToolWindow', 'Structure', 'alt+7', 'cmd+7', 'outline.focus', "focusedView == 'outline'"),
   ...toolWindow('ActivateVersionControlToolWindow', 'Git', 'alt+9', 'cmd+9', containerCommand('unintellij-git'), panelShows(containerCommand('unintellij-git'))),
   // Focusing the Commit view (not just the container) expands it, which also hides VS Code's own views.
   ...toolWindow('ActivateCommitToolWindow', 'Commit', 'alt+0', 'cmd+0', 'unintellij.commit.focus', sideBarShows('workbench.view.scm')),
