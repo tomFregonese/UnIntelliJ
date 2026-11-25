@@ -36,6 +36,7 @@ suite('Version control', function () {
     git('config', 'user.name', 'UnIntelliJ Tests');
     git('config', 'user.email', 'tests@example.invalid');
     git('config', 'commit.gpgsign', 'false');
+    git('config', 'core.autocrlf', 'false'); // Windows runners default to CRLF checkouts
     writeFileSync(file('a.txt'), 'a\n');
     writeFileSync(file('b.txt'), 'b\n');
     git('add', '.');
@@ -53,7 +54,11 @@ suite('Version control', function () {
 
   suiteTeardown(async () => {
     await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-    rmSync(root, { recursive: true, force: true });
+    try {
+      rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+    } catch {
+      // Windows: the Git extension may still hold files open; the folder is git-ignored anyway.
+    }
   });
 
   setup(() => {
