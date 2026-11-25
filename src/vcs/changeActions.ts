@@ -48,7 +48,14 @@ export function registerChangeActions(vcs: VcsService): vscode.Disposable[] {
       if (!target) {
         return;
       }
-      await vscode.commands.executeCommand('git.openChange', target);
+      const api = vcs.gitApi;
+      const commit = vcs.repository?.state.HEAD?.commit;
+      if (api) {
+        const base = commit ? `HEAD ${commit.slice(0, 8)}` : 'HEAD';
+        await vscode.commands.executeCommand('vscode.diff', api.toGitUri(target, 'HEAD'), target, `${target.path.split('/').pop()} (${base} ↔ Your version)`);
+      } else {
+        await vscode.commands.executeCommand('git.openChange', target);
+      }
       const line = changes?.[index]?.modifiedStartLineNumber;
       const editor = vscode.window.activeTextEditor;
       if (line && editor) {

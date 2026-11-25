@@ -187,13 +187,19 @@ export class CommitView implements vscode.WebviewViewProvider, vscode.Disposable
     } else if (change.status === 'D') {
       await vscode.window.showTextDocument(api.toGitUri(uri, 'HEAD'), options);
     } else {
-      await vscode.commands.executeCommand('vscode.diff', api.toGitUri(uri, 'HEAD'), uri, `${path.basename(filePath)} (HEAD ↔ Local Changes)`, options);
+      await vscode.commands.executeCommand('vscode.diff', api.toGitUri(uri, 'HEAD'), uri, `${path.basename(filePath)} (${this.headLabel()} ↔ Your version)`, options);
     }
     const active = vscode.window.tabGroups.activeTabGroup.activeTab;
     if (previous && previous !== active && !previous.isDirty && !previous.isPinned && vscode.window.tabGroups.all.some((g) => g.tabs.includes(previous))) {
       await vscode.window.tabGroups.close(previous, true);
     }
     this.previewTab = asPreview ? active : undefined;
+  }
+
+  /** IntelliJ's left diff header: the base revision. */
+  private headLabel(): string {
+    const commit = this.vcs.repository?.state.HEAD?.commit;
+    return commit ? `HEAD ${commit.slice(0, 8)}` : 'HEAD';
   }
 
   /** Tab opened by the last diff preview, replaced by the next one. */

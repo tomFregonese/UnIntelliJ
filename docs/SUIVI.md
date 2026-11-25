@@ -116,7 +116,7 @@ Cocher et dater quand c'est réglé.
 - [x] ▶ **dans la gouttière à gauche de la ligne**, pas au-dessus (API Testing pour tous les cas) — §17.5
 - [x] Barre Git **pleine** (pas hachurée) dans la gouttière, réglée automatiquement — §18.1 (`configurationDefaults`)
 - [x] Popup de modification au clic — §18.2 : aperçu natif de VS Code (option 1 du cahier des charges) avec ancien contenu, Précédent / Suivant / Rollback natifs + **Show Diff** et **Copier l'original** ajoutés ; raccourcis IntelliJ (Ctrl+Alt+Z, Ctrl+Alt+Shift+↑/↓). **Écart** : c'est un panneau intégré sous la ligne, pas un popup flottant (VS Code ne donne pas le clic de gouttière aux extensions).
-- [ ] Diff complet façon IntelliJ — §18.3 : éditeur de diff natif coloré par le thème, flèches de bloc natives ; restent les en-têtes « Base / Your version » et le bleu « modifié » (VS Code ne distingue qu'ajout/suppression).
+- [x] Diff complet façon IntelliJ — §18.3 : en-tête « HEAD <révision> ↔ Your version », côte à côte, flèches de revert par bloc, espaces non ignorés, fichier entier (préréglage). **Limite** : VS Code ne colore qu'ajout (vert) / suppression, pas le bleu « modifié » d'IntelliJ ; couleurs exactes du schéma Default d'IntelliJ à importer (fichier absent du clone partiel).
 - [x] Commit : simple clic = aperçu du diff à droite avec le focus qui reste dans la liste, flèches = l'aperçu suit, Espace = coche, double-clic / Entrée = ouvre avec le curseur dans l'éditeur — §19.1
 - [x] JetBrains Mono installée par « Apply », sans repli Courier — §19.2
 - [x] Fond de l'éditeur vide sans logo VS Code (Islands+) — §19.4
