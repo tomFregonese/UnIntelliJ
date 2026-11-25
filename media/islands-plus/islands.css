@@ -122,3 +122,8 @@
 .monaco-workbench .activitybar .action-item:has(.codicon-testing-view-icon) {
   display: none !important;
 }
+
+/* Empty editor: IntelliJ shows no logo, only the shortcut hints (VS Code's watermark list stays). */
+.monaco-workbench .part.editor > .content .editor-group-container > .editor-group-watermark .letterpress {
+  display: none !important;
+}
