@@ -223,3 +223,61 @@ Tout est livré ensemble, mais construit par lots indépendants et testables :
 | Options de Structure en boutons bascule | Menu « … » de la vue avec ✓ | Pas de boutons bascule pour les extensions |
 | Shelve (v1.1) | Stash via VCS Operations | Équivalent Git le plus proche |
 | Keymap : réassigner un raccourci | Activer / désactiver par action | Écrire dans `keybindings.json` de l'utilisateur reste à décider |
+
+## 14. Itération 2 — retours après installation au travail (2026-11-25)
+
+Contexte : 0.2.0 installée sur le poste Windows (VS Code 1.140 « system setup » → **pas d'Islands+ possible**). Double Shift et Commit tool window validés. Tout ce qui suit doit d'abord fonctionner **sans injection CSS** ; Islands+ ne sert qu'à placer les éléments exactement comme dans IntelliJ quand il est disponible.
+
+### 14.1 Typographie et lisibilité (priorité 1)
+
+Constat : caractères trop petits, peu lisibles, « ne ressemble pas à IntelliJ ».
+
+- Éditeur : JetBrains Mono (à installer « pour moi » sous Windows, sans admin), taille et interligne calibrés sur IntelliJ Windows (13 pt à 100 % d'échelle → environ 14-15 px dans VS Code selon la mise à l'échelle Windows), `editor.fontWeight`, ligatures off par défaut. Détecter si JetBrains Mono est absente et le signaler avec un lien.
+- Interface : la police de l'interface n'est pas modifiable sans injection ; levier disponible = **zoom de la fenêtre** (`window.zoomLevel`, déjà dans Settings › Appearance) + tailles des arbres (`workbench.tree.indent`, `workbench.list.*`) → proposer un réglage « Taille de l'interface » façon IntelliJ (Appearance › Use custom font size).
+- Calibrage sur captures côte à côte IntelliJ / VS Code **sur le poste Windows** (même fichier, même zoom).
+
+### 14.2 Couleurs exactes (priorité 1)
+
+Constat : « pas exactement les bonnes couleurs ».
+
+- Remplacer les couleurs approximatives par les **valeurs officielles** d'intellij-community (licence Apache 2.0) : thèmes `expUI` / Islands (`*.theme.json`) pour l'interface, schémas d'éditeur (`*.xml`, Dark / Light New UI) pour la coloration syntaxique — import automatisé par un script comme pour les icônes.
+- Vérification par captures avant/après, Islands Dark et Light.
+
+### 14.3 Cases à cocher et contrôles des webviews (priorité 2) — **sans injection**
+
+- Commit tool window et Settings : cases à cocher, boutons, champs, listes déroulantes restylés comme IntelliJ New UI (case arrondie 14 px, bleu accent cochée, état indéterminé, focus). Tout est dans nos webviews : CSS normale, aucune injection.
+
+### 14.4 Widget de branche et synchronisation (priorité 1) — **indispensable**
+
+Comportement IntelliJ à reproduire : nom de la branche avec **flèche verte ↗ + nombre** (commits locaux à pousser) et **flèche bleue ↙ + nombre** (commits distants pas encore récupérés), boutons **Update (pull) / Push / Fetch**, clic sur le nom → popup des branches.
+
+- Sans Islands+ : **barre d'état en bas à gauche**, éléments séparés pour pouvoir colorer chaque flèche (vert / bleu) ; boutons Fetch / Update / Push en icônes ; fetch périodique en arrière-plan pour connaître les commits entrants (réglage d'intervalle).
+- Mêmes actions en icônes dans la barre de titre des vues Commit et Git (natif, sans injection).
+- Avec Islands+ : déplacés **dans la barre de titre à gauche**, exactement comme IntelliJ.
+- Masquer/remplacer le widget de branche natif de VS Code pour éviter le doublon (à investiguer, sinon documenter le clic droit › masquer).
+
+### 14.5 Configurations d'exécution unifiées (priorité 1)
+
+Constat : « npm » (UnIntelliJ) et « Exécuter et déboguer » (VS Code natif) sont séparés ; IntelliJ regroupe tout (npm, Java, scripts SQL…) dans **un seul sélecteur en haut à droite** : flèche, nom de la configuration, Run / Debug / Stop, et menu « Edit Configurations… ».
+
+- Un seul widget « Run configurations » listant npm, `launch.json` (et plus tard Java / Spring Boot / JUnit / SQL) ; menu déroulant groupé par type + « Edit Configurations… ».
+- **Fenêtre Edit Configurations** façon IntelliJ (webview) : arbre des configurations par type à gauche, formulaire à droite (script, dossier, arguments, variables d'environnement…), ajout / copie / suppression.
+- Emplacement : Islands+ → **en haut à droite** ; sinon **barre d'état en bas à gauche** (déjà présent mais peu visible : à rendre plus visible, icône + nom + chevron + ▶ 🐞 ■).
+- Supprimer la tool window « npm » séparée de la barre d'activité (les scripts restent dans le widget et la fenêtre Edit Configurations).
+
+### 14.6 Disposition des tool windows (priorité 2)
+
+Disposition IntelliJ de Tom : **en haut à gauche** Project puis Commit, et rien d'autre ; **en bas à gauche** les exécutions (Run, sorties des configurations, Terminal…).
+
+- Contrainte VS Code : une seule barre d'activité verticale ; le bas de cette barre est réservé à Comptes / Paramètres → **impossible d'y ajouter des icônes sans injection**.
+- Sans injection :
+  - Panneau du bas aligné à gauche (`workbench.panel.alignment: left`) pour qu'il occupe tout le bas, sous l'arbre du projet = équivalent « en bas à gauche » : Terminal, Run (sortie des configurations), Git, Problems.
+  - Sortie des configurations dans un onglet « Run » dédié du panneau (une sous-vue par exécution, comme IntelliJ).
+  - Barre d'activité réduite à Project et Commit : déplacer Structure dans le panneau ou la barre latérale secondaire, supprimer npm (cf. 14.5), et masquer les entrées natives (Recherche, Exécuter et déboguer, Extensions…) — par programme si VS Code le permet, sinon via un assistant « Disposition IntelliJ » qui guide le clic droit › masquer.
+- Avec Islands+ : vraie colonne d'icônes en bas à gauche pour les tool windows du bas.
+
+### 14.7 Questions encore ouvertes
+
+- [ ] Où mettre Structure (panneau du bas, barre latérale droite, ou sous Project) ?
+- [ ] Faut-il garder une entrée de menu pour Recherche / Extensions une fois masquées (ex. dans Search Everywhere › Actions) ?
+- [ ] Captures IntelliJ de référence sur le poste Windows pour calibrer police et couleurs (si IntelliJ est encore accessible).

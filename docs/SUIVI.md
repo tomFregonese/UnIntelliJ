@@ -97,3 +97,12 @@ Cocher et dater quand c'est réglé.
 - [x] Fichiers modifiés qui restaient rouges à cause des erreurs : le préréglage désactive cette coloration (ils restent bleus).
 - [ ] **Premier clic sur l'icône Source Control** (au lieu d'Alt+0) : tant que la section Commit n'a jamais été dépliée, VS Code affiche encore ses vues ; elles disparaissent dès que Commit s'affiche, et ce choix est mémorisé.
 - [ ] **Deux widgets de branche** dans la barre d'état (celui de VS Code et le nôtre) : masquer celui de VS Code par clic droit sur la barre d'état si tu veux.
+
+## Itération 2 — à faire (détail : cahier des charges §14)
+
+- [ ] Police et taille (illisible au travail) — §14.1
+- [ ] Couleurs exactes importées d'intellij-community — §14.2
+- [ ] Cases à cocher / contrôles IntelliJ dans les webviews — §14.3
+- [ ] Widget de branche avec flèches verte/bleue + Fetch / Update / Push — §14.4
+- [ ] Widget Run unique + fenêtre Edit Configurations, suppression de la tool window npm — §14.5
+- [ ] Disposition : Project + Commit en haut à gauche, exécutions en bas — §14.6
