@@ -5,3 +5,4 @@ out/
 *.vsix
 .DS_Store
 !test/fixtures/workspace/node_modules/
+test/fixtures/workspace/.tmp-repo-*/

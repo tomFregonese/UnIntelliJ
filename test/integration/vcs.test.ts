@@ -1,7 +1,6 @@
 import * as assert from 'node:assert';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
@@ -21,14 +20,18 @@ async function eventually(description: string, check: () => boolean | Promise<bo
 suite('Version control', function () {
   this.timeout(60000);
   let api: UnIntelliJApi;
-  // A throwaway repository: tests must never touch the UnIntelliJ repository itself.
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'unintellij-git-')));
+  // A throwaway repository: tests must never touch the UnIntelliJ repository itself. It lives in
+  // the (git-ignored) workspace because older VS Code versions only open repositories inside it.
+  const root = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, `.tmp-repo-${Date.now()}`).fsPath;
+  // Uri.fsPath normalizes the drive letter case on Windows, like the Git extension does.
+  const same = (a: string | undefined, b: string) => a !== undefined && vscode.Uri.file(a).fsPath === vscode.Uri.file(b).fsPath;
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8' });
   const file = (name: string) => join(root, name);
   const state = () => api.vcs.commitState();
   const names = (files: { name: string }[]) => files.map((f) => f.name).sort();
 
   suiteSetup(async () => {
+    mkdirSync(root, { recursive: true });
     git('init', '-b', 'main');
     git('config', 'user.name', 'UnIntelliJ Tests');
     git('config', 'user.email', 'tests@example.invalid');
@@ -42,18 +45,20 @@ suite('Version control', function () {
     await api.vcs.service.ready;
     const gitApi = api.vcs.service.gitApi;
     assert.ok(gitApi?.openRepository, 'Git extension API should be available');
-    await gitApi.openRepository(vscode.Uri.file(root));
+    const opened = await gitApi.openRepository(vscode.Uri.file(root));
+    assert.ok(opened, 'the Git extension should open the temporary repository');
     await vscode.window.showTextDocument(vscode.Uri.file(file('a.txt')));
-    await eventually('temporary repository active', () => api.vcs.service.repository?.rootUri.fsPath === root);
+    await eventually('temporary repository active', () => same(api.vcs.service.repository?.rootUri.fsPath, root));
   });
 
   suiteTeardown(async () => {
     await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+    rmSync(root, { recursive: true, force: true });
   });
 
   setup(() => {
     // Guard against ever committing into a real repository.
-    assert.strictEqual(api.vcs.service.repository?.rootUri.fsPath, root);
+    assert.ok(same(api.vcs.service.repository?.rootUri.fsPath, root), `active repository: ${api.vcs.service.repository?.rootUri.fsPath}`);
   });
 
   test('lists changes in the active changelist and unversioned files apart', async () => {

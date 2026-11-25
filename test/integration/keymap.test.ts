@@ -29,28 +29,23 @@ suite('Keymap and commands', () => {
     assert.strictEqual(document.lineAt(0).text, 'const username = 1;');
   });
 
-  test('Next/Previous Method move between methods', async function () {
-    // Document symbols for untitled TypeScript come from the built-in TypeScript extension.
-    if (!vscode.extensions.getExtension('vscode.typescript-language-features')) {
-      this.skip();
-    }
-    const content = ['class A {', '  first() {', '  }', '', '  second() {', '  }', '}', ''].join('\n');
-    const document = await vscode.workspace.openTextDocument({ language: 'typescript', content });
-    const editor = await vscode.window.showTextDocument(document);
-    // Wait for the TypeScript server to analyze the document (slower on older VS Code / CI).
+  test('Next/Previous Method move between methods', async () => {
+    // A real file: untitled documents reuse URIs and the TypeScript server may answer for a previous one.
+    const uri = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'src/app/user/user.service.ts');
+    const editor = await vscode.window.showTextDocument(uri);
     for (let i = 0; i < 100; i++) {
-      const symbols = await vscode.commands.executeCommand<unknown[]>('vscode.executeDocumentSymbolProvider', document.uri);
-      if (symbols && symbols.length > 0) {
+      const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>('vscode.executeDocumentSymbolProvider', uri);
+      if (symbols?.some((s) => s.name === 'UserService' && s.children.length > 0)) {
         break;
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
     editor.selection = new vscode.Selection(0, 0, 0, 0);
     await vscode.commands.executeCommand('unintellij.nextMethod');
-    assert.strictEqual(editor.selection.active.line, 1);
+    assert.strictEqual(editor.selection.active.line, 8, 'findUser');
     await vscode.commands.executeCommand('unintellij.nextMethod');
-    assert.strictEqual(editor.selection.active.line, 4);
+    assert.strictEqual(editor.selection.active.line, 12, 'saveUser');
     await vscode.commands.executeCommand('unintellij.previousMethod');
-    assert.strictEqual(editor.selection.active.line, 1);
+    assert.strictEqual(editor.selection.active.line, 8, 'findUser again');
   });
 });
