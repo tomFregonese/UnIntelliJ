@@ -21,3 +21,6 @@
 - **Structure** tool window (Alt+7): symbols of the active file with IntelliJ icons and colors, sort alphabetically, show/hide fields, autoscroll from source.
 - **npm** tool window: scripts of every package.json (npm, yarn or pnpm detected), run or debug inline.
 - **Run widget** (status bar): selected run configuration (npm scripts and launch.json), Run (Shift+F10), Debug (Shift+F9), Stop (Ctrl+F2), Run…/Debug… pickers (Alt+Shift+F10/F9). Rerunning stops the previous run.
+- **Commit tool window** (Alt+0, Ctrl+K focuses the message): changes grouped by **changelists** (active one checked by default), Unversioned Files, check what to commit (the staging area is ignored, as in IntelliJ), Amend, Commit / Commit and Push, double-click for diff, native context menu (Show Diff, Jump to Source, Rollback, Move to Another Changelist, Add to VCS, changelist actions), IntelliJ status colors.
+- **Branches popup** (status bar widget, Ctrl+Shift+`): Recent / Local / Remote branches with ↑↓ indicators; Checkout, New Branch from…, Checkout and Rebase, Compare, Merge, Rebase, Update, Push, Rename, Delete.
+- **Push** dialog listing outgoing commits (Push / Force Push with lease, upstream set automatically), **VCS Operations** popup (Alt+`), Update Project with merge or rebase.

@@ -56,12 +56,23 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.npm.run', title: 'Run Script', icon: '$(play)', hidden: true },
   { command: 'unintellij.npm.debug', title: 'Debug Script', icon: '$(debug-alt)', hidden: true },
   { command: 'unintellij.npm.open', title: 'Show in package.json', hidden: true },
+  // Commit tool window (context menu)
+  { command: 'unintellij.commit.showDiff', title: 'Show Diff', hidden: true },
+  { command: 'unintellij.commit.jumpToSource', title: 'Jump to Source', hidden: true },
+  { command: 'unintellij.commit.rollback', title: 'Rollback…', hidden: true },
+  { command: 'unintellij.commit.addToVcs', title: 'Add to VCS', hidden: true },
+  { command: 'unintellij.commit.moveToChangelist', title: 'Move to Another Changelist…', hidden: true },
+  { command: 'unintellij.commit.newChangelist', title: 'New Changelist…' },
+  { command: 'unintellij.commit.setActiveChangelist', title: 'Set Active Changelist', hidden: true },
+  { command: 'unintellij.commit.renameChangelist', title: 'Edit Changelist…', hidden: true },
+  { command: 'unintellij.commit.deleteChangelist', title: 'Delete Changelist', hidden: true },
   // Version control
   { command: 'unintellij.commit', title: 'Commit…' },
   { command: 'unintellij.push', title: 'Push…' },
   { command: 'unintellij.updateProject', title: 'Update Project…' },
   { command: 'unintellij.vcsOperations', title: 'VCS Operations Popup…' },
   { command: 'unintellij.branches', title: 'Branches…' },
+  { command: 'unintellij.newBranch', title: 'New Branch…' },
 ];
 
 export function buildCommandContribution(): unknown[] {

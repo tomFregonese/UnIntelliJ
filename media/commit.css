@@ -1,0 +1,206 @@
+/* IntelliJ Commit tool window, colored by the active VS Code theme. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  background: transparent;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+}
+
+.tool {
+  background: transparent;
+  color: var(--vscode-icon-foreground);
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tool:hover:not(:disabled) {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.tool:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.branch {
+  margin-left: auto;
+  color: var(--vscode-descriptionForeground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.changes {
+  flex: 1;
+  overflow: auto;
+  outline: none;
+  padding-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 6px;
+  cursor: default;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.row:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.row.file {
+  padding-left: 26px;
+}
+
+.row.selected {
+  background: var(--vscode-list-inactiveSelectionBackground);
+}
+
+.changes:focus .row.selected {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.row input[type='checkbox'] {
+  margin: 0 2px 0 0;
+}
+
+.group-name {
+  font-weight: 600;
+}
+
+.group.active .group-name::after {
+  content: ' (active)';
+  font-weight: normal;
+  color: var(--vscode-descriptionForeground);
+}
+
+.count,
+.dir {
+  color: var(--vscode-descriptionForeground);
+  margin-left: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* IntelliJ file status colors. */
+.status-M {
+  color: var(--vscode-gitDecoration-modifiedResourceForeground);
+}
+.status-A {
+  color: var(--vscode-gitDecoration-addedResourceForeground);
+}
+.status-D {
+  color: var(--vscode-gitDecoration-deletedResourceForeground);
+}
+.status-R {
+  color: var(--vscode-gitDecoration-renamedResourceForeground);
+}
+.status-U {
+  color: var(--vscode-gitDecoration-untrackedResourceForeground);
+}
+.status-C {
+  color: var(--vscode-gitDecoration-conflictingResourceForeground);
+}
+
+.changes:focus .row.selected .name {
+  color: inherit;
+}
+
+.empty {
+  padding: 12px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.commit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.amend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+textarea {
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
+  border-radius: 4px;
+  padding: 6px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: var(--vscode-editor-font-size);
+  resize: vertical;
+  min-height: 60px;
+}
+
+textarea:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground);
+}
+
+button.secondary {
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border-color: var(--vscode-input-border, var(--vscode-widget-border));
+}
+
+button.secondary:hover:not(:disabled) {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+button:disabled {
+  opacity: 0.5;
+}

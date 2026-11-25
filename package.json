@@ -383,6 +383,51 @@
         "category": "UnIntelliJ"
       },
       {
+        "command": "unintellij.commit.showDiff",
+        "title": "Show Diff",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.jumpToSource",
+        "title": "Jump to Source",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.rollback",
+        "title": "Rollback…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.addToVcs",
+        "title": "Add to VCS",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.moveToChangelist",
+        "title": "Move to Another Changelist…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.newChangelist",
+        "title": "New Changelist…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.setActiveChangelist",
+        "title": "Set Active Changelist",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.renameChangelist",
+        "title": "Edit Changelist…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.commit.deleteChangelist",
+        "title": "Delete Changelist",
+        "category": "UnIntelliJ"
+      },
+      {
         "command": "unintellij.commit",
         "title": "Commit…",
         "category": "UnIntelliJ"
@@ -405,6 +450,11 @@
       {
         "command": "unintellij.branches",
         "title": "Branches…",
+        "category": "UnIntelliJ"
+      },
+      {
+        "command": "unintellij.newBranch",
+        "title": "New Branch…",
         "category": "UnIntelliJ"
       }
     ],
@@ -465,6 +515,95 @@
         {
           "command": "unintellij.npm.open",
           "when": "false"
+        },
+        {
+          "command": "unintellij.commit.showDiff",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.jumpToSource",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.rollback",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.addToVcs",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.moveToChangelist",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.setActiveChangelist",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.renameChangelist",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.commit.deleteChangelist",
+          "when": "false"
+        }
+      ],
+      "webview/context": [
+        {
+          "command": "unintellij.commit.showDiff",
+          "group": "1_diff@1",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'file'"
+        },
+        {
+          "command": "unintellij.commit.jumpToSource",
+          "group": "1_diff@2",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'file'"
+        },
+        {
+          "command": "unintellij.commit.rollback",
+          "group": "2_changes@1",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'file'"
+        },
+        {
+          "command": "unintellij.commit.moveToChangelist",
+          "group": "2_changes@2",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'file' && config.unintellij.vcs.changelists.enabled"
+        },
+        {
+          "command": "unintellij.commit.addToVcs",
+          "group": "1_vcs@1",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'unversioned'"
+        },
+        {
+          "command": "unintellij.commit.jumpToSource",
+          "group": "1_vcs@2",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'unversioned'"
+        },
+        {
+          "command": "unintellij.commit.rollback",
+          "group": "2_delete@1",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'unversioned'"
+        },
+        {
+          "command": "unintellij.commit.setActiveChangelist",
+          "group": "1_changelist@1",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'changelist' && config.unintellij.vcs.changelists.enabled"
+        },
+        {
+          "command": "unintellij.commit.newChangelist",
+          "group": "1_changelist@2",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'changelist' && config.unintellij.vcs.changelists.enabled"
+        },
+        {
+          "command": "unintellij.commit.renameChangelist",
+          "group": "1_changelist@3",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'changelist' && config.unintellij.vcs.changelists.enabled"
+        },
+        {
+          "command": "unintellij.commit.deleteChangelist",
+          "group": "1_changelist@4",
+          "when": "webviewId == 'unintellij.commit' && webviewSection == 'changelist' && config.unintellij.vcs.changelists.enabled"
         }
       ],
       "view/title": [
@@ -966,13 +1105,13 @@
       },
       {
         "key": "alt+0",
-        "command": "workbench.view.scm",
+        "command": "workbench.view.extension.unintellij-commit",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
       },
       {
         "key": "alt+0",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+        "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-commit')"
       },
       {
         "key": "alt+f12",
@@ -1612,13 +1751,13 @@
       },
       {
         "key": "cmd+0",
-        "command": "workbench.view.scm",
+        "command": "workbench.view.extension.unintellij-commit",
         "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow"
       },
       {
         "key": "cmd+0",
         "command": "workbench.action.closeSidebar",
-        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.scm')"
+        "when": "(config.unintellij.keymap.layout == 'macos' || config.unintellij.keymap.layout == 'auto' && isMac) && !unintellij.keymap.disabled.ActivateCommitToolWindow && (sideBarFocus && activeViewlet == 'workbench.view.extension.unintellij-commit')"
       },
       {
         "key": "alt+f12",
@@ -1834,6 +1973,11 @@
     "viewsContainers": {
       "activitybar": [
         {
+          "id": "unintellij-commit",
+          "title": "Commit",
+          "icon": "media/commit.svg"
+        },
+        {
           "id": "unintellij-structure",
           "title": "Structure",
           "icon": "media/structure.svg"
@@ -1846,6 +1990,13 @@
       ]
     },
     "views": {
+      "unintellij-commit": [
+        {
+          "type": "webview",
+          "id": "unintellij.commit",
+          "name": "Commit"
+        }
+      ],
       "unintellij-structure": [
         {
           "id": "unintellij.structure",

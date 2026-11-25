@@ -56,3 +56,13 @@ Cocher et dater quand c'est réglé.
 - [ ] **Options de Structure** (tri, champs, autoscroll) dans le menu « … » de la vue, avec ✓ dans le titre : VS Code n'a pas de boutons à bascule pour les extensions.
 - [ ] **Java (Run/Debug, Spring Boot, JUnit, Maven, Services)** : reporté en v2 comme prévu. Les configurations `launch.json` existantes apparaissent déjà dans le widget Run.
 - [ ] Debug d'un script npm = « JavaScript Debug Terminal » de VS Code : à essayer avec `ng serve` (le debug Angular se fait surtout côté navigateur).
+
+## Lot 8 — Git : Commit, changelists, branches, Push
+
+- [ ] **Rendu non vérifié à l'écran** (testé : logique, dépôt Git réel temporaire, interface sous jsdom).
+- [ ] **Pas de commit partiel de lignes** (IntelliJ permet de cocher des morceaux de fichier dans le diff) : on committe des fichiers entiers.
+- [ ] **La zone de staging est réécrite au commit** (comme IntelliJ qui l'ignore) : si tu utilises `git add -p` à côté, ce staging est remplacé par les fichiers cochés.
+- [ ] **Fichiers renommés** : à vérifier qu'un renommage se committe bien en un seul « rename » (on stage le nouveau chemin ; l'ancien doit suivre).
+- [ ] **Vue Source Control native de VS Code toujours présente** à côté de notre Commit tool window : la masquer (clic droit sur la barre d'activité) ou la laisser ?
+- [ ] **Widget de branche dans la barre d'état** (en bas) en plus de celui de VS Code ; avec Islands+, le placer en haut comme dans IntelliJ.
+- [ ] **Push** = popup de confirmation (liste des commits + Push / Force Push) plutôt qu'un vrai dialogue ; suppression de branche distante via la commande native de VS Code.

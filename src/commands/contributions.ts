@@ -5,12 +5,14 @@
 
 export const VIEW_CONTAINERS = {
   activitybar: [
+    { id: 'unintellij-commit', title: 'Commit', icon: 'media/commit.svg' },
     { id: 'unintellij-structure', title: 'Structure', icon: 'media/structure.svg' },
     { id: 'unintellij-npm', title: 'npm', icon: 'media/npm.svg' },
   ],
 };
 
 export const VIEWS = {
+  'unintellij-commit': [{ type: 'webview', id: 'unintellij.commit', name: 'Commit' }],
   'unintellij-structure': [{ id: 'unintellij.structure', name: 'Structure' }],
   'unintellij-npm': [{ id: 'unintellij.npm', name: 'Scripts' }],
 };
@@ -23,7 +25,34 @@ const structureToggle = (option: string, enable: string, disable: string, order:
   { command: `unintellij.structure.${disable}`, when: `view == unintellij.structure && unintellij.structure.${option}`, group: `options@${order}` },
 ];
 
+const commitMenu = (section: string, entries: [string, string][], extraWhen = '') =>
+  entries.map(([command, group]) => ({ command, group, when: `webviewId == 'unintellij.commit' && webviewSection == '${section}'${extraWhen}` }));
+const CHANGELISTS_ON = ' && config.unintellij.vcs.changelists.enabled';
+
 export const MENUS = {
+  'webview/context': [
+    ...commitMenu('file', [
+      ['unintellij.commit.showDiff', '1_diff@1'],
+      ['unintellij.commit.jumpToSource', '1_diff@2'],
+      ['unintellij.commit.rollback', '2_changes@1'],
+    ]),
+    ...commitMenu('file', [['unintellij.commit.moveToChangelist', '2_changes@2']], CHANGELISTS_ON),
+    ...commitMenu('unversioned', [
+      ['unintellij.commit.addToVcs', '1_vcs@1'],
+      ['unintellij.commit.jumpToSource', '1_vcs@2'],
+      ['unintellij.commit.rollback', '2_delete@1'],
+    ]),
+    ...commitMenu(
+      'changelist',
+      [
+        ['unintellij.commit.setActiveChangelist', '1_changelist@1'],
+        ['unintellij.commit.newChangelist', '1_changelist@2'],
+        ['unintellij.commit.renameChangelist', '1_changelist@3'],
+        ['unintellij.commit.deleteChangelist', '1_changelist@4'],
+      ],
+      CHANGELISTS_ON,
+    ),
+  ],
   'view/title': [
     ...structureToggle('sortAlphabetically', 'sortAlphabetically', 'sortByPosition', 1),
     ...structureToggle('showFields', 'showFields', 'hideFields', 2),

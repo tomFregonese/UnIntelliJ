@@ -15,7 +15,10 @@
     "src/settings/pages.ts",
     "src/settings/protocol.ts",
     "src/config/schema.ts",
-    "test/unit/settingsWebview.test.ts"
+    "test/unit/settingsWebview.test.ts",
+    "test/unit/commitWebview.test.ts",
+    "src/vcs/commitProtocol.ts",
+    "src/vcs/changesLogic.ts"
   ],
   "exclude": []
 }

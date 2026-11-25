@@ -32,10 +32,10 @@
       "fontCharacter": "\\E031"
     },
     "bell": {
-      "fontCharacter": "\\E054"
+      "fontCharacter": "\\E055"
     },
     "bookmark": {
-      "fontCharacter": "\\E04F"
+      "fontCharacter": "\\E050"
     },
     "check": {
       "fontCharacter": "\\E001"
@@ -65,43 +65,43 @@
       "fontCharacter": "\\E00F"
     },
     "debug-alt": {
-      "fontCharacter": "\\E045"
-    },
-    "debug-continue": {
-      "fontCharacter": "\\E049"
-    },
-    "debug-pause": {
       "fontCharacter": "\\E046"
     },
-    "debug-rerun": {
+    "debug-continue": {
+      "fontCharacter": "\\E04A"
+    },
+    "debug-pause": {
       "fontCharacter": "\\E047"
     },
-    "debug-restart": {
+    "debug-rerun": {
       "fontCharacter": "\\E048"
     },
+    "debug-restart": {
+      "fontCharacter": "\\E049"
+    },
     "debug-start": {
-      "fontCharacter": "\\E045"
+      "fontCharacter": "\\E046"
     },
     "debug-step-into": {
-      "fontCharacter": "\\E04B"
-    },
-    "debug-step-out": {
       "fontCharacter": "\\E04C"
     },
-    "debug-step-over": {
+    "debug-step-out": {
       "fontCharacter": "\\E04D"
     },
-    "debug-stop": {
+    "debug-step-over": {
       "fontCharacter": "\\E04E"
+    },
+    "debug-stop": {
+      "fontCharacter": "\\E04F"
     },
     "desktop-download": {
       "fontCharacter": "\\E012"
     },
     "diff": {
-      "fontCharacter": "\\E059"
+      "fontCharacter": "\\E05A"
     },
     "discard": {
-      "fontCharacter": "\\E05D"
+      "fontCharacter": "\\E05E"
     },
     "edit": {
       "fontCharacter": "\\E013"
@@ -113,13 +113,13 @@
       "fontCharacter": "\\E014"
     },
     "explorer-view-icon": {
-      "fontCharacter": "\\E056"
+      "fontCharacter": "\\E057"
     },
     "export": {
       "fontCharacter": "\\E015"
     },
     "extensions-view-icon": {
-      "fontCharacter": "\\E040"
+      "fontCharacter": "\\E041"
     },
     "filter": {
       "fontCharacter": "\\E016"
@@ -127,11 +127,14 @@
     "gear": {
       "fontCharacter": "\\E02B"
     },
+    "git-branch": {
+      "fontCharacter": "\\E034"
+    },
     "git-commit": {
-      "fontCharacter": "\\E058"
+      "fontCharacter": "\\E059"
     },
     "git-merge": {
-      "fontCharacter": "\\E05B"
+      "fontCharacter": "\\E05C"
     },
     "go-to-file": {
       "fontCharacter": "\\E01D"
@@ -167,7 +170,7 @@
       "fontCharacter": "\\E01E"
     },
     "markers-view-icon": {
-      "fontCharacter": "\\E055"
+      "fontCharacter": "\\E056"
     },
     "menu": {
       "fontCharacter": "\\E01F"
@@ -179,16 +182,16 @@
       "fontCharacter": "\\E002"
     },
     "notifications-view-icon": {
-      "fontCharacter": "\\E054"
+      "fontCharacter": "\\E055"
     },
     "open-preview": {
       "fontCharacter": "\\E003"
     },
     "outline-view-icon": {
-      "fontCharacter": "\\E057"
+      "fontCharacter": "\\E058"
     },
     "output-view-icon": {
-      "fontCharacter": "\\E053"
+      "fontCharacter": "\\E054"
     },
     "pin": {
       "fontCharacter": "\\E022"
@@ -197,7 +200,7 @@
       "fontCharacter": "\\E023"
     },
     "play": {
-      "fontCharacter": "\\E04A"
+      "fontCharacter": "\\E04B"
     },
     "preview": {
       "fontCharacter": "\\E003"
@@ -218,22 +221,22 @@
       "fontCharacter": "\\E005"
     },
     "repo-fetch": {
-      "fontCharacter": "\\E05A"
+      "fontCharacter": "\\E05B"
     },
     "repo-pull": {
-      "fontCharacter": "\\E05E"
+      "fontCharacter": "\\E05F"
     },
     "repo-push": {
-      "fontCharacter": "\\E05C"
+      "fontCharacter": "\\E05D"
     },
     "run": {
-      "fontCharacter": "\\E04A"
+      "fontCharacter": "\\E04B"
     },
     "run-all": {
       "fontCharacter": "\\E006"
     },
     "run-view-icon": {
-      "fontCharacter": "\\E051"
+      "fontCharacter": "\\E052"
     },
     "save": {
       "fontCharacter": "\\E029"
@@ -245,7 +248,7 @@
       "fontCharacter": "\\E02A"
     },
     "search-view-icon": {
-      "fontCharacter": "\\E052"
+      "fontCharacter": "\\E053"
     },
     "settings-gear": {
       "fontCharacter": "\\E02B"
@@ -253,8 +256,11 @@
     "settings-view-bar-icon": {
       "fontCharacter": "\\E02B"
     },
+    "source-control": {
+      "fontCharacter": "\\E034"
+    },
     "source-control-view-icon": {
-      "fontCharacter": "\\E050"
+      "fontCharacter": "\\E051"
     },
     "split-horizontal": {
       "fontCharacter": "\\E02E"
@@ -263,64 +269,64 @@
       "fontCharacter": "\\E02D"
     },
     "symbol-class": {
-      "fontCharacter": "\\E034"
+      "fontCharacter": "\\E035"
     },
     "symbol-constant": {
-      "fontCharacter": "\\E035"
-    },
-    "symbol-enum": {
       "fontCharacter": "\\E036"
     },
+    "symbol-enum": {
+      "fontCharacter": "\\E037"
+    },
     "symbol-enum-member": {
-      "fontCharacter": "\\E035"
+      "fontCharacter": "\\E036"
     },
     "symbol-event": {
-      "fontCharacter": "\\E03B"
+      "fontCharacter": "\\E03C"
     },
     "symbol-field": {
-      "fontCharacter": "\\E037"
+      "fontCharacter": "\\E038"
     },
     "symbol-file": {
       "fontCharacter": "\\E007"
     },
     "symbol-folder": {
-      "fontCharacter": "\\E038"
-    },
-    "symbol-function": {
       "fontCharacter": "\\E039"
     },
-    "symbol-interface": {
+    "symbol-function": {
       "fontCharacter": "\\E03A"
     },
+    "symbol-interface": {
+      "fontCharacter": "\\E03B"
+    },
     "symbol-key": {
-      "fontCharacter": "\\E041"
-    },
-    "symbol-method": {
-      "fontCharacter": "\\E03C"
-    },
-    "symbol-module": {
-      "fontCharacter": "\\E03D"
-    },
-    "symbol-namespace": {
-      "fontCharacter": "\\E03E"
-    },
-    "symbol-package": {
-      "fontCharacter": "\\E03E"
-    },
-    "symbol-parameter": {
-      "fontCharacter": "\\E03F"
-    },
-    "symbol-property": {
-      "fontCharacter": "\\E041"
-    },
-    "symbol-structure": {
       "fontCharacter": "\\E042"
     },
-    "symbol-type-parameter": {
+    "symbol-method": {
+      "fontCharacter": "\\E03D"
+    },
+    "symbol-module": {
+      "fontCharacter": "\\E03E"
+    },
+    "symbol-namespace": {
+      "fontCharacter": "\\E03F"
+    },
+    "symbol-package": {
+      "fontCharacter": "\\E03F"
+    },
+    "symbol-parameter": {
+      "fontCharacter": "\\E040"
+    },
+    "symbol-property": {
+      "fontCharacter": "\\E042"
+    },
+    "symbol-structure": {
       "fontCharacter": "\\E043"
     },
-    "symbol-variable": {
+    "symbol-type-parameter": {
       "fontCharacter": "\\E044"
+    },
+    "symbol-variable": {
+      "fontCharacter": "\\E045"
     },
     "target": {
       "fontCharacter": "\\E01D"

@@ -13,6 +13,8 @@ import { RunWidget } from './run/runWidget';
 import { NpmView } from './toolWindows/npm';
 import { StructureView } from './toolWindows/structure';
 import { registerVcsCommands } from './vcs/commands';
+import type { CommitViewState } from './vcs/commitProtocol';
+import type { VcsService } from './vcs/vcsService';
 
 export interface UnIntelliJApi {
   integrations(): IntegrationStatus[];
@@ -22,6 +24,8 @@ export interface UnIntelliJApi {
   search(tab: TabId, query: string): Promise<vscode.QuickPickItem[]>;
   /** Names of the top-level symbols shown in the Structure tool window (used by tests). */
   structure(): Promise<string[]>;
+  /** Version control service and Commit tool window (used by tests). */
+  vcs: { service: VcsService; commitState(): CommitViewState };
   /** Settings window operations (used by tests). */
   settings: {
     applyChanges(changes: Record<string, unknown>): Promise<void>;
@@ -43,11 +47,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
 
   // Commands first: a keybinding may be what activated the extension.
   const navigation = registerNavigationCommands(context, log);
+  const vcs = registerVcsCommands(context, log);
   context.subscriptions.push(
     ...navigation.disposables,
     ...registerEditorCommands(),
     ...registerSettingsCommands(context, log),
-    ...registerVcsCommands(),
+    ...vcs.disposables,
     syncDisabledActions(),
     new RunWidget(context.workspaceState),
     new NpmView(),
@@ -64,6 +69,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     integrations: detectIntegrations,
     appearanceIdle: () => themeSync.idle(),
     search: (tab, query) => navigation.searchEverywhere.search(tab, query),
+    vcs: { service: vcs.service, commitState: () => vcs.commitView.state() },
     structure: async () => (await structure.whenLoaded()).map((n) => n.symbol.name),
     settings: {
       applyChanges,

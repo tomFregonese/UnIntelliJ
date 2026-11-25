@@ -1,17 +1,32 @@
 import * as vscode from 'vscode';
-import { getSetting } from '../config/settings';
+import { Branches } from './branches';
+import { CommitView } from './commitView';
+import { VcsService } from './vcsService';
 
-/** Version control actions. The Commit tool window and branches popup replace these in later lots. */
-export function registerVcsCommands(): vscode.Disposable[] {
-  return [
-    vscode.commands.registerCommand('unintellij.commit', () => vscode.commands.executeCommand('workbench.view.scm')),
-    vscode.commands.registerCommand('unintellij.push', () => vscode.commands.executeCommand('git.push')),
-    vscode.commands.registerCommand('unintellij.updateProject', () =>
-      vscode.commands.executeCommand(getSetting('vcs.updateMethod') === 'rebase' ? 'git.pullRebase' : 'git.pull'),
-    ),
-    vscode.commands.registerCommand('unintellij.vcsOperations', () =>
-      vscode.commands.executeCommand('workbench.action.quickOpen', '>Git: '),
-    ),
-    vscode.commands.registerCommand('unintellij.branches', () => vscode.commands.executeCommand('git.checkout')),
-  ];
+export interface Vcs {
+  service: VcsService;
+  commitView: CommitView;
+  disposables: vscode.Disposable[];
+}
+
+/** Commit tool window, branches popup, Push dialog, Update Project, VCS Operations popup. */
+export function registerVcsCommands(context: vscode.ExtensionContext, log: vscode.LogOutputChannel): Vcs {
+  const service = new VcsService(context.workspaceState);
+  const commitView = new CommitView(context, service, log);
+  const branches = new Branches(service, context.workspaceState);
+  return {
+    service,
+    commitView,
+    disposables: [
+      service,
+      commitView,
+      branches,
+      vscode.commands.registerCommand('unintellij.commit', () => commitView.focus()),
+      vscode.commands.registerCommand('unintellij.push', () => branches.push()),
+      vscode.commands.registerCommand('unintellij.updateProject', () => branches.updateProject()),
+      vscode.commands.registerCommand('unintellij.vcsOperations', () => branches.vcsOperations()),
+      vscode.commands.registerCommand('unintellij.branches', () => branches.showBranches()),
+      vscode.commands.registerCommand('unintellij.newBranch', () => branches.newBranch()),
+    ],
+  };
 }

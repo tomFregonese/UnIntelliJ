@@ -5,6 +5,7 @@
  *   package.json  views, menus, tasks         ← src/commands/contributions.ts
  *   package.json  contributes.keybindings     ← src/keymap/keymap.ts
  *   docs/KEYMAP.md                            ← src/keymap/keymap.ts
+ *   media/product-icons.css                   ← icons/product-icon-theme.json
  *   themes/*.json                             ← src/theme/palettes.ts (+ icons/symbol-colors.json)
  *
  * `--check` writes nothing and exits non-zero when something is out of date (used in CI).
@@ -50,6 +51,19 @@ emit(packagePath, json(pkg));
 
 // Keymap reference
 emit(join(root, 'docs', 'KEYMAP.md'), buildKeymapMarkdown());
+
+// Product icon font for webviews: `<span class="icon icon-refresh">`.
+const productIcons = JSON.parse(readFileSync(join(root, 'icons', 'product-icon-theme.json'), 'utf8')) as {
+  iconDefinitions: Record<string, { fontCharacter: string }>;
+};
+const iconCss = [
+  '/* Generated from icons/product-icon-theme.json by `npm run gen` — do not edit. */',
+  "@font-face { font-family: 'unintellij-icons'; src: url('../icons/product-icons.woff') format('woff'); }",
+  ".icon { font-family: 'unintellij-icons'; font-size: 16px; line-height: 1; display: inline-block; vertical-align: middle; speak: never; }",
+  ...Object.entries(productIcons.iconDefinitions).map(([id, def]) => `.icon-${id}::before { content: '${def.fontCharacter}'; }`),
+  '',
+].join('\n');
+emit(join(root, 'media', 'product-icons.css'), iconCss);
 
 // Color themes
 for (const palette of PALETTES) {

@@ -7,56 +7,450 @@
       "rootFolder": "nodes/module"
     },
     "icons": {
-      "java": { "source": "nodes/class", "extensions": ["java"], "languageIds": ["java"] },
-      "javaClass": { "source": "fileTypes/javaClass", "extensions": ["class"] },
-      "typeScript": { "source": "fileTypes/typeScript", "extensions": ["ts", "tsx", "mts", "cts"], "languageIds": ["typescript", "typescriptreact"] },
-      "javaScript": { "source": "fileTypes/javaScript", "extensions": ["js", "jsx", "mjs", "cjs"], "languageIds": ["javascript", "javascriptreact"] },
-      "html": { "source": "fileTypes/html", "extensions": ["html", "htm"], "languageIds": ["html"] },
-      "xhtml": { "source": "fileTypes/xhtml", "extensions": ["xhtml"] },
-      "css": { "source": "fileTypes/css", "extensions": ["css", "scss", "sass", "less"], "languageIds": ["css", "scss", "sass", "less"] },
-      "json": { "source": "fileTypes/json", "extensions": ["json", "jsonc", "json5", "webmanifest"], "languageIds": ["json", "jsonc"] },
-      "yaml": { "source": "fileTypes/yaml", "extensions": ["yaml", "yml"], "languageIds": ["yaml"] },
-      "markdown": { "source": "fileTypes/markdown", "extensions": ["md", "markdown"], "languageIds": ["markdown"] },
-      "xml": { "source": "fileTypes/xml", "extensions": ["xml", "xsl", "xslt", "fxml", "iml"], "languageIds": ["xml", "xsl"] },
-      "xsd": { "source": "fileTypes/xsd", "extensions": ["xsd"] },
-      "wsdl": { "source": "fileTypes/wsdl", "extensions": ["wsdl"] },
-      "properties": { "source": "fileTypes/properties", "extensions": ["properties"], "languageIds": ["properties", "java-properties"] },
-      "gradle": { "source": "fileTypes/gradle", "extensions": ["gradle", "gradle.kts"] },
-      "groovy": { "source": "fileTypes/groovy", "extensions": ["groovy"], "languageIds": ["groovy"] },
-      "sql": { "source": "fileTypes/sql", "extensions": ["sql", "ddl"], "languageIds": ["sql"] },
-      "shell": { "source": "fileTypes/shell", "extensions": ["sh", "bash", "zsh"], "languageIds": ["shellscript"] },
-      "windows": { "source": "fileTypes/microsoftWindows", "extensions": ["bat", "cmd", "ps1", "psm1"], "languageIds": ["bat", "powershell"] },
-      "image": { "source": "fileTypes/image", "extensions": ["png", "jpg", "jpeg", "gif", "svg", "ico", "webp", "bmp", "avif"] },
-      "archive": { "source": "fileTypes/archive", "extensions": ["zip", "jar", "war", "ear", "tar", "gz", "tgz", "7z", "rar"] },
-      "csv": { "source": "fileTypes/csv", "extensions": ["csv", "tsv"] },
-      "text": { "source": "fileTypes/text", "extensions": ["txt", "log"], "languageIds": ["plaintext", "log"] },
-      "toml": { "source": "fileTypes/toml", "extensions": ["toml"] },
-      "http": { "source": "fileTypes/http", "extensions": ["http", "rest"] },
-      "patch": { "source": "fileTypes/patch", "extensions": ["patch", "diff"], "languageIds": ["diff"] },
-      "font": { "source": "fileTypes/font", "extensions": ["ttf", "otf", "woff", "woff2", "eot"] },
-      "vue": { "source": "fileTypes/vue", "extensions": ["vue"] },
-      "graphql": { "source": "fileTypes/graphql", "extensions": ["graphql", "gql"] },
-      "sourceMap": { "source": "fileTypes/sourceMap", "extensions": ["map"] },
-      "terraform": { "source": "fileTypes/terraform", "extensions": ["tf", "tfvars"] },
-      "jsp": { "source": "fileTypes/jsp", "extensions": ["jsp"] },
-      "csharp": { "source": "fileTypes/Csharp", "extensions": ["cs"], "languageIds": ["csharp"] },
-      "c": { "source": "fileTypes/c", "extensions": ["c"] },
-      "cpp": { "source": "fileTypes/cpp", "extensions": ["cpp", "cc", "cxx"] },
-      "h": { "source": "fileTypes/h", "extensions": ["h", "hpp"] },
-      "jupyter": { "source": "fileTypes/jupyter", "extensions": ["ipynb"] },
-      "config": { "source": "fileTypes/config", "extensions": ["env", "ini", "conf", "cfg"], "fileNames": [".env", ".npmrc", ".nvmrc", ".browserslistrc", ".prettierrc", ".eslintrc"] },
-      "editorConfig": { "source": "fileTypes/editorConfig", "fileNames": [".editorconfig"] },
-      "gitignore": { "source": "fileTypes/gitignore", "fileNames": [".gitignore", ".gitattributes", ".gitmodules", ".dockerignore", ".npmignore"], "languageIds": ["ignore"] },
-      "docker": { "source": "fileTypes/docker", "fileNames": ["dockerfile", "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"], "languageIds": ["dockerfile"] },
-      "jenkins": { "source": "fileTypes/jenkins", "fileNames": ["jenkinsfile"] },
-      "manifest": { "source": "fileTypes/manifest", "fileNames": ["manifest.mf"] }
+      "java": {
+        "source": "nodes/class",
+        "extensions": [
+          "java"
+        ],
+        "languageIds": [
+          "java"
+        ]
+      },
+      "javaClass": {
+        "source": "fileTypes/javaClass",
+        "extensions": [
+          "class"
+        ]
+      },
+      "typeScript": {
+        "source": "fileTypes/typeScript",
+        "extensions": [
+          "ts",
+          "tsx",
+          "mts",
+          "cts"
+        ],
+        "languageIds": [
+          "typescript",
+          "typescriptreact"
+        ]
+      },
+      "javaScript": {
+        "source": "fileTypes/javaScript",
+        "extensions": [
+          "js",
+          "jsx",
+          "mjs",
+          "cjs"
+        ],
+        "languageIds": [
+          "javascript",
+          "javascriptreact"
+        ]
+      },
+      "html": {
+        "source": "fileTypes/html",
+        "extensions": [
+          "html",
+          "htm"
+        ],
+        "languageIds": [
+          "html"
+        ]
+      },
+      "xhtml": {
+        "source": "fileTypes/xhtml",
+        "extensions": [
+          "xhtml"
+        ]
+      },
+      "css": {
+        "source": "fileTypes/css",
+        "extensions": [
+          "css",
+          "scss",
+          "sass",
+          "less"
+        ],
+        "languageIds": [
+          "css",
+          "scss",
+          "sass",
+          "less"
+        ]
+      },
+      "json": {
+        "source": "fileTypes/json",
+        "extensions": [
+          "json",
+          "jsonc",
+          "json5",
+          "webmanifest"
+        ],
+        "languageIds": [
+          "json",
+          "jsonc"
+        ]
+      },
+      "yaml": {
+        "source": "fileTypes/yaml",
+        "extensions": [
+          "yaml",
+          "yml"
+        ],
+        "languageIds": [
+          "yaml"
+        ]
+      },
+      "markdown": {
+        "source": "fileTypes/markdown",
+        "extensions": [
+          "md",
+          "markdown"
+        ],
+        "languageIds": [
+          "markdown"
+        ]
+      },
+      "xml": {
+        "source": "fileTypes/xml",
+        "extensions": [
+          "xml",
+          "xsl",
+          "xslt",
+          "fxml",
+          "iml"
+        ],
+        "languageIds": [
+          "xml",
+          "xsl"
+        ]
+      },
+      "xsd": {
+        "source": "fileTypes/xsd",
+        "extensions": [
+          "xsd"
+        ]
+      },
+      "wsdl": {
+        "source": "fileTypes/wsdl",
+        "extensions": [
+          "wsdl"
+        ]
+      },
+      "properties": {
+        "source": "fileTypes/properties",
+        "extensions": [
+          "properties"
+        ],
+        "languageIds": [
+          "properties",
+          "java-properties"
+        ]
+      },
+      "gradle": {
+        "source": "fileTypes/gradle",
+        "extensions": [
+          "gradle",
+          "gradle.kts"
+        ]
+      },
+      "groovy": {
+        "source": "fileTypes/groovy",
+        "extensions": [
+          "groovy"
+        ],
+        "languageIds": [
+          "groovy"
+        ]
+      },
+      "sql": {
+        "source": "fileTypes/sql",
+        "extensions": [
+          "sql",
+          "ddl"
+        ],
+        "languageIds": [
+          "sql"
+        ]
+      },
+      "shell": {
+        "source": "fileTypes/shell",
+        "extensions": [
+          "sh",
+          "bash",
+          "zsh"
+        ],
+        "languageIds": [
+          "shellscript"
+        ]
+      },
+      "windows": {
+        "source": "fileTypes/microsoftWindows",
+        "extensions": [
+          "bat",
+          "cmd",
+          "ps1",
+          "psm1"
+        ],
+        "languageIds": [
+          "bat",
+          "powershell"
+        ]
+      },
+      "image": {
+        "source": "fileTypes/image",
+        "extensions": [
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "svg",
+          "ico",
+          "webp",
+          "bmp",
+          "avif"
+        ]
+      },
+      "archive": {
+        "source": "fileTypes/archive",
+        "extensions": [
+          "zip",
+          "jar",
+          "war",
+          "ear",
+          "tar",
+          "gz",
+          "tgz",
+          "7z",
+          "rar"
+        ]
+      },
+      "csv": {
+        "source": "fileTypes/csv",
+        "extensions": [
+          "csv",
+          "tsv"
+        ]
+      },
+      "text": {
+        "source": "fileTypes/text",
+        "extensions": [
+          "txt",
+          "log"
+        ],
+        "languageIds": [
+          "plaintext",
+          "log"
+        ]
+      },
+      "toml": {
+        "source": "fileTypes/toml",
+        "extensions": [
+          "toml"
+        ]
+      },
+      "http": {
+        "source": "fileTypes/http",
+        "extensions": [
+          "http",
+          "rest"
+        ]
+      },
+      "patch": {
+        "source": "fileTypes/patch",
+        "extensions": [
+          "patch",
+          "diff"
+        ],
+        "languageIds": [
+          "diff"
+        ]
+      },
+      "font": {
+        "source": "fileTypes/font",
+        "extensions": [
+          "ttf",
+          "otf",
+          "woff",
+          "woff2",
+          "eot"
+        ]
+      },
+      "vue": {
+        "source": "fileTypes/vue",
+        "extensions": [
+          "vue"
+        ]
+      },
+      "graphql": {
+        "source": "fileTypes/graphql",
+        "extensions": [
+          "graphql",
+          "gql"
+        ]
+      },
+      "sourceMap": {
+        "source": "fileTypes/sourceMap",
+        "extensions": [
+          "map"
+        ]
+      },
+      "terraform": {
+        "source": "fileTypes/terraform",
+        "extensions": [
+          "tf",
+          "tfvars"
+        ]
+      },
+      "jsp": {
+        "source": "fileTypes/jsp",
+        "extensions": [
+          "jsp"
+        ]
+      },
+      "csharp": {
+        "source": "fileTypes/Csharp",
+        "extensions": [
+          "cs"
+        ],
+        "languageIds": [
+          "csharp"
+        ]
+      },
+      "c": {
+        "source": "fileTypes/c",
+        "extensions": [
+          "c"
+        ]
+      },
+      "cpp": {
+        "source": "fileTypes/cpp",
+        "extensions": [
+          "cpp",
+          "cc",
+          "cxx"
+        ]
+      },
+      "h": {
+        "source": "fileTypes/h",
+        "extensions": [
+          "h",
+          "hpp"
+        ]
+      },
+      "jupyter": {
+        "source": "fileTypes/jupyter",
+        "extensions": [
+          "ipynb"
+        ]
+      },
+      "config": {
+        "source": "fileTypes/config",
+        "extensions": [
+          "env",
+          "ini",
+          "conf",
+          "cfg"
+        ],
+        "fileNames": [
+          ".env",
+          ".npmrc",
+          ".nvmrc",
+          ".browserslistrc",
+          ".prettierrc",
+          ".eslintrc"
+        ]
+      },
+      "editorConfig": {
+        "source": "fileTypes/editorConfig",
+        "fileNames": [
+          ".editorconfig"
+        ]
+      },
+      "gitignore": {
+        "source": "fileTypes/gitignore",
+        "fileNames": [
+          ".gitignore",
+          ".gitattributes",
+          ".gitmodules",
+          ".dockerignore",
+          ".npmignore"
+        ],
+        "languageIds": [
+          "ignore"
+        ]
+      },
+      "docker": {
+        "source": "fileTypes/docker",
+        "fileNames": [
+          "dockerfile",
+          "docker-compose.yml",
+          "docker-compose.yaml",
+          "compose.yml",
+          "compose.yaml"
+        ],
+        "languageIds": [
+          "dockerfile"
+        ]
+      },
+      "jenkins": {
+        "source": "fileTypes/jenkins",
+        "fileNames": [
+          "jenkinsfile"
+        ]
+      },
+      "manifest": {
+        "source": "fileTypes/manifest",
+        "fileNames": [
+          "manifest.mf"
+        ]
+      }
     },
     "folders": {
-      "testRoot": { "source": "nodes/testRoot", "names": ["test", "tests", "__tests__", "e2e", "spec"] },
-      "sourceRoot": { "source": "nodes/sourceRoot", "names": ["java", "kotlin"] },
-      "resourcesRoot": { "source": "nodes/resourcesRoot", "names": ["resources"] },
-      "excludeRoot": { "source": "nodes/excludeRoot", "names": ["node_modules", "dist", "target", "build", "out", "coverage", ".angular", ".gradle", ".nx"] },
-      "github": { "source": "nodes/folderGithub", "names": [".github"] }
+      "testRoot": {
+        "source": "nodes/testRoot",
+        "names": [
+          "test",
+          "tests",
+          "__tests__",
+          "e2e",
+          "spec"
+        ]
+      },
+      "sourceRoot": {
+        "source": "nodes/sourceRoot",
+        "names": [
+          "java",
+          "kotlin"
+        ]
+      },
+      "resourcesRoot": {
+        "source": "nodes/resourcesRoot",
+        "names": [
+          "resources"
+        ]
+      },
+      "excludeRoot": {
+        "source": "nodes/excludeRoot",
+        "names": [
+          "node_modules",
+          "dist",
+          "target",
+          "build",
+          "out",
+          "coverage",
+          ".angular",
+          ".gradle",
+          ".nx"
+        ]
+      },
+      "github": {
+        "source": "nodes/folderGithub",
+        "names": [
+          ".github"
+        ]
+      }
     }
   },
   "productIcons": {
@@ -72,7 +466,6 @@
     "settings-view-bar-icon": "general/settings",
     "accounts-view-bar-icon": "general/user",
     "notifications-view-icon": "toolwindows/notifications",
-
     "chevron-right": "general/chevronRight",
     "chevron-down": "general/chevronDown",
     "chevron-up": "general/chevronUp",
@@ -149,7 +542,6 @@
     "menu": "general/menu",
     "bookmark": "toolwindows/bookmarks",
     "layout": "general/layout",
-
     "symbol-class": "nodes/class",
     "symbol-interface": "nodes/interface",
     "symbol-enum": "nodes/enum",
@@ -169,7 +561,9 @@
     "symbol-folder": "nodes/folder",
     "symbol-key": "nodes/property",
     "symbol-structure": "nodes/record",
-    "symbol-event": "nodes/lambda"
+    "symbol-event": "nodes/lambda",
+    "git-branch": "general/vcs",
+    "source-control": "general/vcs"
   },
   "symbolColors": {
     "symbolIcon.classForeground": "nodes/class",
