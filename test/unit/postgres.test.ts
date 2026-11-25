@@ -4,12 +4,12 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Client } from 'pg';
-import { DataSource } from '../../src/database/dataSourceLogic';
+import { DataSource, inDatabase } from '../../src/database/dataSourceLogic';
 import { openClient } from '../../src/database/pgClient';
 import { splitStatements } from '../../src/database/sqlLogic';
 
 const port = Number(process.env.UNINTELLIJ_TEST_PG_PORT);
-const source: DataSource = { id: 't', name: 'test', host: 'localhost', port, database: 'postgres', user: 'postgres', ssl: 'prefer', readOnly: false, color: 'none', schemas: '' };
+const source: DataSource = { id: 't', name: 'test', host: 'localhost', port, database: 'postgres', user: 'postgres', ssl: 'prefer', readOnly: false, color: 'none' };
 
 describe.skipIf(!port)('PostgreSQL (live)', () => {
   let client: Client;
@@ -54,5 +54,19 @@ select ut.two() as v, count(*) as n from ut.t`;
     await ro.query('SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY');
     await expect(ro.query("insert into ut.t values (3, 'x')")).rejects.toThrow(/read-only/);
     await ro.end();
+  });
+
+  it('connects to another database of the server chosen in the tree', async () => {
+    await client.query('DROP DATABASE IF EXISTS unintellij_other');
+    await client.query('CREATE DATABASE unintellij_other');
+    const listed = (await client.query<{ datname: string }>('SELECT datname FROM pg_database WHERE NOT datistemplate AND datallowconn ORDER BY datname')).rows.map((r) => r.datname);
+    expect(listed).toContain('unintellij_other');
+    const other = await openClient(inDatabase(source, 'unintellij_other'), process.env.UNINTELLIJ_TEST_PG_PASSWORD);
+    try {
+      expect((await other.query<{ db: string }>('SELECT current_database() AS db')).rows[0].db).toBe('unintellij_other');
+    } finally {
+      await other.end();
+    }
+    await client.query('DROP DATABASE unintellij_other');
   });
 });

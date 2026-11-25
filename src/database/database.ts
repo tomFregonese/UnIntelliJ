@@ -6,6 +6,7 @@ import { DatabaseView, DbNode } from './databaseView';
 import { ResultsView } from './resultsView';
 import { SqlEditor } from './sqlEditor';
 import { quoteIdent } from './sqlLogic';
+import { DataSource, shownDatabases, visibleSchemas, withDatabases, withSchemas } from './dataSourceLogic';
 
 /** PostgreSQL support (IntelliJ's Database tool window, data sources, SQL consoles, results). */
 export function registerDatabase(context: vscode.ExtensionContext): vscode.Disposable[] {
@@ -15,6 +16,14 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
   const view = new DatabaseView(context.extensionUri, store, connections);
   const results = new ResultsView(context.extensionUri, connections);
   const sql = new SqlEditor(context.workspaceState, store, connections, results);
+  const replace = async (updated: DataSource): Promise<void> => {
+    await store.save(
+      store.all.map((s) => (s.id === updated.id ? updated : s)),
+      {},
+    );
+  };
+  const failed = (source: DataSource, error: unknown) =>
+    void vscode.window.showErrorMessage(t('Cannot connect to {0}: {1}', source.name, error instanceof Error ? error.message : String(error)));
   const selectedSource = (node?: DbNode) => (node && 'source' in node ? node.source : view.view.selection.find((n): n is Extract<DbNode, { source: unknown }> => 'source' in n)?.source);
   return [
     store,
@@ -41,6 +50,52 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
         return;
       }
       await sql.newConsole(source, node && 'schema' in node ? node.schema : undefined);
+    }),
+    // IntelliJ: data source › "N of M" databases, database › "N of M" schemas, chosen with checkboxes.
+    vscode.commands.registerCommand('unintellij.database.chooseDatabases', async (node?: DbNode) => {
+      const source = node?.kind === 'source' ? node.source : selectedSource(node) && store.get(selectedSource(node)!.id);
+      if (!source) {
+        return;
+      }
+      let all: string[];
+      try {
+        all = await view.databases(source);
+      } catch (error) {
+        failed(source, error);
+        return;
+      }
+      const shown = shownDatabases(source);
+      const chosen = await vscode.window.showQuickPick(
+        all.map((d) => ({ label: d, description: d === source.database ? t('connection database') : undefined, picked: shown.includes(d) })),
+        { canPickMany: true, title: t('Databases shown for {0}', source.name), placeHolder: t('Check the databases to show') },
+      );
+      if (chosen) {
+        await replace(withDatabases(source, chosen.map((c) => c.label)));
+      }
+    }),
+    vscode.commands.registerCommand('unintellij.database.chooseSchemas', async (node?: DbNode) => {
+      if (node?.kind !== 'database') {
+        return;
+      }
+      const base = store.get(node.source.id);
+      if (!base) {
+        return;
+      }
+      let all: string[];
+      try {
+        all = await view.schemas(node.source);
+      } catch (error) {
+        failed(node.source, error);
+        return;
+      }
+      const shown = visibleSchemas(base, node.source.database);
+      const chosen = await vscode.window.showQuickPick(
+        all.map((s) => ({ label: s, picked: !shown || shown.includes(s) })),
+        { canPickMany: true, title: t('Schemas shown for {0}', `${base.name} › ${node.source.database}`), placeHolder: t('Check the schemas to show') },
+      );
+      if (chosen) {
+        await replace(withSchemas(base, node.source.database, chosen.map((c) => c.label), all));
+      }
     }),
     vscode.commands.registerCommand('unintellij.database.openTable', async (node?: DbNode) => {
       if (node?.kind === 'table') {

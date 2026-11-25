@@ -26,6 +26,8 @@
   "command.unintellij.database.refresh": "Refresh Database",
   "command.unintellij.database.disconnect": "Disconnect",
   "command.unintellij.database.newConsole": "New Query Console",
+  "command.unintellij.database.chooseDatabases": "Choose Databases…",
+  "command.unintellij.database.chooseSchemas": "Choose Schemas…",
   "command.unintellij.database.openTable": "Open Table Data",
   "command.unintellij.database.copyName": "Copy Name",
   "command.unintellij.database.selectSource": "Choose Data Source and Schema…",

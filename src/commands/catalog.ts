@@ -47,6 +47,8 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.database.refresh', title: 'Refresh Database', icon: '$(refresh)' },
   { command: 'unintellij.database.disconnect', title: 'Disconnect', icon: '$(debug-disconnect)' },
   { command: 'unintellij.database.newConsole', title: 'New Query Console', icon: '$(terminal)' },
+  { command: 'unintellij.database.chooseDatabases', title: 'Choose Databases…', icon: '$(checklist)' },
+  { command: 'unintellij.database.chooseSchemas', title: 'Choose Schemas…', icon: '$(checklist)' },
   { command: 'unintellij.database.openTable', title: 'Open Table Data', icon: '$(table)', hidden: true },
   { command: 'unintellij.database.copyName', title: 'Copy Name', hidden: true },
   { command: 'unintellij.database.selectSource', title: 'Choose Data Source and Schema…', icon: '$(database)' },

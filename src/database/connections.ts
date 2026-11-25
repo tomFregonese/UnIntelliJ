@@ -2,7 +2,7 @@ import { Client, QueryArrayResult } from 'pg';
 import { openClient } from './pgClient';
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
-import { DataSource } from './dataSourceLogic';
+import { DataSource, normalizeSource, sessionKey } from './dataSourceLogic';
 
 const SECRET_PREFIX = 'unintellij.database.password.';
 const STORE_KEY = 'database.dataSources';
@@ -27,7 +27,7 @@ export class DataSourceStore implements vscode.Disposable {
   ) {}
 
   get all(): DataSource[] {
-    return this.state.get<DataSource[]>(STORE_KEY, []);
+    return this.state.get<DataSource[]>(STORE_KEY, []).map(normalizeSource);
   }
 
   get(id: string): DataSource | undefined {
@@ -59,7 +59,7 @@ export class DataSourceStore implements vscode.Disposable {
   }
 }
 
-/** One open session per data source, created on first use (IntelliJ's "connect on demand"). */
+/** One open session per data source and database, created on first use (IntelliJ's "connect on demand"). */
 export class Connections implements vscode.Disposable {
   private readonly sessions = new Map<string, Promise<Client>>();
   private readonly notices = new vscode.EventEmitter<{ sourceId: string; message: string }>();
@@ -70,19 +70,21 @@ export class Connections implements vscode.Disposable {
 
   constructor(private readonly store: DataSourceStore) {}
 
+  /** Whether a session is open on any database of the source. */
   isConnected(id: string): boolean {
-    return this.sessions.has(id);
+    return [...this.sessions.keys()].some((key) => key.startsWith(`${id}/`));
   }
 
   private client(source: DataSource): Promise<Client> {
-    let session = this.sessions.get(source.id);
+    const key = sessionKey(source);
+    let session = this.sessions.get(key);
     if (!session) {
       session = (async () => {
         const client = await openClient(source, await this.store.password(source.id));
         client.on('notice', (n) => this.notices.fire({ sourceId: source.id, message: `${n.severity ?? 'NOTICE'}: ${n.message}` }));
-        client.on('error', () => void this.disconnect(source.id));
+        client.on('error', () => void this.disconnectSession(key));
         client.on('end', () => {
-          this.sessions.delete(source.id);
+          this.sessions.delete(key);
           this.states.fire(source.id);
         });
         if (source.readOnly) {
@@ -91,10 +93,10 @@ export class Connections implements vscode.Disposable {
         }
         return client;
       })();
-      this.sessions.set(source.id, session);
+      this.sessions.set(key, session);
       session.then(
         () => this.states.fire(source.id),
-        () => this.sessions.delete(source.id),
+        () => this.sessions.delete(key),
       );
     }
     return session;
@@ -121,7 +123,7 @@ export class Connections implements vscode.Disposable {
 
   /** Cancels the running statement of a source from a second connection (pg_cancel_backend). */
   async cancel(source: DataSource): Promise<void> {
-    const session = this.sessions.get(source.id);
+    const session = this.sessions.get(sessionKey(source));
     if (!session) {
       return;
     }
@@ -137,12 +139,17 @@ export class Connections implements vscode.Disposable {
     }
   }
 
+  /** Closes every session of the source (all its databases). */
   async disconnect(id: string): Promise<void> {
-    const session = this.sessions.get(id);
-    this.sessions.delete(id);
+    await Promise.all([...this.sessions.keys()].filter((key) => key.startsWith(`${id}/`)).map((key) => this.disconnectSession(key)));
+  }
+
+  private async disconnectSession(key: string): Promise<void> {
+    const session = this.sessions.get(key);
+    this.sessions.delete(key);
     if (session) {
       await session.then((c) => c.end()).catch(() => undefined);
-      this.states.fire(id);
+      this.states.fire(key.slice(0, key.indexOf('/')));
     }
   }
 
@@ -158,8 +165,8 @@ export class Connections implements vscode.Disposable {
   }
 
   dispose(): void {
-    for (const id of [...this.sessions.keys()]) {
-      void this.disconnect(id);
+    for (const key of [...this.sessions.keys()]) {
+      void this.disconnectSession(key);
     }
     this.notices.dispose();
     this.states.dispose();

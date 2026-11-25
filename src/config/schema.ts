@@ -256,6 +256,8 @@ export const EDITOR_FONT = "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Casca
  */
 export const INTELLIJ_DEFAULTS: readonly { key: string; value: unknown; reason: string }[] = [
   { key: 'workbench.colorTheme', value: 'Islands Dark', reason: 'IntelliJ default theme' },
+  { key: 'workbench.iconTheme', value: 'unintellij-file-icons', reason: 'New UI file icons' },
+  { key: 'workbench.productIconTheme', value: 'unintellij-product-icons', reason: 'New UI icons in the interface' },
   { key: 'editor.fontFamily', value: EDITOR_FONT, reason: 'IntelliJ default editor font' },
   { key: 'editor.fontSize', value: 14, reason: 'Same visual size as IntelliJ' },
   { key: 'editor.lineHeight', value: 1.6, reason: 'IntelliJ line spacing (1.2 × JetBrains Mono line height)' },

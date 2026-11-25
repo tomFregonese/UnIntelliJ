@@ -101,8 +101,12 @@ export const MENUS = {
   'view/item/context': [
     { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: 'inline@1' },
     { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: '1_open@1' },
-    { command: 'unintellij.database.newConsole', when: 'view == unintellij.database && viewItem =~ /^(source|schema)/', group: '1_open@2' },
+    { command: 'unintellij.database.newConsole', when: 'view == unintellij.database && viewItem =~ /^(source|database|schema)/', group: '1_open@2' },
     { command: 'unintellij.database.copyName', when: 'view == unintellij.database && viewItem =~ /^(table|schema|dataColumn|key|function|sequence|index)$/', group: '2_copy@1' },
+    { command: 'unintellij.database.chooseDatabases', when: 'view == unintellij.database && viewItem =~ /^source/', group: '0_shown@1' },
+    { command: 'unintellij.database.chooseSchemas', when: 'view == unintellij.database && viewItem == database', group: '0_shown@1' },
+    { command: 'unintellij.database.chooseSchemas', when: 'view == unintellij.database && viewItem == database', group: 'inline@1' },
+    { command: 'unintellij.database.chooseDatabases', when: 'view == unintellij.database && viewItem =~ /^source/', group: 'inline@1' },
     { command: 'unintellij.database.editSources', when: 'view == unintellij.database && viewItem =~ /^source/', group: '3_source@1' },
     { command: 'unintellij.database.disconnect', when: 'view == unintellij.database && viewItem == \'source connected\'', group: '3_source@2' },
     { command: 'unintellij.project.newFile', when: PROJECT_ITEM, group: '1_new@1' },

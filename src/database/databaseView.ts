@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { Connections, DataSourceStore } from './connections';
-import { COLOR_VALUES, DataSource, describeSource, visibleSchemas } from './dataSourceLogic';
+import { COLOR_VALUES, DataSource, describeSource, inDatabase, shownDatabases, visibleSchemas } from './dataSourceLogic';
 
 type Folder = 'tables' | 'views' | 'functions' | 'sequences' | 'keys' | 'indexes';
 
+/** Nodes under a database carry the source moved to that database (`inDatabase`). */
 export type DbNode =
   | { kind: 'source'; source: DataSource }
+  | { kind: 'database'; source: DataSource }
   | { kind: 'schema'; source: DataSource; schema: string }
   | { kind: 'folder'; source: DataSource; schema: string; folder: Folder; table?: string }
   | { kind: 'table'; source: DataSource; schema: string; name: string; view: boolean }
@@ -15,7 +17,7 @@ export type DbNode =
 
 const FOLDER_LABELS: Record<Folder, string> = { tables: 'tables', views: 'views', functions: 'routines', sequences: 'sequences', keys: 'keys', indexes: 'indexes' };
 
-/** IntelliJ's Database tool window: data source › schema › tables / views / routines / sequences › columns, keys, indexes. */
+/** IntelliJ's Database tool window: data source › database › schema › tables / views / routines / sequences › columns, keys, indexes. */
 export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Disposable {
   private readonly changed = new vscode.EventEmitter<DbNode | undefined>();
   readonly onDidChangeTreeData = this.changed.event;
@@ -53,25 +55,35 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
         item.id = `source:${node.source.id}`;
         return item;
       }
+      case 'database': {
+        const item = new vscode.TreeItem(node.source.database, collapsed);
+        item.iconPath = this.icon('database');
+        const filter = visibleSchemas(node.source);
+        item.description = filter ? (filter.length === 1 ? t('1 schema') : t('{0} schemas', filter.length)) : undefined;
+        item.tooltip = t('Right-click › Choose Schemas… to pick the schemas shown');
+        item.contextValue = 'database';
+        item.id = `database:${node.source.id}:${node.source.database}`;
+        return item;
+      }
       case 'schema': {
         const item = new vscode.TreeItem(node.schema, collapsed);
         item.iconPath = this.icon('dataSchema');
         item.contextValue = 'schema';
-        item.id = `schema:${node.source.id}:${node.schema}`;
+        item.id = `schema:${node.source.id}:${node.source.database}:${node.schema}`;
         return item;
       }
       case 'folder': {
         const item = new vscode.TreeItem(t(FOLDER_LABELS[node.folder]), collapsed);
         item.iconPath = this.icon(node.folder === 'functions' ? 'function' : node.folder === 'sequences' ? 'sequence' : node.folder === 'keys' ? 'key' : node.folder === 'indexes' ? 'index' : 'dataTables');
         item.contextValue = 'folder';
-        item.id = `folder:${node.source.id}:${node.schema}:${node.table ?? ''}:${node.folder}`;
+        item.id = `folder:${node.source.id}:${node.source.database}:${node.schema}:${node.table ?? ''}:${node.folder}`;
         return item;
       }
       case 'table': {
         const item = new vscode.TreeItem(node.name, collapsed);
         item.iconPath = this.icon(node.view ? 'view' : 'table');
         item.contextValue = 'table';
-        item.id = `table:${node.source.id}:${node.schema}:${node.name}`;
+        item.id = `table:${node.source.id}:${node.source.database}:${node.schema}:${node.name}`;
         return item;
       }
       case 'leaf': {
@@ -105,15 +117,26 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
     return (await this.connections.query(source, sql, undefined, values)).rows;
   }
 
+  /** Non-system schemas of the source's database, public first. */
+  async schemas(source: DataSource): Promise<string[]> {
+    const rows = await this.rows(source, `SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg\\_%' AND nspname <> 'information_schema' ORDER BY nspname = 'public' DESC, nspname`);
+    return rows.map((r) => String(r[0]));
+  }
+
+  /** Databases of the server that accept connections (templates excluded). */
+  async databases(source: DataSource): Promise<string[]> {
+    const rows = await this.rows(source, 'SELECT datname FROM pg_database WHERE NOT datistemplate AND datallowconn ORDER BY datname');
+    return rows.map((r) => String(r[0]));
+  }
+
   private async children(node: DbNode): Promise<DbNode[]> {
     switch (node.kind) {
-      case 'source': {
+      case 'source':
+        return shownDatabases(node.source).map((database) => ({ kind: 'database', source: inDatabase(node.source, database) }));
+      case 'database': {
         const filter = visibleSchemas(node.source);
-        const rows = await this.rows(
-          node.source,
-          `SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg\\_%' AND nspname <> 'information_schema' ORDER BY nspname = 'public' DESC, nspname`,
-        );
-        return rows.map((r) => String(r[0])).filter((s) => !filter || filter.includes(s)).map((schema) => ({ kind: 'schema', source: node.source, schema }));
+        const schemas = await this.schemas(node.source);
+        return schemas.filter((s) => !filter || filter.includes(s)).map((schema) => ({ kind: 'schema', source: node.source, schema }));
       }
       case 'schema':
         return (['tables', 'views', 'functions', 'sequences'] as const).map((folder) => ({ kind: 'folder', source: node.source, schema: node.schema, folder }));

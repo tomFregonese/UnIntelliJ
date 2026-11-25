@@ -31,8 +31,12 @@ export interface DataSource {
   ssl: SslMode;
   readOnly: boolean;
   color: SourceColor;
-  /** Comma-separated schema names shown in the tree; empty: all non-system schemas. */
-  schemas: string;
+  /** Before 0.4: comma-separated schemas shown for `database`; moved to `schemaFilter` by `normalizeSource`. */
+  schemas?: string;
+  /** Databases shown in the tree (IntelliJ's "N of M"); missing or empty: the connection database only. */
+  databases?: string[];
+  /** Schemas shown, per database; a database without an entry shows every non-system schema. */
+  schemaFilter?: Record<string, string[]>;
 }
 
 export function newDataSource(id: string, existingNames: readonly string[]): DataSource {
@@ -40,7 +44,7 @@ export function newDataSource(id: string, existingNames: readonly string[]): Dat
   for (let i = 1; existingNames.includes(name); i++) {
     name = `postgres@localhost (${i})`;
   }
-  return { id, name, host: 'localhost', port: 5432, database: 'postgres', user: 'postgres', ssl: 'prefer', readOnly: false, color: 'none', schemas: '' };
+  return { id, name, host: 'localhost', port: 5432, database: 'postgres', user: 'postgres', ssl: 'prefer', readOnly: false, color: 'none' };
 }
 
 /** Problems that prevent saving, as English texts (translated by the caller). */
@@ -69,13 +73,60 @@ export function describeSource(source: DataSource): string {
   return `${source.user}@${source.host}:${source.port}/${source.database}`;
 }
 
-/** Schema filter of a source: undefined when every schema is shown. */
-export function visibleSchemas(source: DataSource): string[] | undefined {
-  const names = source.schemas
+/** Moves the pre-0.4 `schemas` text into `schemaFilter` (stored sources are normalized when read). */
+export function normalizeSource(source: DataSource): DataSource {
+  const legacy = (source.schemas ?? '')
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
-  return names.length > 0 ? names : undefined;
+  const rest = { ...source };
+  delete rest.schemas;
+  if (legacy.length === 0 || rest.schemaFilter?.[source.database]) {
+    return rest;
+  }
+  return { ...rest, schemaFilter: { ...rest.schemaFilter, [source.database]: legacy } };
+}
+
+/** Databases shown under the source in the tree. */
+export function shownDatabases(source: DataSource): string[] {
+  return source.databases && source.databases.length > 0 ? source.databases : [source.database];
+}
+
+/** Schemas shown for `database` (default: the source's): undefined when every schema is shown. */
+export function visibleSchemas(source: DataSource, database = source.database): string[] | undefined {
+  const names = source.schemaFilter?.[database];
+  return names && names.length > 0 ? names : undefined;
+}
+
+/** The same source, connected to another database of the server (sessions are per source and database). */
+export function inDatabase(source: DataSource, database: string): DataSource {
+  return database === source.database ? source : { ...source, database };
+}
+
+/** Key of the session of a source on its database. */
+export function sessionKey(source: DataSource): string {
+  return `${source.id}/${source.database}`;
+}
+
+/** New `databases` value after choosing `chosen` (undefined when it is the default: the connection database only). */
+export function withDatabases(source: DataSource, chosen: readonly string[]): DataSource {
+  const only = chosen.length === 0 || (chosen.length === 1 && chosen[0] === source.database);
+  const rest = { ...source };
+  delete rest.databases;
+  return only ? rest : { ...rest, databases: [...chosen] };
+}
+
+/** New `schemaFilter` after choosing `chosen` among `all` schemas of `database` (everything chosen: no filter). */
+export function withSchemas(source: DataSource, database: string, chosen: readonly string[], all: readonly string[]): DataSource {
+  const filter = { ...source.schemaFilter };
+  if (chosen.length === 0 || all.every((s) => chosen.includes(s))) {
+    delete filter[database];
+  } else {
+    filter[database] = [...chosen];
+  }
+  const rest = { ...source };
+  delete rest.schemaFilter;
+  return Object.keys(filter).length > 0 ? { ...rest, schemaFilter: filter } : rest;
 }
 
 /** node-postgres `ssl` option for a mode. */

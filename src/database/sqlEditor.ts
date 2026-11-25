@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { Connections, DataSourceStore } from './connections';
-import { COLOR_VALUES, DataSource, describeSource } from './dataSourceLogic';
+import { COLOR_VALUES, DataSource, describeSource, inDatabase, sessionKey, shownDatabases, visibleSchemas } from './dataSourceLogic';
 import { ResultsView } from './resultsView';
 import { isModification, isUnsafeModification, splitStatements, Statement, statementAt } from './sqlLogic';
 
@@ -10,6 +10,8 @@ const ATTACH_KEY = 'database.attachedFiles';
 interface Attachment {
   sourceId: string;
   schema?: string;
+  /** Database of the server, when not the data source's own. */
+  database?: string;
 }
 
 const isSql = (document: vscode.TextDocument | undefined): document is vscode.TextDocument => !!document && (document.languageId === 'sql' || /\.(sql|pgsql|psql)$/i.test(document.fileName));
@@ -85,11 +87,14 @@ export class SqlEditor implements vscode.Disposable {
   attachment(uri: vscode.Uri): { source: DataSource; schema?: string } | undefined {
     const a = this.attachments()[uri.toString()];
     const source = a && this.store.get(a.sourceId);
-    return source ? { source, schema: a.schema } : undefined;
+    return source ? { source: inDatabase(source, a.database ?? source.database), schema: a.schema } : undefined;
   }
 
-  async attach(uri: vscode.Uri, sourceId: string, schema?: string): Promise<void> {
-    await this.state.update(ATTACH_KEY, { ...this.attachments(), [uri.toString()]: { sourceId, schema } });
+  /** `source` may be a data source moved to another database of its server (see `inDatabase`). */
+  async attach(uri: vscode.Uri, source: DataSource, schema?: string): Promise<void> {
+    const base = this.store.get(source.id);
+    const database = base && base.database !== source.database ? source.database : undefined;
+    await this.state.update(ATTACH_KEY, { ...this.attachments(), [uri.toString()]: { sourceId: source.id, schema, database } });
     this.completionCache.clear();
     this.update();
   }
@@ -97,7 +102,7 @@ export class SqlEditor implements vscode.Disposable {
   /** IntelliJ's "New Console": an untitled SQL editor already attached to the source. */
   async newConsole(source: DataSource, schema?: string): Promise<void> {
     const document = await vscode.workspace.openTextDocument({ language: 'sql', content: '' });
-    await this.attach(document.uri, source.id, schema);
+    await this.attach(document.uri, source, schema);
     await vscode.window.showTextDocument(document);
   }
 
@@ -115,18 +120,36 @@ export class SqlEditor implements vscode.Disposable {
       return;
     }
     const current = this.attachment(document.uri);
-    const source = await vscode.window.showQuickPick(
+    const picked = await vscode.window.showQuickPick(
       sources.map((s) => ({ label: `$(database) ${s.name}`, description: describeSource(s), picked: s.id === current?.source.id, source: s })),
       { title: t('Data Source for {0}', vscode.workspace.asRelativePath(document.uri)), placeHolder: t('Choose the data source') },
     );
-    if (!source) {
+    if (!picked) {
       return;
     }
+    // Databases and schemas chosen in the Database tool window (right-click › Choose Databases / Schemas).
+    const databases = shownDatabases(picked.source);
+    let database = databases[0];
+    if (databases.length > 1) {
+      const choice = await vscode.window.showQuickPick(
+        databases.map((d) => ({ label: d, picked: d === current?.source.database })),
+        { title: t('Database'), placeHolder: t('Choose the database') },
+      );
+      if (!choice) {
+        return;
+      }
+      database = choice.label;
+    }
+    const source = inDatabase(picked.source, database);
     let schemas: string[] = [];
     try {
-      schemas = (await this.connections.query(source.source, `SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg\\_%' AND nspname <> 'information_schema' ORDER BY 1`)).rows.map((r) => String(r[0]));
+      schemas = (await this.connections.query(source, `SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg\\_%' AND nspname <> 'information_schema' ORDER BY 1`)).rows.map((r) => String(r[0]));
     } catch (error) {
-      void vscode.window.showErrorMessage(t('Cannot connect to {0}: {1}', source.source.name, error instanceof Error ? error.message : String(error)));
+      void vscode.window.showErrorMessage(t('Cannot connect to {0}: {1}', source.name, error instanceof Error ? error.message : String(error)));
+    }
+    const shown = visibleSchemas(source, database);
+    if (shown) {
+      schemas = schemas.filter((s) => shown.includes(s));
     }
     const schema =
       schemas.length > 0
@@ -135,7 +158,7 @@ export class SqlEditor implements vscode.Disposable {
             { title: t('Schema'), placeHolder: t('Choose the default schema (search_path)') },
           )
         : undefined;
-    await this.attach(document.uri, source.source.id, schema?.label);
+    await this.attach(document.uri, source, schema?.label);
   }
 
   // --- UI state --------------------------------------------------------------------------------
@@ -150,7 +173,11 @@ export class SqlEditor implements vscode.Disposable {
       return;
     }
     const attached = this.attachment(document.uri);
-    this.selector.text = attached ? `$(database) ${attached.source.name}${attached.schema ? ` › ${attached.schema}` : ''} $(chevron-down)` : `$(database) ${t('<no data source>')}`;
+    const base = attached && this.store.get(attached.source.id);
+    const showDatabase = !!attached && !!base && (base.database !== attached.source.database || shownDatabases(base).length > 1);
+    this.selector.text = attached
+      ? `$(database) ${attached.source.name}${showDatabase ? ` › ${attached.source.database}` : ''}${attached.schema ? ` › ${attached.schema}` : ''} $(chevron-down)`
+      : `$(database) ${t('<no data source>')}`;
     this.selector.tooltip = attached ? `${describeSource(attached.source)}\n${t('Click to change the data source or schema')}` : t('Choose a data source to run this file');
     this.selector.backgroundColor = attached ? undefined : new vscode.ThemeColor('statusBarItem.warningBackground');
     this.selector.show();
@@ -240,9 +267,9 @@ export class SqlEditor implements vscode.Disposable {
         }
       }
       try {
-        if (this.manual.has(target.source.id) && !this.inTransaction.has(target.source.id)) {
+        if (this.manual.has(target.source.id) && !this.inTransaction.has(sessionKey(target.source))) {
           await this.connections.query(target.source, 'BEGIN');
-          this.inTransaction.add(target.source.id);
+          this.inTransaction.add(sessionKey(target.source));
         }
         await this.results.run(target.source, statement.text, target.schema);
       } catch (error) {
@@ -279,7 +306,7 @@ export class SqlEditor implements vscode.Disposable {
     }
     const id = attached.source.id;
     if (this.manual.has(id)) {
-      if (this.inTransaction.has(id)) {
+      if (this.inTransaction.has(sessionKey(attached.source))) {
         const commit = t('Commit');
         const rollback = t('Rollback');
         const answer = await vscode.window.showWarningMessage(t('A transaction is open on {0}.', attached.source.name), { modal: true }, commit, rollback);
@@ -298,12 +325,12 @@ export class SqlEditor implements vscode.Disposable {
   private async endTransaction(command: 'COMMIT' | 'ROLLBACK'): Promise<void> {
     const document = vscode.window.activeTextEditor?.document;
     const attached = document && this.attachment(document.uri);
-    if (!attached || !this.inTransaction.has(attached.source.id)) {
+    if (!attached || !this.inTransaction.has(sessionKey(attached.source))) {
       vscode.window.setStatusBarMessage(t('No open transaction'), 2000);
       return;
     }
     await this.connections.query(attached.source, command);
-    this.inTransaction.delete(attached.source.id);
+    this.inTransaction.delete(sessionKey(attached.source));
     vscode.window.setStatusBarMessage(command === 'COMMIT' ? t('Transaction committed') : t('Transaction rolled back'), 3000);
   }
 
@@ -361,7 +388,7 @@ export class SqlEditor implements vscode.Disposable {
     if (!attached) {
       return [];
     }
-    const key = `${attached.source.id}|${attached.schema ?? 'public'}`;
+    const key = `${sessionKey(attached.source)}|${attached.schema ?? 'public'}`;
     let items = this.completionCache.get(key);
     if (!items) {
       items = this.connections

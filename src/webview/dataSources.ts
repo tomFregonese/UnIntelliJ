@@ -124,7 +124,7 @@ function row(label: string, control: HTMLElement, help?: string): HTMLElement {
   return h('div', { className: 'row' }, h('label', {}, label), control, help && h('div', { className: 'help' }, help));
 }
 
-function input(key: 'name' | 'host' | 'database' | 'user' | 'schemas', value: string, placeholder = ''): HTMLInputElement {
+function input(key: 'name' | 'host' | 'database' | 'user', value: string, placeholder = ''): HTMLInputElement {
   return h('input', { type: 'text', value, placeholder, onInput: (e: Event) => update({ [key]: (e.target as HTMLInputElement).value }) });
 }
 
@@ -156,12 +156,11 @@ function renderForm(): HTMLElement {
     row(t('Name:'), input('name', source.name)),
     row(t('Host:'), input('host', source.host, 'localhost')),
     row(t('Port:'), h('input', { type: 'number', value: source.port, min: 1, max: 65535, onInput: (e: Event) => update({ port: Number((e.target as HTMLInputElement).value) }) })),
-    row(t('Database:'), input('database', source.database, 'postgres')),
+    row(t('Database:'), input('database', source.database, 'postgres'), t('Connection database. Other databases and the schemas shown are chosen in the Database tool window: right-click › Choose Databases… / Choose Schemas…')),
     row(t('User:'), input('user', source.user, 'postgres')),
     row(t('Password:'), password, t('Stored in the operating system keychain, never in settings files.')),
     stored && h('div', { className: 'buttons-inline' }, h('button', { className: 'secondary', onClick: () => ((passwords[source.id] = null), render()) }, t('Forget Password'))),
     row(t('SSL mode:'), ssl),
-    row(t('Schemas:'), input('schemas', source.schemas, t('All (comma-separated list to filter)'))),
     row(t('Color:'), color, t('Tints SQL editors attached to this data source, like IntelliJ (red for production).')),
     h(
       'div',

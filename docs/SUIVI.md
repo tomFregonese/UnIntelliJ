@@ -133,7 +133,7 @@ Cocher et dater quand c'est réglé.
   - **Écarts** : la taille de police par défaut est 14 sur tous les OS (une valeur par défaut ne peut pas dépendre de l'OS) ; JetBrains Mono reste installée après désinstallation (inoffensif).
   - **Limite** : avec le VS Code « System setup » du travail, Islands+ ne peut rien modifier sans droits admin. Il faut passer au « User setup », ou masquer à la main la branche native (clic droit sur la barre d'état, une seule fois).
 - [x] **2. Vue Commit** : fichiers triés par ordre alphabétique du nom (insensible à la casse, file2 avant file10), puis par dossier, dans chaque changelist et dans Unversioned Files.
-- [ ] **3. Database : choix des bases et des schémas** :
+- [x] **3. Database : choix des bases et des schémas** (source › base › schéma ; clic droit ou icône ✓☰ sur la source › « Choose Databases… », sur une base › « Choose Schemas… » ; une session par base ; l'ancien champ « Schemas » du formulaire est repris automatiquement) :
   - afficher toutes les bases du serveur, pas seulement celle de la connexion ;
   - choisir par cases à cocher les bases affichées (pas forcément toutes) ;
   - pour chaque base, choisir les schémas affichés par clic droit (« N of M », sélection par cases à cocher, comme IntelliJ) ;

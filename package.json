@@ -378,6 +378,18 @@
         "icon": "$(terminal)"
       },
       {
+        "command": "unintellij.database.chooseDatabases",
+        "title": "%command.unintellij.database.chooseDatabases%",
+        "category": "%command.category%",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "unintellij.database.chooseSchemas",
+        "title": "%command.unintellij.database.chooseSchemas%",
+        "category": "%command.category%",
+        "icon": "$(checklist)"
+      },
+      {
         "command": "unintellij.database.openTable",
         "title": "%command.unintellij.database.openTable%",
         "category": "%command.category%",
@@ -1030,13 +1042,33 @@
         },
         {
           "command": "unintellij.database.newConsole",
-          "when": "view == unintellij.database && viewItem =~ /^(source|schema)/",
+          "when": "view == unintellij.database && viewItem =~ /^(source|database|schema)/",
           "group": "1_open@2"
         },
         {
           "command": "unintellij.database.copyName",
           "when": "view == unintellij.database && viewItem =~ /^(table|schema|dataColumn|key|function|sequence|index)$/",
           "group": "2_copy@1"
+        },
+        {
+          "command": "unintellij.database.chooseDatabases",
+          "when": "view == unintellij.database && viewItem =~ /^source/",
+          "group": "0_shown@1"
+        },
+        {
+          "command": "unintellij.database.chooseSchemas",
+          "when": "view == unintellij.database && viewItem == database",
+          "group": "0_shown@1"
+        },
+        {
+          "command": "unintellij.database.chooseSchemas",
+          "when": "view == unintellij.database && viewItem == database",
+          "group": "inline@1"
+        },
+        {
+          "command": "unintellij.database.chooseDatabases",
+          "when": "view == unintellij.database && viewItem =~ /^source/",
+          "group": "inline@1"
         },
         {
           "command": "unintellij.database.editSources",
@@ -2555,6 +2587,8 @@
     ],
     "configurationDefaults": {
       "workbench.colorTheme": "Islands Dark",
+      "workbench.iconTheme": "unintellij-file-icons",
+      "workbench.productIconTheme": "unintellij-product-icons",
       "editor.fontFamily": "'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Cascadia Mono', 'DejaVu Sans Mono', monospace",
       "editor.fontSize": 14,
       "editor.lineHeight": 1.6,
