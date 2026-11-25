@@ -39,7 +39,6 @@ export const PRESET: readonly { key: string; value: unknown; reason: string }[] 
   { key: 'files.autoSaveDelay', value: 100, reason: 'Save almost immediately while typing' },
   { key: 'problems.decorations.enabled', value: false, reason: 'File names keep their VCS color (blue = modified) instead of turning red on errors' },
   { key: 'git.autofetch', value: true, reason: 'Background fetch' },
-  { key: 'panel.alignment', value: 'left', reason: 'Bottom tool windows start at the left edge, under the Project view' },
   { key: 'debug.toolBarLocation', value: 'docked', reason: 'Debug toolbar in the Debug tool window' },
   { key: 'explorer.confirmDelete', value: true, reason: 'Ask before deleting' },
   { key: 'workbench.tree.indent', value: 12, reason: 'Project tree indentation' },
@@ -66,8 +65,14 @@ export async function applyPreset(state: vscode.Memento): Promise<void> {
       // `null` marks "was not set", restored by removing the user value.
       backup[key] = config.inspect(key)?.globalValue ?? null;
     }
-    await config.update(key, value, vscode.ConfigurationTarget.Global);
+    try {
+      await config.update(key, value, vscode.ConfigurationTarget.Global);
+    } catch {
+      // A setting unknown to this VS Code version must not stop the others.
+    }
   }
+  // Bottom tool windows start at the left edge, under the Project view (a layout state, not a setting).
+  await Promise.resolve(vscode.commands.executeCommand('workbench.action.alignPanelLeft')).catch(() => undefined);
   await state.update(BACKUP_KEY, backup);
   await state.update(VERSION_KEY, PRESET_VERSION);
 }

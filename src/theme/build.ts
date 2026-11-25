@@ -391,6 +391,10 @@ export function buildTokenColors(p: ThemePalette): TokenColorRule[] {
     rule('Fields and properties', ['variable.other.property', 'variable.other.object.property', 'meta.definition.property variable', 'variable.other.member', 'variable.other.definition.java', 'support.variable.property', 'entity.name.variable.field'], s.field),
     rule('Constants and enum members', ['variable.other.constant.property', 'variable.other.enummember', 'constant.other.enum', 'variable.other.constant.java'], s.field, 'italic'),
     rule('Annotations and decorators', ['storage.type.annotation', 'punctuation.definition.annotation', 'meta.declaration.annotation', 'meta.decorator', 'punctuation.decorator', 'meta.decorator entity.name.function', 'meta.decorator variable.other.readwrite'], s.annotation),
+    // Java grammar: class types are `storage.type.java`, package / import names `storage.modifier.*`.
+    // IntelliJ keeps both plain text; only primitives (int, void…) are keywords.
+    rule('Java class types and package names', ['storage.type.java', 'storage.type.object.array.java', 'storage.modifier.package.java', 'storage.modifier.import.java'], s.text),
+    rule('Java primitives', ['storage.type.primitive.java', 'storage.type.primitive.array.java'], s.keyword),
     rule('Type parameters', ['entity.name.type.type-parameter', 'storage.type.generic.java', 'meta.type.parameters entity.name.type'], s.typeParameter),
     rule('Labels', ['entity.name.label'], s.label),
     rule('Markup tags', ['entity.name.tag', 'punctuation.definition.tag', 'meta.tag.sgml', 'entity.name.tag.html', 'entity.name.tag.xml'], s.markupTag),

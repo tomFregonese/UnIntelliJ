@@ -551,6 +551,28 @@
       }
     },
     {
+      "name": "Java class types and package names",
+      "scope": [
+        "storage.type.java",
+        "storage.type.object.array.java",
+        "storage.modifier.package.java",
+        "storage.modifier.import.java"
+      ],
+      "settings": {
+        "foreground": "#080808"
+      }
+    },
+    {
+      "name": "Java primitives",
+      "scope": [
+        "storage.type.primitive.java",
+        "storage.type.primitive.array.java"
+      ],
+      "settings": {
+        "foreground": "#0033B3"
+      }
+    },
+    {
       "name": "Type parameters",
       "scope": [
         "entity.name.type.type-parameter",
