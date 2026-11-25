@@ -37,6 +37,14 @@ suite('Keymap and commands', () => {
     const content = ['class A {', '  first() {', '  }', '', '  second() {', '  }', '}', ''].join('\n');
     const document = await vscode.workspace.openTextDocument({ language: 'typescript', content });
     const editor = await vscode.window.showTextDocument(document);
+    // Wait for the TypeScript server to analyze the document (slower on older VS Code / CI).
+    for (let i = 0; i < 100; i++) {
+      const symbols = await vscode.commands.executeCommand<unknown[]>('vscode.executeDocumentSymbolProvider', document.uri);
+      if (symbols && symbols.length > 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
     editor.selection = new vscode.Selection(0, 0, 0, 0);
     await vscode.commands.executeCommand('unintellij.nextMethod');
     assert.strictEqual(editor.selection.active.line, 1);
