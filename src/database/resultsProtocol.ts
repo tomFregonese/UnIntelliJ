@@ -25,6 +25,8 @@ export interface ResultTab {
 export interface ResultsModel {
   tabs: ResultTab[];
   active?: string;
+  /** Table editor tab in the editor area: a single tab, no tab strip (the editor tab is the tab). */
+  single?: boolean;
 }
 
 export type ToResultsWebview = { type: 'model'; model: ResultsModel };

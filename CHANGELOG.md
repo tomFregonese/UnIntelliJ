@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Database: checking or unchecking a database or schema applies at once, no OK needed (click outside to close).
+- Database: double-click a table to open its data in an editor tab, like IntelliJ's table editor; the inline Open Table Data button is gone (still in the right-click menu).
+
 ## 0.4.0
 
 - IntelliJ-like settings and the Islands Dark theme are VS Code defaults: they apply while UnIntelliJ is enabled and go away when it is disabled or uninstalled. Values you set yourself (including with the former "Apply" button) are never changed.

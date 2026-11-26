@@ -37,7 +37,7 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
     this.changed.fire(undefined);
   }
 
-  private icon(name: string): { light: vscode.Uri; dark: vscode.Uri } {
+  icon(name: string): { light: vscode.Uri; dark: vscode.Uri } {
     const file = (theme: string) => vscode.Uri.joinPath(this.extensionUri, 'media', 'database', `${name}-${theme}.svg`);
     return { light: file('light'), dark: file('dark') };
   }
@@ -83,6 +83,8 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
         const item = new vscode.TreeItem(node.name, collapsed);
         item.iconPath = this.icon(node.view ? 'view' : 'table');
         item.contextValue = 'table';
+        // Double-click opens the table data (see unintellij.database.click).
+        item.command = { command: 'unintellij.database.click', title: t('Open Table Data'), arguments: [node] };
         item.id = `table:${node.source.id}:${node.source.database}:${node.schema}:${node.name}`;
         return item;
       }

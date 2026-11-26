@@ -17,15 +17,19 @@ interface TabState {
   raw: unknown[][];
   /** For table data tabs. */
   table?: { schema: string; name: string };
+  /** Table data opened in the editor area (IntelliJ's table editor), instead of a results tab. */
+  panel?: vscode.WebviewPanel;
 }
 
-/** Bottom panel with one tab per executed query, like IntelliJ's Services › Database results. */
+/** Bottom panel with one tab per executed query, like IntelliJ's Services › Database results; table data opens as editor tabs. */
 export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposable {
   static readonly viewId = 'unintellij.dbResults';
   private view: vscode.WebviewView | undefined;
   private readonly tabs: TabState[] = [];
   private active: string | undefined;
   private counter = 0;
+  /** Open table editors by source, database, schema and table. */
+  private readonly tables = new Map<string, TabState>();
   private readonly disposables: vscode.Disposable[] = [];
 
   constructor(
@@ -35,10 +39,11 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
     this.disposables.push(
       vscode.window.registerWebviewViewProvider(ResultsView.viewId, this, { webviewOptions: { retainContextWhenHidden: true } }),
       connections.onNotice(({ sourceId, message }) => {
-        const tab = [...this.tabs].reverse().find((s) => s.source.id === sourceId && s.tab.running) ?? [...this.tabs].reverse().find((s) => s.source.id === sourceId);
+        const all = [...this.tabs, ...this.tables.values()];
+        const tab = [...all].reverse().find((s) => s.source.id === sourceId && s.tab.running) ?? [...all].reverse().find((s) => s.source.id === sourceId);
         if (tab) {
           tab.tab.notices.push(message);
-          this.post();
+          this.post(tab);
         }
       }),
     );
@@ -46,13 +51,22 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
 
   resolveWebviewView(view: vscode.WebviewView): void {
     this.view = view;
-    view.webview.options = { enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist'), vscode.Uri.joinPath(this.extensionUri, 'media'), vscode.Uri.joinPath(this.extensionUri, 'icons')] };
+    view.webview.options = { enableScripts: true, localResourceRoots: this.roots() };
     view.webview.html = this.html(view.webview);
     view.webview.onDidReceiveMessage((m: FromResultsWebview) => void this.onMessage(m));
     view.onDidDispose(() => (this.view = undefined));
   }
 
-  private post(): void {
+  private roots(): vscode.Uri[] {
+    return ['dist', 'media', 'icons'].map((d) => vscode.Uri.joinPath(this.extensionUri, d));
+  }
+
+  /** Sends the model to the webview showing `state` (its table editor, or the results panel). */
+  private post(state?: TabState): void {
+    if (state?.panel) {
+      void state.panel.webview.postMessage({ type: 'model', model: { tabs: [state.tab], active: state.tab.id, single: true } } satisfies ToResultsWebview);
+      return;
+    }
     void this.view?.webview.postMessage({ type: 'model', model: { tabs: this.tabs.map((s) => s.tab), active: this.active } } satisfies ToResultsWebview);
   }
 
@@ -66,12 +80,28 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
     return this.execute(state);
   }
 
-  /** IntelliJ's table editor (double-click on a table): first page, filter and sort server side. */
-  async openTable(source: DataSource, schema: string, name: string): Promise<void> {
-    const state = this.newTab(source, '', schema, name);
+  /**
+   * IntelliJ's table editor (double-click on a table): an editor tab in the middle of the window,
+   * first page, filter and sort server side. Opening the same table again shows its tab.
+   */
+  async openTable(source: DataSource, schema: string, name: string, icon?: vscode.Uri | { light: vscode.Uri; dark: vscode.Uri }): Promise<void> {
+    const key = `${source.id}/${source.database}/${schema}.${name}`;
+    const open = this.tables.get(key);
+    if (open?.panel) {
+      open.panel.reveal();
+      return;
+    }
+    const panel = vscode.window.createWebviewPanel('unintellij.tableData', name, vscode.ViewColumn.Active, { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: this.roots() });
+    panel.iconPath = icon;
+    const state = this.createState(source, '', schema, name);
+    state.panel = panel;
     state.table = { schema, name };
     state.tab.table = { where: '', orderBy: '', page: 0, pageSize: MAX_ROWS };
     state.tab.sql = this.tableSql(state);
+    this.tables.set(key, state);
+    panel.webview.html = this.html(panel.webview);
+    panel.webview.onDidReceiveMessage((m: FromResultsWebview) => void this.onMessage(m, state));
+    panel.onDidDispose(() => this.tables.delete(key));
     await this.execute(state).catch(() => undefined);
   }
 
@@ -82,8 +112,19 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
   }
 
   private newTab(source: DataSource, sql: string, schema: string | undefined, title: string): TabState {
+    const state = this.createState(source, sql, schema, title);
+    this.tabs.push(state);
+    // IntelliJ keeps a bounded number of result tabs.
+    while (this.tabs.length > 20) {
+      this.tabs.shift();
+    }
+    this.active = state.tab.id;
+    return state;
+  }
+
+  private createState(source: DataSource, sql: string, schema: string | undefined, title: string): TabState {
     const id = `r${++this.counter}`;
-    const state: TabState = {
+    return {
       source,
       schema,
       raw: [],
@@ -103,21 +144,16 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
         running: true,
       },
     };
-    this.tabs.push(state);
-    // IntelliJ keeps a bounded number of result tabs.
-    while (this.tabs.length > 20) {
-      this.tabs.shift();
-    }
-    this.active = id;
-    return state;
   }
 
   private async execute(state: TabState): Promise<QueryResult> {
     const tab = state.tab;
     tab.running = true;
     tab.error = undefined;
-    this.post();
-    void this.reveal();
+    this.post(state);
+    if (!state.panel) {
+      void this.reveal();
+    }
     try {
       const result = await this.connections.query(state.source, tab.sql, state.schema);
       const limit = tab.table ? tab.table.pageSize : MAX_ROWS;
@@ -134,7 +170,7 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
       throw error;
     } finally {
       tab.running = false;
-      this.post();
+      this.post(state);
     }
   }
 
@@ -142,16 +178,20 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
     return this.tabs.find((s) => s.tab.id === id);
   }
 
-  private async onMessage(message: FromResultsWebview): Promise<void> {
-    const state = 'id' in message ? this.find(message.id) : undefined;
+  private async onMessage(message: FromResultsWebview, panelState?: TabState): Promise<void> {
+    const state = panelState ?? ('id' in message ? this.find(message.id) : undefined);
     switch (message.type) {
       case 'ready':
-        this.post();
+        this.post(panelState);
         break;
       case 'select':
         this.active = message.id;
         break;
       case 'close': {
+        if (panelState) {
+          panelState.panel?.dispose();
+          break;
+        }
         const index = this.tabs.findIndex((s) => s.tab.id === message.id);
         if (index >= 0) {
           this.tabs.splice(index, 1);
@@ -218,6 +258,7 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
   }
 
   dispose(): void {
+    [...this.tables.values()].forEach((s) => s.panel?.dispose());
     this.disposables.forEach((d) => d.dispose());
   }
 }

@@ -24,6 +24,7 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
   };
   const failed = (source: DataSource, error: unknown) =>
     void vscode.window.showErrorMessage(t('Cannot connect to {0}: {1}', source.name, error instanceof Error ? error.message : String(error)));
+  let lastClick: { key: string; time: number } | undefined;
   const selectedSource = (node?: DbNode) => (node && 'source' in node ? node.source : view.view.selection.find((n): n is Extract<DbNode, { source: unknown }> => 'source' in n)?.source);
   return [
     store,
@@ -65,13 +66,17 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
         return;
       }
       const shown = shownDatabases(source);
-      const chosen = await vscode.window.showQuickPick(
+      pickLive(
         all.map((d) => ({ label: d, description: d === source.database ? t('connection database') : undefined, picked: shown.includes(d) })),
-        { canPickMany: true, title: t('Databases shown for {0}', source.name), placeHolder: t('Check the databases to show') },
+        t('Databases shown for {0}', source.name),
+        t('Check the databases to show'),
+        async (chosen) => {
+          const current = store.get(source.id);
+          if (current) {
+            await replace(withDatabases(current, chosen));
+          }
+        },
       );
-      if (chosen) {
-        await replace(withDatabases(source, chosen.map((c) => c.label)));
-      }
     }),
     vscode.commands.registerCommand('unintellij.database.chooseSchemas', async (node?: DbNode) => {
       if (node?.kind !== 'database') {
@@ -89,17 +94,36 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
         return;
       }
       const shown = visibleSchemas(base, node.source.database);
-      const chosen = await vscode.window.showQuickPick(
+      const database = node.source.database;
+      pickLive(
         all.map((s) => ({ label: s, picked: !shown || shown.includes(s) })),
-        { canPickMany: true, title: t('Schemas shown for {0}', `${base.name} › ${node.source.database}`), placeHolder: t('Check the schemas to show') },
+        t('Schemas shown for {0}', `${base.name} › ${database}`),
+        t('Check the schemas to show'),
+        async (chosen) => {
+          const current = store.get(base.id);
+          if (current) {
+            await replace(withSchemas(current, database, chosen, all));
+          }
+        },
       );
-      if (chosen) {
-        await replace(withSchemas(base, node.source.database, chosen.map((c) => c.label), all));
-      }
     }),
     vscode.commands.registerCommand('unintellij.database.openTable', async (node?: DbNode) => {
       if (node?.kind === 'table') {
-        await results.openTable(node.source, node.schema, node.name);
+        await results.openTable(node.source, node.schema, node.name, view.icon(node.view ? 'view' : 'table'));
+      }
+    }),
+    // VS Code trees only report single clicks: two on the same table within 500 ms open it (IntelliJ double-click).
+    vscode.commands.registerCommand('unintellij.database.click', async (node?: DbNode) => {
+      if (node?.kind !== 'table') {
+        return;
+      }
+      const key = `${node.source.id}/${node.source.database}/${node.schema}.${node.name}`;
+      const now = Date.now();
+      if (lastClick?.key === key && now - lastClick.time < 500) {
+        lastClick = undefined;
+        await vscode.commands.executeCommand('unintellij.database.openTable', node);
+      } else {
+        lastClick = { key, time: now };
       }
     }),
     vscode.commands.registerCommand('unintellij.database.copyName', async (node?: DbNode) => {
@@ -109,4 +133,31 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
       }
     }),
   ];
+}
+
+/**
+ * Checkbox list applied as soon as a box is checked or unchecked, like IntelliJ's popups: no OK
+ * needed, clicking outside (or Escape) closes it with the changes kept. Saves run one at a time.
+ */
+function pickLive(items: (vscode.QuickPickItem & { picked: boolean })[], title: string, placeholder: string, save: (chosen: string[]) => Promise<void>): void {
+  const pick = vscode.window.createQuickPick<vscode.QuickPickItem>();
+  pick.canSelectMany = true;
+  pick.title = title;
+  pick.placeholder = placeholder;
+  pick.items = items;
+  pick.selectedItems = items.filter((i) => i.picked);
+  let last = JSON.stringify(pick.selectedItems.map((i) => i.label));
+  let queue = Promise.resolve();
+  pick.onDidChangeSelection((selected) => {
+    const chosen = selected.map((i) => i.label);
+    const key = JSON.stringify(chosen);
+    if (key === last) {
+      return;
+    }
+    last = key;
+    queue = queue.then(() => save(chosen)).catch((error: unknown) => void vscode.window.showErrorMessage(error instanceof Error ? error.message : String(error)));
+  });
+  pick.onDidAccept(() => pick.hide());
+  pick.onDidHide(() => pick.dispose());
+  pick.show();
 }

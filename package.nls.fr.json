@@ -27,6 +27,7 @@
   "command.unintellij.maven.run": "Lancer le build Maven",
   "command.unintellij.maven.openPom": "Ouvrir pom.xml",
   "command.unintellij.maven.click": "Clic dans l'arbre Maven",
+  "command.unintellij.database.click": "Database Tree Click",
   "command.unintellij.maven.toggleOffline": "Travailler hors ligne",
   "command.unintellij.maven.toggleOfflineOff": "Hors ligne (actif : cliquer pour repasser en ligne)",
   "command.unintellij.maven.toggleSkipTests": "Ignorer les tests",

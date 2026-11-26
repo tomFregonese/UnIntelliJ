@@ -113,7 +113,6 @@ export const MENUS = {
     { command: 'unintellij.maven.run', when: 'view == unintellij.maven && viewItem == goal', group: '1_run@1' },
     { command: 'unintellij.maven.executeGoal', when: 'view == unintellij.maven && viewItem =~ /^(project|goal)$/', group: '1_run@2' },
     { command: 'unintellij.maven.openPom', when: 'view == unintellij.maven && viewItem == project', group: '2_open@1' },
-    { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: 'inline@1' },
     { command: 'unintellij.database.openTable', when: 'view == unintellij.database && viewItem == table', group: '1_open@1' },
     { command: 'unintellij.database.newConsole', when: 'view == unintellij.database && viewItem =~ /^(source|database|schema)/', group: '1_open@2' },
     { command: 'unintellij.database.copyName', when: 'view == unintellij.database && viewItem =~ /^(table|schema|dataColumn|key|function|sequence|index)$/', group: '2_copy@1' },

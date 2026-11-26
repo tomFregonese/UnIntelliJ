@@ -48,6 +48,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.maven.run', title: 'Run Maven Build', icon: '$(play)', hidden: true },
   { command: 'unintellij.maven.openPom', title: 'Open pom.xml', hidden: true },
   { command: 'unintellij.maven.click', title: 'Maven Tree Click', hidden: true },
+  { command: 'unintellij.database.click', title: 'Database Tree Click', hidden: true },
   { command: 'unintellij.maven.toggleOffline', title: 'Work Offline', icon: '$(globe)' },
   { command: 'unintellij.maven.toggleOfflineOff', title: 'Work Offline (on: click to go online)', icon: '$(debug-disconnect)', hidden: true },
   { command: 'unintellij.maven.toggleSkipTests', title: 'Skip Tests', icon: '$(beaker)' },

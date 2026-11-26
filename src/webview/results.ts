@@ -129,7 +129,7 @@ function render(): void {
   if (tab.notices.length > 0) {
     body.push(h('pre', { className: 'notices' }, tab.notices.join('\n')));
   }
-  app.replaceChildren(tabs, toolbar, ...body);
+  app.replaceChildren(...(model.single ? [] : [tabs]), toolbar, ...body);
 }
 
 window.addEventListener('message', (event: MessageEvent<ToResultsWebview>) => {
