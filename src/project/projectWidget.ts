@@ -37,7 +37,6 @@ export class ProjectWidget implements vscode.Disposable {
       return;
     }
     this.item.text = `$(folder) ${name.replace(/ \(Workspace\)$/, '')} $(chevron-down)`;
-    this.item.tooltip = t('Recent Projects');
     this.item.show();
   }
 

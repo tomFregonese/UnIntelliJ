@@ -4,6 +4,7 @@
 
 - Project widget (IntelliJ's project name next to the branch): always shown, in the title bar with Islands+ and next to the branch in the status bar otherwise. Its popup lists the projects open in other windows (choosing one brings its window to the front) and VS Code's recent projects, plus Open… and Clone Repository….
 - New setting **Open project in** (Settings › Appearance & Behavior › System Settings): new window (default), current window or ask.
+- Islands+: the project and branch popups open under their widget, on the left, like IntelliJ (other popups stay centered).
 - Islands+: title bar widgets take mouse clicks again (they were under VS Code's drag area) and leave room for the macOS window buttons.
 
 ## 0.4.1

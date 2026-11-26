@@ -95,6 +95,48 @@
     });
   }
 
+  /**
+   * IntelliJ opens the project and branch popups under the widget clicked, not in the middle of the
+   * window: a quick input shown right after a click on a left title bar widget is moved under it.
+   */
+  var anchor = null;
+  document.addEventListener(
+    'mousedown',
+    function (event) {
+      var item = event.target && event.target.closest && event.target.closest('.unintellij-titlebar-widgets.left .statusbar-item');
+      anchor = item ? { rect: item.getBoundingClientRect(), until: Date.now() + 2000 } : null;
+    },
+    true,
+  );
+
+  function quickInputChanged(widget) {
+    var visible = widget.style.display !== 'none' && widget.offsetParent !== null;
+    if (!visible) {
+      widget.classList.remove('unintellij-anchored');
+      return;
+    }
+    if (anchor && Date.now() < anchor.until && !widget.classList.contains('unintellij-anchored')) {
+      var parent = widget.offsetParent.getBoundingClientRect();
+      widget.style.setProperty('--unintellij-anchor-left', Math.max(4, anchor.rect.left - parent.left) + 'px');
+      widget.style.setProperty('--unintellij-anchor-top', anchor.rect.bottom - parent.top + 4 + 'px');
+      widget.classList.add('unintellij-anchored');
+      anchor = null;
+    }
+  }
+
+  var watchedQuickInput = null;
+  function watchQuickInput() {
+    var widget = document.querySelector('.quick-input-widget');
+    if (!widget || widget === watchedQuickInput) {
+      return;
+    }
+    watchedQuickInput = widget;
+    new MutationObserver(function () {
+      quickInputChanged(widget);
+    }).observe(widget, { attributes: true, attributeFilter: ['style'] });
+    quickInputChanged(widget);
+  }
+
   var ALIVE = 'unintellij.alive';
   /** Time UnIntelliJ gets to start before Islands+ is switched off (extensions start after the window). */
   var GRACE_MS = 30000;
@@ -125,6 +167,7 @@
     place(LEFT, 'left');
     place(RIGHT, 'right');
     colorCounts();
+    watchQuickInput();
   }
 
   new MutationObserver(function () {

@@ -156,3 +156,12 @@
 .unintellij-count.outgoing {
   color: var(--vscode-unintellij-outgoingCommits);
 }
+
+/* Project and branch popups opened under their widget, like IntelliJ (see islands.js). */
+.monaco-workbench .quick-input-widget.unintellij-anchored {
+  top: var(--unintellij-anchor-top) !important;
+  left: var(--unintellij-anchor-left) !important;
+  margin-left: 0 !important;
+  transform: none !important;
+  width: min(560px, calc(100vw - 16px)) !important;
+}
