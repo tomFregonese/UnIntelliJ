@@ -58,6 +58,8 @@ export class SearchEverywhere implements vscode.Disposable {
     private readonly fileIndex: FileIndex,
     private readonly history: NavigationHistory,
     private readonly log: vscode.LogOutputChannel,
+    /** Why Java classes and methods may be missing (Java support absent, Lightweight mode), or undefined. */
+    private readonly javaHint: () => Promise<{ label: string; detail: string; run: () => Thenable<unknown> } | undefined> = async () => undefined,
   ) {}
 
   get visible(): boolean {
@@ -224,7 +226,12 @@ export class SearchEverywhere implements vscode.Disposable {
       this.refreshChrome();
       const active = quickPick.activeItems[0];
       const activeIndex = active ? quickPick.items.indexOf(active) : -1;
-      quickPick.items = [...items, ...this.footer(raw)].map((i) => ({ ...i, alwaysShow: true }));
+      const hint = raw.trim() !== '' && (this.tab === 'all' || this.tab === 'classes' || this.tab === 'symbols') ? await this.javaHint().catch(() => undefined) : undefined;
+      if (generation !== this.generation || !this.quickPick) {
+        return;
+      }
+      const hintItems: SearchItem[] = hint ? [{ label: hint.label, detail: hint.detail, run: () => (quickPick.hide(), void hint.run()) }] : [];
+      quickPick.items = [...hintItems, ...items, ...this.footer(raw)].map((i) => ({ ...i, alwaysShow: true }));
       // After "More", stay where the user was instead of jumping back to the top.
       if (this.pages > 0 && activeIndex >= 0 && quickPick.items[activeIndex]) {
         quickPick.activeItems = [quickPick.items[activeIndex]];

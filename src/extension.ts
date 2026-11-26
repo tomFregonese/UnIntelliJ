@@ -11,6 +11,7 @@ import { UserKeybindings } from './keymap/userKeybindings';
 import { IslandsPlus } from './islandsPlus/islandsPlus';
 import { ProjectWidget } from './project/projectWidget';
 import { registerNavigationCommands } from './navigation/commands';
+import { JavaServer } from './settings/javaServer';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
@@ -68,11 +69,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   // Commands first: a keybinding may be what activated the extension.
   const userKeybindings = new UserKeybindings(context, log);
   void userKeybindings.sync();
-  const navigation = registerNavigationCommands(context, log);
+  const javaServer = new JavaServer(context.workspaceState);
+  const navigation = registerNavigationCommands(context, log, javaServer);
   const vcs = registerVcsCommands(context, log);
   const setup = new SetupPrompt(context, log);
   const java = new JavaExtensions(context.globalState);
   context.subscriptions.push(
+    javaServer,
     ...navigation.disposables,
     ...registerEditorCommands(),
     ...registerSettingsCommands(context, log, setup, java),
@@ -102,6 +105,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   if (context.extensionMode !== vscode.ExtensionMode.Test) {
     void setup.onStartup();
     void java.onStartup();
+    javaServer.onStartup();
   }
 
   return {

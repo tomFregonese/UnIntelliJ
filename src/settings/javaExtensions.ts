@@ -68,7 +68,7 @@ export class JavaExtensions {
   }
 }
 
-async function isJavaProject(): Promise<boolean> {
+export async function isJavaProject(): Promise<boolean> {
   const found = await vscode.workspace.findFiles('{**/pom.xml,**/build.gradle,**/build.gradle.kts,**/*.java}', '{**/node_modules/**,**/target/**,**/build/**}', 1);
   return found.length > 0;
 }

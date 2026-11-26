@@ -3,6 +3,7 @@ import { FileIndex } from '../search/fileIndex';
 import { NavigationHistory } from '../search/history';
 import { RecentPopups, showFileStructure } from '../search/popups';
 import { SearchEverywhere, TabId } from '../search/searchEverywhere';
+import { JavaServer } from '../settings/javaServer';
 
 export interface Navigation {
   searchEverywhere: SearchEverywhere;
@@ -11,10 +12,10 @@ export interface Navigation {
 }
 
 /** Search Everywhere, Go to Class/File/Symbol, Find Action, Recent Files/Locations, File Structure. */
-export function registerNavigationCommands(context: vscode.ExtensionContext, log: vscode.LogOutputChannel): Navigation {
+export function registerNavigationCommands(context: vscode.ExtensionContext, log: vscode.LogOutputChannel, javaServer: JavaServer): Navigation {
   const fileIndex = new FileIndex();
   const history = new NavigationHistory(context.workspaceState);
-  const searchEverywhere = new SearchEverywhere(context.extensionUri, fileIndex, history, log);
+  const searchEverywhere = new SearchEverywhere(context.extensionUri, fileIndex, history, log, () => javaServer.searchHint());
   const recent = new RecentPopups(context.extensionUri, history);
   const open = (tab: TabId) => () => searchEverywhere.show(tab);
   return {

@@ -2816,6 +2816,7 @@
       "files.autoSaveDelay": 100,
       "problems.decorations.enabled": false,
       "git.autofetch": true,
+      "java.symbols.includeSourceMethodDeclarations": true,
       "git.openRepositoryInParentFolders": "always",
       "debug.toolBarLocation": "docked",
       "workbench.tree.indent": 12,
