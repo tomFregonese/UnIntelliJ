@@ -736,6 +736,7 @@ export const FR: Record<string, string> = {
   "Lifecycle": "Lifecycle",
   "Maven": "Maven",
   "Maven Tree Click": "Clic dans l'arbre Maven",
+  "Database Tree Click": "Clic dans l'arbre Database",
   "Maven: offline mode off": "Maven : mode hors ligne désactivé",
   "Maven: offline mode on": "Maven : mode hors ligne activé",
   "Maven: tests run": "Maven : tests exécutés",
