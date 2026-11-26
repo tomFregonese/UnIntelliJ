@@ -16,6 +16,41 @@ export interface BranchInfo {
 /** Format for `git for-each-ref`, fields separated by NUL. */
 export const REF_FORMAT = '%(refname)%00%(refname:short)%00%(upstream:short)%00%(upstream:track,nobracket)%00%(committerdate:unix)';
 
+/**
+ * `git for-each-ref` output of `refs`, skipping refs whose commit is missing: Git aborts the whole
+ * listing on the first one, IntelliJ just leaves such branches out. `run` lists the given refs; it
+ * is retried on halves of a failing batch down to single refs. Git's message is not relied on (it
+ * is sometimes garbage for this error); when every ref fails, the first error is thrown.
+ */
+export async function listRefsSkippingBroken(refs: readonly string[], run: (refs: readonly string[]) => Promise<string>, batch = 50): Promise<{ output: string; skipped: string[] }> {
+  const skipped: string[] = [];
+  let firstError: unknown;
+  const list = async (part: readonly string[]): Promise<string> => {
+    if (part.length === 0) {
+      return '';
+    }
+    try {
+      return await run(part);
+    } catch (error) {
+      firstError ??= error;
+      if (part.length === 1) {
+        skipped.push(part[0]);
+        return '';
+      }
+      const middle = Math.ceil(part.length / 2);
+      return (await list(part.slice(0, middle))) + (await list(part.slice(middle)));
+    }
+  };
+  let output = '';
+  for (let i = 0; i < refs.length; i += batch) {
+    output += await list(refs.slice(i, i + batch));
+  }
+  if (refs.length > 0 && skipped.length === refs.length) {
+    throw firstError;
+  }
+  return { output, skipped };
+}
+
 export function parseRefs(output: string): BranchInfo[] {
   const branches: BranchInfo[] = [];
   for (const line of output.split('\n')) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Git branches popup: opens even when a branch points to a commit missing from the repository (incomplete copy of a project); such branches are left out, with a warning saying how to repair them.
+
 ## 0.5.0
 
 - Search Everywhere: build output and dependencies (`*.class`, `*.jar`, `target/`, `build/`, `out/`, `dist/`, `node_modules/`) are non-project items, hidden by default. When the project has no match, non-project items are searched automatically (like IntelliJ); a last row includes them on demand and a **More** row loads more results.

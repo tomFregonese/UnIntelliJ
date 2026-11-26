@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { getSetting } from '../config/settings';
 import { shortcutFor } from '../search/actions';
-import { BranchInfo, COMMIT_FORMAT, localNameForRemote, parseCommits, parseRefs, REF_FORMAT, trackingLabel, validateBranchName } from './branchesLogic';
+import { BranchInfo, COMMIT_FORMAT, listRefsSkippingBroken, localNameForRemote, parseCommits, parseRefs, REF_FORMAT, trackingLabel, validateBranchName } from './branchesLogic';
 import { VcsService } from './vcsService';
 import { t } from '../i18n/i18n';
 
@@ -52,7 +52,29 @@ export class Branches implements vscode.Disposable {
   }
 
   private async branches(): Promise<BranchInfo[]> {
-    return parseRefs(await this.vcs.git(['for-each-ref', `--format=${REF_FORMAT}`, 'refs/heads', 'refs/remotes'], false));
+    try {
+      return parseRefs(await this.vcs.git(['for-each-ref', `--format=${REF_FORMAT}`, 'refs/heads', 'refs/remotes'], false));
+    } catch (error) {
+      // Typically a ref pointing to a missing commit: list the others (ref names alone need no object).
+      const names = (await this.vcs.git(['for-each-ref', '--format=%(refname)', 'refs/heads', 'refs/remotes'], false).catch(() => Promise.reject(error))).split('\n').filter(Boolean);
+      const { output, skipped } = await listRefsSkippingBroken(names, (refs) => this.vcs.git(['for-each-ref', `--format=${REF_FORMAT}`, ...refs], false));
+      this.warnBrokenRefs(skipped);
+      return parseRefs(output);
+    }
+  }
+
+  private warnedBrokenRefs = false;
+
+  /** Once per session: says which branches point to missing commits and how to repair them. */
+  private warnBrokenRefs(skipped: readonly string[]): void {
+    if (skipped.length === 0 || this.warnedBrokenRefs) {
+      return;
+    }
+    this.warnedBrokenRefs = true;
+    const names = skipped.map((r) => r.replace(/^refs\/(heads|remotes)\//, ''));
+    void vscode.window.showWarningMessage(
+      t('{0} branch(es) point to commits missing from this repository and are not shown: {1}. The .git folder is incomplete (an interrupted copy?). Remote branches come back after deleting them and fetching: git update-ref -d <ref>, then git fetch.', skipped.length, names.join(', ')),
+    );
   }
 
   private current(): string | undefined {

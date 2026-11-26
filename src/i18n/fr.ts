@@ -754,6 +754,7 @@ export const FR: Record<string, string> = {
   "Why VS Code found no repository": "Pourquoi VS Code n'a trouvé aucun dépôt",
   "No Git repository found in this project": "Aucun dépôt Git trouvé dans ce projet",
   "Version Control (No Repository)": "Gestion de versions (aucun dépôt)",
+  "{0} branch(es) point to commits missing from this repository and are not shown: {1}. The .git folder is incomplete (an interrupted copy?). Remote branches come back after deleting them and fetching: git update-ref -d <ref>, then git fetch.": "{0} branche(s) pointent vers des commits absents de ce dépôt et ne sont pas affichées : {1}. Le dossier .git est incomplet (copie interrompue ?). Les branches distantes reviennent après les avoir supprimées puis un fetch : git update-ref -d <ref>, puis git fetch.",
   "Open Projects": "Projets ouverts",
   "Open project in": "Ouvrir le projet",
   "Open…": "Ouvrir…",
