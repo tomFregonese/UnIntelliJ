@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
 - Search Everywhere: build output and dependencies (`*.class`, `*.jar`, `target/`, `build/`, `out/`, `dist/`, `node_modules/`) are non-project items, hidden by default. When the project has no match, non-project items are searched automatically (like IntelliJ); a last row includes them on demand and a **More** row loads more results.
 - Branch widget always shown: **Version Control** when no Git repository is found, with Open / Create / Clone repository and the Git output. A repository in a parent folder of the project is now opened automatically (`git.openRepositoryInParentFolders` default). The widget no longer misses a repository that finishes loading late (it also refreshes when the window gets focus) and logs what Git reports when it has no branch to show.
