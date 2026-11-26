@@ -300,6 +300,7 @@ export const INTELLIJ_DEFAULTS: readonly { key: string; value: unknown; reason: 
   { key: 'files.autoSaveDelay', value: 100, reason: 'Save almost immediately while typing' },
   { key: 'problems.decorations.enabled', value: false, reason: 'File names keep their VCS color (blue = modified) instead of turning red on errors' },
   { key: 'git.autofetch', value: true, reason: 'Background fetch' },
+  { key: 'git.openRepositoryInParentFolders', value: 'always', reason: 'Like IntelliJ, a project opened from a subfolder of a repository is under Git' },
   { key: 'debug.toolBarLocation', value: 'docked', reason: 'Debug toolbar in the Debug tool window' },
   { key: 'workbench.tree.indent', value: 12, reason: 'Project tree indentation' },
   { key: 'workbench.tree.renderIndentGuides', value: 'none', reason: 'No guides in the Project tree' },

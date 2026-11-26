@@ -28,6 +28,8 @@ export class BranchWidget implements vscode.Disposable {
     this.disposables.push(
       this.item,
       vcs.onDidChange(() => this.update()),
+      vscode.workspace.onDidChangeWorkspaceFolders(() => this.update()),
+      vscode.commands.registerCommand('unintellij.vcs.noRepository', () => this.noRepository()),
       onSettingsChanged(['vcs.backgroundFetchMinutes'], () => this.schedule()),
       vscode.workspace.onDidChangeConfiguration((e) => e.affectsConfiguration('git.autofetch') && this.schedule()),
     );
@@ -38,9 +40,18 @@ export class BranchWidget implements vscode.Disposable {
   private update(): void {
     const head = this.vcs.repository?.state.HEAD;
     if (!head) {
-      this.item.hide();
+      // IntelliJ shows "Version control" when the project has no repository: the widget stays findable.
+      if (!vscode.workspace.workspaceFolders?.length) {
+        this.item.hide();
+        return;
+      }
+      this.item.text = `$(git-branch) ${t('Version Control')}`;
+      this.item.tooltip = this.vcs.available ? t('No Git repository found in this project. Click to open or create one.') : t('Git is not available (Git extension disabled or Git not installed).');
+      this.item.command = 'unintellij.vcs.noRepository';
+      this.item.show();
       return;
     }
+    this.item.command = 'unintellij.branches';
     const name = head.name ?? head.commit?.slice(0, 8) ?? '';
     const upstream = head.upstream ? `${head.upstream.remote}/${head.upstream.name}` : undefined;
     const counts = [head.behind ? `↙${head.behind}` : '', head.ahead ? `↗${head.ahead}` : ''].filter(Boolean).join(' ');
@@ -58,6 +69,28 @@ export class BranchWidget implements vscode.Disposable {
     ];
     this.item.tooltip = lines.filter((line, index) => line || index === 3).join('\n');
     this.item.show();
+  }
+
+  /** Popup of the widget when the project has no repository (or Git is not available). */
+  private async noRepository(): Promise<void> {
+    if (!this.vcs.available) {
+      const settings = t('Open Settings');
+      const answer = await vscode.window.showWarningMessage(t('Git is not available: VS Code\'s Git extension is disabled or Git is not installed (see the git.path setting).'), settings);
+      if (answer === settings) {
+        await vscode.commands.executeCommand('workbench.action.openSettings', '@ext:vscode.git git.enabled git.path');
+      }
+      return;
+    }
+    const items: (vscode.QuickPickItem & { command: string })[] = [
+      { label: `$(folder-opened) ${t('Open Git Repository…')}`, detail: t('A repository in a parent folder or deeper in the project'), command: 'git.openRepository' },
+      { label: `$(repo) ${t('Create Git Repository…')}`, command: 'git.init' },
+      { label: `$(repo-clone) ${t('Clone Repository…')}`, command: 'git.clone' },
+      { label: `$(output) ${t('Show Git Output')}`, detail: t('Why VS Code found no repository'), command: 'git.showOutput' },
+    ];
+    const choice = await vscode.window.showQuickPick(items, { placeHolder: t('No Git repository found in this project') });
+    if (choice) {
+      await vscode.commands.executeCommand(choice.command);
+    }
   }
 
   /** (Re)starts the background fetch timer. */

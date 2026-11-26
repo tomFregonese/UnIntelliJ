@@ -27,6 +27,7 @@
   "command.unintellij.maven.run": "Run Maven Build",
   "command.unintellij.maven.openPom": "Open pom.xml",
   "command.unintellij.maven.click": "Maven Tree Click",
+  "command.unintellij.vcs.noRepository": "Version Control (No Repository)",
   "command.unintellij.database.click": "Database Tree Click",
   "command.unintellij.maven.toggleOffline": "Work Offline",
   "command.unintellij.maven.toggleOfflineOff": "Work Offline (on: click to go online)",

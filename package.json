@@ -397,6 +397,11 @@
         "category": "%command.category%"
       },
       {
+        "command": "unintellij.vcs.noRepository",
+        "title": "%command.unintellij.vcs.noRepository%",
+        "category": "%command.category%"
+      },
+      {
         "command": "unintellij.database.click",
         "title": "%command.unintellij.database.click%",
         "category": "%command.category%"
@@ -809,6 +814,10 @@
         },
         {
           "command": "unintellij.maven.click",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.vcs.noRepository",
           "when": "false"
         },
         {
@@ -2807,6 +2816,7 @@
       "files.autoSaveDelay": 100,
       "problems.decorations.enabled": false,
       "git.autofetch": true,
+      "git.openRepositoryInParentFolders": "always",
       "debug.toolBarLocation": "docked",
       "workbench.tree.indent": 12,
       "workbench.tree.renderIndentGuides": "none",

@@ -21,6 +21,8 @@ const LIMITS = { all: 5, tab: 100, text: 200 };
 
 export interface SearchItem extends vscode.QuickPickItem {
   open?(toSide: boolean): Thenable<unknown>;
+  /** Rows acting on the popup itself (load more, include non-project items): it stays open. */
+  run?(): void;
 }
 
 const OPEN_TO_SIDE: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon('split-horizontal'), tooltip: t('Open to the Side') };
@@ -41,6 +43,10 @@ export class SearchEverywhere implements vscode.Disposable {
   private quickPick: vscode.QuickPick<SearchItem> | undefined;
   private tab: TabId = 'all';
   private includeNonProject = false;
+  /** Non-project items switched on because the project had no result for the current text (IntelliJ). */
+  private autoIncluded = false;
+  /** "More" rows clicked for the current text: each loads one more page. */
+  private pages = 0;
   private generation = 0;
   private cancellation: vscode.CancellationTokenSource | undefined;
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -73,6 +79,8 @@ export class SearchEverywhere implements vscode.Disposable {
     }
     this.tab = tab;
     this.includeNonProject = getSetting('searchEverywhere.includeNonProjectItems');
+    this.autoIncluded = false;
+    this.pages = 0;
     this.actions = undefined;
     this.symbolCache.clear();
 
@@ -91,10 +99,15 @@ export class SearchEverywhere implements vscode.Disposable {
       quickPick.value = selected;
     }
 
-    quickPick.onDidChangeValue(() => this.scheduleUpdate());
+    quickPick.onDidChangeValue(() => {
+      this.resetPaging();
+      this.scheduleUpdate();
+    });
     quickPick.onDidAccept(() => {
       const item = quickPick.selectedItems[0] ?? quickPick.activeItems[0];
-      if (item?.open) {
+      if (item?.run) {
+        item.run();
+      } else if (item?.open) {
         quickPick.hide();
         void item.open(false);
       }
@@ -120,6 +133,7 @@ export class SearchEverywhere implements vscode.Disposable {
 
   switchTab(tab: TabId): void {
     this.tab = tab;
+    this.pages = 0;
     this.refreshChrome();
     this.scheduleUpdate(0);
   }
@@ -152,9 +166,25 @@ export class SearchEverywhere implements vscode.Disposable {
       void vscode.commands.executeCommand('workbench.action.findInFiles', { query, triggerSearch: true });
       return;
     }
-    this.includeNonProject = !this.includeNonProject;
+    this.setNonProject(!this.includeNonProject);
+  }
+
+  private setNonProject(include: boolean): void {
+    this.includeNonProject = include;
+    this.autoIncluded = false;
+    this.pages = 0;
     this.refreshChrome();
     this.scheduleUpdate(0);
+  }
+
+  /** New text: back to the first page, and to project items if they were only added for the previous text. */
+  private resetPaging(): void {
+    this.pages = 0;
+    if (this.autoIncluded) {
+      this.autoIncluded = false;
+      this.includeNonProject = false;
+      this.refreshChrome();
+    }
   }
 
   private scheduleUpdate(delay?: number): void {
@@ -176,11 +206,29 @@ export class SearchEverywhere implements vscode.Disposable {
     const query = parseQuery(raw);
     quickPick.busy = true;
     try {
-      const items = await this.itemsFor(this.tab, raw, query, cancellation.token);
+      let items = await this.itemsFor(this.tab, raw, query, cancellation.token);
+      // IntelliJ: nothing in the project, so look in libraries and build output too.
+      if (!this.includeNonProject && this.tab !== 'actions' && raw.trim() !== '' && !hasResults(items)) {
+        this.includeNonProject = true;
+        this.autoIncluded = true;
+        items = await this.itemsFor(this.tab, raw, query, cancellation.token);
+        if (!hasResults(items)) {
+          this.includeNonProject = false;
+          this.autoIncluded = false;
+          items = await this.itemsFor(this.tab, raw, query, cancellation.token);
+        }
+      }
       if (generation !== this.generation || !this.quickPick) {
         return;
       }
-      quickPick.items = items.map((i) => ({ ...i, alwaysShow: true }));
+      this.refreshChrome();
+      const active = quickPick.activeItems[0];
+      const activeIndex = active ? quickPick.items.indexOf(active) : -1;
+      quickPick.items = [...items, ...this.footer(raw)].map((i) => ({ ...i, alwaysShow: true }));
+      // After "More", stay where the user was instead of jumping back to the top.
+      if (this.pages > 0 && activeIndex >= 0 && quickPick.items[activeIndex]) {
+        quickPick.activeItems = [quickPick.items[activeIndex]];
+      }
     } catch (error) {
       this.log.error(`Search Everywhere failed: ${String(error)}`);
     } finally {
@@ -188,6 +236,30 @@ export class SearchEverywhere implements vscode.Disposable {
         quickPick.busy = false;
       }
     }
+  }
+
+  /** Last row: include libraries and build output, when they are not already searched. */
+  private footer(raw: string): SearchItem[] {
+    if (this.includeNonProject || this.tab === 'actions' || raw.trim() === '') {
+      return [];
+    }
+    return [{ label: `$(library) ${t('Include non-project items')}`, description: t('compiled classes, libraries, build output'), run: () => this.setNonProject(true) }];
+  }
+
+  /** "More" row loading one more page of results. */
+  private moreItem(): SearchItem {
+    return {
+      label: `$(ellipsis) ${t('More')}`,
+      run: () => {
+        this.pages++;
+        this.scheduleUpdate(0);
+      },
+    };
+  }
+
+  /** Keeps `limit` items, adding a "More" row when there were more. */
+  private paged(items: SearchItem[], limit: number): SearchItem[] {
+    return items.length > limit ? [...items.slice(0, limit), this.moreItem()] : items;
   }
 
   /** Results without UI, with the configured "include non-project items" default. */
@@ -198,13 +270,14 @@ export class SearchEverywhere implements vscode.Disposable {
   }
 
   private async itemsFor(tab: TabId, raw: string, query: ParsedQuery, token: vscode.CancellationToken): Promise<SearchItem[]> {
+    const limit = LIMITS.tab * (this.pages + 1);
     switch (tab) {
       case 'files':
-        return this.fileItems(query, LIMITS.tab);
+        return this.paged(await this.fileItems(query, limit + 1), limit);
       case 'classes':
-        return this.symbolItems(query, true, LIMITS.tab);
+        return this.paged(await this.symbolItems(query, true, limit + 1), limit);
       case 'symbols':
-        return this.symbolItems(query, false, LIMITS.tab);
+        return this.paged(await this.symbolItems(query, false, limit + 1), limit);
       case 'actions':
         return this.actionItems(raw, LIMITS.tab);
       case 'text':
@@ -218,18 +291,21 @@ export class SearchEverywhere implements vscode.Disposable {
     if (raw.trim() === '') {
       return this.recentItems(query, 15);
     }
+    // Each "More" adds 10 rows to every section, like IntelliJ's "... more" in the All tab.
+    const limit = LIMITS.all + this.pages * 10;
     const [recent, classes, files, symbols] = await Promise.all([
-      this.recentItems(query, LIMITS.all),
-      this.symbolItems(query, true, LIMITS.all),
-      this.fileItems(query, LIMITS.all + 3),
-      this.symbolItems(query, false, LIMITS.all),
+      this.recentItems(query, limit),
+      this.symbolItems(query, true, limit + 1),
+      this.fileItems(query, 2 * limit + 4),
+      this.symbolItems(query, false, limit + 1),
     ]);
     const recentUris = new Set(recent.map((r) => r.description + r.label));
+    const shownClasses = classes.slice(0, limit);
     const sections: [string, SearchItem[]][] = [
       [t('Recent Files'), recent],
-      [t('Classes'), classes],
-      [t('Files'), files.filter((f) => !recentUris.has(f.description + f.label))],
-      [t('Symbols'), symbols.filter((s) => !classes.some((c) => c.label === s.label && c.description === s.description))],
+      [t('Classes'), this.paged(classes, limit)],
+      [t('Files'), this.paged(files.filter((f) => !recentUris.has(f.description + f.label)), limit + 3)],
+      [t('Symbols'), this.paged(symbols.filter((s) => !shownClasses.some((c) => c.label === s.label && c.description === s.description)), limit)],
       [t('Actions'), this.actionItems(raw, LIMITS.all)],
     ];
     return sections.flatMap(([label, items]) => (items.length === 0 ? [] : [{ label, kind: vscode.QuickPickItemKind.Separator }, ...items]));
@@ -336,19 +412,20 @@ export class SearchEverywhere implements vscode.Disposable {
       return [];
     }
     const folders = vscode.workspace.workspaceFolders?.map((f) => f.uri) ?? [];
+    const limit = LIMITS.text * (this.pages + 1);
     const matches = await searchText({
       query: raw,
       folders,
       excludeGlobs: excludedGlobs(this.includeNonProject),
       includeIgnored: this.includeNonProject,
-      maxResults: LIMITS.text,
+      maxResults: limit + 1,
       token,
     });
     if (matches === undefined) {
       return [{ label: t('Text search is not available in this VS Code build'), description: t('Open in Find Tool Window'), open: () => vscode.commands.executeCommand('workbench.action.findInFiles', { query: raw, triggerSearch: true }) }];
     }
     const multiRoot = folders.length > 1;
-    return matches.map((m) => {
+    const items = matches.map((m): SearchItem => {
       const name = m.uri.path.slice(m.uri.path.lastIndexOf('/') + 1);
       return {
         label: m.text.trim().slice(0, 150),
@@ -358,6 +435,7 @@ export class SearchEverywhere implements vscode.Disposable {
         open: (toSide) => openLocation(m.uri, toSide, new vscode.Position(m.line, m.character), m.length),
       };
     });
+    return this.paged(items, limit);
   }
 
   dispose(): void {
@@ -365,6 +443,18 @@ export class SearchEverywhere implements vscode.Disposable {
     this.cancellation?.dispose();
     clearTimeout(this.timer);
   }
+}
+
+/** Whether the items contain search results (not only actions, "More" or the popup's own rows). */
+function hasResults(items: readonly SearchItem[]): boolean {
+  let section = '';
+  return items.some((item) => {
+    if (item.kind === vscode.QuickPickItemKind.Separator) {
+      section = item.label;
+      return false;
+    }
+    return !item.run && section !== t('Actions') && !!item.open && item.label !== t('Text search is not available in this VS Code build');
+  });
 }
 
 /** Matches a multi-word action query ("reformat code") against an action's words. */

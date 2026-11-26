@@ -5,8 +5,14 @@ import { getSetting } from '../config/settings';
 const ALWAYS_EXCLUDED = ['**/.git/**'];
 
 /**
+ * Build output and dependencies, which IntelliJ marks as excluded or library folders: shown only
+ * with "Include non-project items" (otherwise `Montant.class` comes up next to `Montant.java`).
+ */
+export const NON_PROJECT_GLOBS = ['**/*.class', '**/*.jar', '**/*.war', '**/*.ear', '**/target/**', '**/build/**', '**/out/**', '**/dist/**', '**/node_modules/**', '**/.gradle/**', '**/.angular/**'];
+
+/**
  * Glob patterns excluded from Search Everywhere: `files.exclude`, `search.exclude` and
- * `unintellij.searchEverywhere.excludePatterns`; only `.git` when non-project items are included.
+ * `unintellij.searchEverywhere.excludePatterns` and build output; only `.git` when non-project items are included.
  */
 export function excludedGlobs(includeNonProjectItems: boolean): string[] {
   if (includeNonProjectItems) {
@@ -16,7 +22,7 @@ export function excludedGlobs(includeNonProjectItems: boolean): string[] {
     Object.entries(vscode.workspace.getConfiguration(section).get<Record<string, unknown>>('exclude') ?? {})
       .filter(([, value]) => value === true)
       .map(([glob]) => glob);
-  return [...new Set([...ALWAYS_EXCLUDED, ...enabled('files'), ...enabled('search'), ...getSetting('searchEverywhere.excludePatterns')])];
+  return [...new Set([...ALWAYS_EXCLUDED, ...NON_PROJECT_GLOBS, ...enabled('files'), ...enabled('search'), ...getSetting('searchEverywhere.excludePatterns')])];
 }
 
 export function toExcludeGlob(globs: readonly string[]): string | undefined {
