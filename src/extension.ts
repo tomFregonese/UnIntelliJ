@@ -9,6 +9,7 @@ import { detectIntegrations, formatIntegrations, IntegrationStatus } from './int
 import { syncDisabledActions } from './keymap/disabledActions';
 import { UserKeybindings } from './keymap/userKeybindings';
 import { IslandsPlus } from './islandsPlus/islandsPlus';
+import { ProjectWidget } from './project/projectWidget';
 import { registerNavigationCommands } from './navigation/commands';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
@@ -83,6 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     new StatusDetails(),
     ...registerDatabase(context),
     new ProjectView(context, vcs.service),
+    new ProjectWidget(),
     new MavenView(context.workspaceState),
   );
   const islandsPlus = IslandsPlus.create(context, log);

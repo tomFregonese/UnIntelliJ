@@ -22,7 +22,6 @@ const STARTUP_DELAY_MS = 20000;
  */
 export class IslandsPlus implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
-  private readonly projectItem: vscode.StatusBarItem;
   /** Present while UnIntelliJ runs: when it is disabled, the injected script turns Islands+ off. */
   private readonly aliveItem: vscode.StatusBarItem;
   private running: Promise<void> = Promise.resolve();
@@ -32,19 +31,12 @@ export class IslandsPlus implements vscode.Disposable {
     private readonly patcher: WorkbenchPatcher,
     private readonly log: vscode.LogOutputChannel,
   ) {
-    // IntelliJ's project widget, shown in the title bar by Islands+.
-    this.projectItem = vscode.window.createStatusBarItem('unintellij.project', vscode.StatusBarAlignment.Left, 105);
-    this.projectItem.name = t('Project');
-    this.projectItem.command = 'workbench.action.openRecent';
-    this.projectItem.tooltip = t('Recent Projects');
     this.aliveItem = vscode.window.createStatusBarItem(ALIVE_ITEM, vscode.StatusBarAlignment.Right, -100000);
     this.aliveItem.name = 'UnIntelliJ Islands+';
     this.aliveItem.text = 'UnIntelliJ';
     this.disposables.push(
       this.aliveItem,
-      this.projectItem,
       onSettingsChanged(['appearance.islandsPlus.enabled'], () => void this.reconcile(true)),
-      vscode.workspace.onDidChangeWorkspaceFolders(() => this.updateProjectItem()),
     );
   }
 
@@ -71,18 +63,7 @@ export class IslandsPlus implements vscode.Disposable {
     return this.running;
   }
 
-  private updateProjectItem(): void {
-    const name = vscode.workspace.name;
-    if (getSetting('appearance.islandsPlus.enabled') && name) {
-      this.projectItem.text = `$(folder) ${name.replace(/ \(Workspace\)$/, '')} $(chevron-down)`;
-      this.projectItem.show();
-    } else {
-      this.projectItem.hide();
-    }
-  }
-
   private async doReconcile(userInitiated: boolean): Promise<void> {
-    this.updateProjectItem();
     try {
       await this.reconcilePatch(userInitiated);
     } finally {

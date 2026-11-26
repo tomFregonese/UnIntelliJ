@@ -99,6 +99,22 @@
             "default": true,
             "markdownDescription": "%config.unintellij.appearance.islandsPlus.enabled.description%",
             "order": 6
+          },
+          "unintellij.appearance.openProjectIn": {
+            "type": "string",
+            "default": "newWindow",
+            "enum": [
+              "newWindow",
+              "currentWindow",
+              "ask"
+            ],
+            "enumDescriptions": [
+              "%config.unintellij.appearance.openProjectIn.enum.0%",
+              "%config.unintellij.appearance.openProjectIn.enum.1%",
+              "%config.unintellij.appearance.openProjectIn.enum.2%"
+            ],
+            "markdownDescription": "%config.unintellij.appearance.openProjectIn.description%",
+            "order": 7
           }
         }
       },
@@ -515,6 +531,11 @@
         "title": "%command.unintellij.project.selectOpenedFile%",
         "category": "%command.category%",
         "icon": "$(target)"
+      },
+      {
+        "command": "unintellij.project.switch",
+        "title": "%command.unintellij.project.switch%",
+        "category": "%command.category%"
       },
       {
         "command": "unintellij.project.refresh",

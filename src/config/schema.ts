@@ -21,6 +21,9 @@ export type UiLanguage = (typeof UI_LANGUAGES)[number];
 export const KEYMAP_LAYOUTS = ['auto', 'windows', 'macos'] as const;
 export type KeymapLayout = (typeof KEYMAP_LAYOUTS)[number];
 
+export const OPEN_PROJECT_IN = ['newWindow', 'currentWindow', 'ask'] as const;
+export type OpenProjectIn = (typeof OPEN_PROJECT_IN)[number];
+
 export const UPDATE_METHODS = ['merge', 'rebase'] as const;
 export type UpdateMethod = (typeof UPDATE_METHODS)[number];
 
@@ -32,6 +35,7 @@ export interface Settings {
   'appearance.preferredDarkTheme': ThemeId;
   'appearance.preferredLightTheme': ThemeId;
   'appearance.islandsPlus.enabled': boolean;
+  'appearance.openProjectIn': OpenProjectIn;
   'keymap.layout': KeymapLayout;
   'keymap.disabledActions': string[];
   'keymap.customShortcuts': Record<string, string>;
@@ -128,6 +132,17 @@ export const SETTINGS: { [K in SettingKey]: SettingDefinition<Settings[K]> } = {
       { value: 'macos', label: 'IntelliJ "macOS" default keymap' },
     ],
     markdownDescription: 'Which IntelliJ default keymap to emulate.',
+  },
+  'appearance.openProjectIn': {
+    section: 'appearance',
+    type: 'string',
+    default: 'newWindow',
+    enum: [
+      { value: 'newWindow', label: 'In a new window (a project already open in a window: that window comes to the front)' },
+      { value: 'currentWindow', label: 'In the current window, replacing the open project' },
+      { value: 'ask', label: 'Ask each time' },
+    ],
+    markdownDescription: "Where projects chosen in the project widget (the project name next to the branch) open, like IntelliJ's **Open project in** setting.",
   },
   'keymap.disabledActions': {
     section: 'keymap',

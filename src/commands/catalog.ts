@@ -73,6 +73,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   // Project tool window
   { command: 'unintellij.project.selectMode', title: 'Change Project View…', icon: '$(chevron-down)' },
   { command: 'unintellij.project.selectOpenedFile', title: 'Select Opened File', icon: '$(target)' },
+  { command: 'unintellij.project.switch', title: 'Recent Projects…' },
   { command: 'unintellij.project.refresh', title: 'Reload from Disk', icon: '$(refresh)', hidden: true },
   { command: 'unintellij.project.newFile', title: 'New File…', hidden: true },
   { command: 'unintellij.project.newFolder', title: 'New Directory…', hidden: true },

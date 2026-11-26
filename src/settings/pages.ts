@@ -81,6 +81,7 @@ export const PAGES: readonly Page[] = [
         ],
       },
       { type: 'checkbox', key: 'window.confirmBeforeClose', label: 'Confirm before exiting the IDE' },
+      selectFromSchema('unintellij.appearance.openProjectIn', 'Open project in'),
     ],
   },
   { id: 'keymap', title: 'Keymap', custom: 'keymap', keywords: 'shortcut keyboard binding', fields: [selectFromSchema('unintellij.keymap.layout', 'Keymap')] },

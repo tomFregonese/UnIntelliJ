@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 
 /** Bump when the injected block or assets change, so existing patches are refreshed. */
-export const PATCH_VERSION = 2;
+export const PATCH_VERSION = 3;
 export const ASSET_CSS = 'unintellij-islands.css';
 export const ASSET_JS = 'unintellij-islands.js';
 const START = '<!-- UNINTELLIJ-ISLANDS-START';

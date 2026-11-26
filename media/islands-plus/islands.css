@@ -78,10 +78,18 @@
   gap: 2px;
   height: 100%;
   -webkit-app-region: no-drag;
+  /* Above VS Code's absolutely positioned drag region, which would otherwise take the clicks. */
+  position: relative;
+  z-index: 1;
 }
 
 .unintellij-titlebar-widgets.left {
   margin-left: 8px;
+}
+
+/* macOS draws the window buttons over the top-left corner, except in full screen. */
+.monaco-workbench.mac:not(.fullscreen) .unintellij-titlebar-widgets.left {
+  margin-left: 78px;
 }
 
 .unintellij-titlebar-widgets.right {
