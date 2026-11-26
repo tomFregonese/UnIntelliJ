@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.2
 
 - Search Everywhere finds Java methods (with their class; opening goes to the declaration): `java.symbols.includeSourceMethodDeclarations` is on by default.
 - Java language server state: Search Everywhere says when Java support is missing, still loading or in Lightweight mode (where classes and methods are not indexed and Ctrl+click does not reach other classes), with the fix one click away; a notification says so once if Java stays in Lightweight mode.
