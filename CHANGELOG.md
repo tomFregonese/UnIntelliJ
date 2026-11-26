@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.1
 
-- Git branches popup: opens even when a branch points to a commit missing from the repository (incomplete copy of a project); such branches are left out, with a warning saying how to repair them.
+- Git branches popup: opens even when a branch points to a commit missing from the repository (incomplete copy of a project); such branches are left out, with a warning naming them.
 
 ## 0.5.0
 
