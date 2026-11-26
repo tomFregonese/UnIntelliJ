@@ -2781,7 +2781,7 @@
       "editor.stickyScroll.enabled": true,
       "editor.linkedEditing": true,
       "workbench.editor.enablePreview": false,
-      "workbench.startupEditor": "none",
+      "workbench.startupEditor": "welcomePageInEmptyWorkbench",
       "files.autoSave": "afterDelay",
       "files.autoSaveDelay": 100,
       "problems.decorations.enabled": false,

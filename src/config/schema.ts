@@ -280,7 +280,7 @@ export const INTELLIJ_DEFAULTS: readonly { key: string; value: unknown; reason: 
   { key: 'editor.stickyScroll.enabled', value: true, reason: 'Sticky lines' },
   { key: 'editor.linkedEditing', value: true, reason: 'Paired tags renamed together' },
   { key: 'workbench.editor.enablePreview', value: false, reason: 'No preview tabs' },
-  { key: 'workbench.startupEditor', value: 'none', reason: 'Open the project, no welcome page' },
+  { key: 'workbench.startupEditor', value: 'welcomePageInEmptyWorkbench', reason: 'Empty window: Welcome page with recent projects; in a project: no welcome page, only the shortcut hints' },
   { key: 'files.autoSave', value: 'afterDelay', reason: 'IntelliJ saves continuously, no Save needed' },
   { key: 'files.autoSaveDelay', value: 100, reason: 'Save almost immediately while typing' },
   { key: 'problems.decorations.enabled', value: false, reason: 'File names keep their VCS color (blue = modified) instead of turning red on errors' },

@@ -4,6 +4,7 @@
 
 - Database: checking or unchecking a database or schema applies at once, no OK needed (click outside to close).
 - Database: double-click a table to open its data in an editor tab, like IntelliJ's table editor; the inline Open Table Data button is gone (still in the right-click menu).
+- Empty window: VS Code's Welcome page with recent projects is back; inside a project, no welcome page, only the shortcut hints.
 
 ## 0.4.0
 
