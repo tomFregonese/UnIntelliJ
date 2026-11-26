@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.1
 
 - Database: checking or unchecking a database or schema applies at once, no OK needed (click outside to close).
 - Database: double-click a table to open its data in an editor tab, like IntelliJ's table editor; the inline Open Table Data button is gone (still in the right-click menu).
