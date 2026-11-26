@@ -81,6 +81,9 @@ export interface Repository {
 export interface GitApi {
   readonly git: { readonly path: string };
   readonly repositories: Repository[];
+  /** `initialized` once the Git extension has scanned the workspace for repositories. */
+  readonly state: 'uninitialized' | 'initialized';
+  readonly onDidChangeState: vscode.Event<'uninitialized' | 'initialized'>;
   readonly onDidOpenRepository: vscode.Event<Repository>;
   readonly onDidCloseRepository: vscode.Event<Repository>;
   toGitUri(uri: vscode.Uri, ref: string): vscode.Uri;
@@ -88,14 +91,25 @@ export interface GitApi {
   openRepository?(root: vscode.Uri): Promise<Repository | null>;
 }
 
-/** The Git API, or undefined when the built-in Git extension is disabled. */
-export async function getGitApi(): Promise<GitApi | undefined> {
-  const extension = vscode.extensions.getExtension<{ getAPI(version: 1): GitApi; enabled: boolean }>('vscode.git');
+/**
+ * The Git API, or undefined when the built-in Git extension is missing or disabled. `onEnabled` is
+ * called if a disabled Git extension gets enabled later (`git.enabled` turned on).
+ */
+export async function getGitApi(onEnabled?: () => void): Promise<GitApi | undefined> {
+  const extension = vscode.extensions.getExtension<{ getAPI(version: 1): GitApi; enabled: boolean; onDidChangeEnablement: vscode.Event<boolean> }>('vscode.git');
   if (!extension) {
     return undefined;
   }
   const exports = extension.isActive ? extension.exports : await extension.activate();
   if (!exports.enabled) {
+    if (onEnabled) {
+      const listener = exports.onDidChangeEnablement((enabled) => {
+        if (enabled) {
+          listener.dispose();
+          onEnabled();
+        }
+      });
+    }
     return undefined;
   }
   return exports.getAPI(1);

@@ -29,13 +29,24 @@ export class BranchWidget implements vscode.Disposable {
       this.item,
       vcs.onDidChange(() => this.update()),
       vscode.workspace.onDidChangeWorkspaceFolders(() => this.update()),
+      // Safety net: the Commit and Git Log views read the repository state when shown; the widget
+      // must not stay on an old state if an event was missed.
+      vscode.window.onDidChangeWindowState((state) => state.focused && this.update()),
       vscode.commands.registerCommand('unintellij.vcs.noRepository', () => this.noRepository()),
       onSettingsChanged(['vcs.backgroundFetchMinutes'], () => this.schedule()),
       vscode.workspace.onDidChangeConfiguration((e) => e.affectsConfiguration('git.autofetch') && this.schedule()),
     );
     this.update();
+    void vcs.ready.then(() => this.update());
+    // Retries while the repositories load after startup.
+    for (const delay of [2000, 5000, 15000]) {
+      const timer = setTimeout(() => this.update(), delay);
+      this.disposables.push({ dispose: () => clearTimeout(timer) });
+    }
     this.schedule();
   }
+
+  private lastLogged: string | undefined;
 
   private update(): void {
     const head = this.vcs.repository?.state.HEAD;
@@ -44,6 +55,11 @@ export class BranchWidget implements vscode.Disposable {
       if (!vscode.workspace.workspaceFolders?.length) {
         this.item.hide();
         return;
+      }
+      const state = this.vcs.describe();
+      if (state !== this.lastLogged) {
+        this.lastLogged = state;
+        this.log.info(`Branch widget: no branch to show. ${state}`);
       }
       this.item.text = `$(git-branch) ${t('Version Control')}`;
       this.item.tooltip = this.vcs.available ? t('No Git repository found in this project. Click to open or create one.') : t('Git is not available (Git extension disabled or Git not installed).');

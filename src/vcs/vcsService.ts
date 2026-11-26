@@ -45,7 +45,7 @@ export class VcsService implements vscode.Disposable {
   }
 
   private async initialize(): Promise<void> {
-    this.api = await getGitApi();
+    this.api = await getGitApi(() => void this.initialize());
     if (!this.api) {
       return;
     }
@@ -54,7 +54,7 @@ export class VcsService implements vscode.Disposable {
       this.repositoryListeners = this.api!.repositories.map((r) => r.state.onDidChange(() => this.onRepositoryChange()));
       this.onRepositoryChange();
     };
-    this.disposables.push(this.api.onDidOpenRepository(listen), this.api.onDidCloseRepository(listen), vscode.window.onDidChangeActiveTextEditor(() => this.changed.fire()));
+    this.disposables.push(this.api.onDidOpenRepository(listen), this.api.onDidCloseRepository(listen), this.api.onDidChangeState(listen), vscode.window.onDidChangeActiveTextEditor(() => this.changed.fire()));
     listen();
   }
 
@@ -66,13 +66,22 @@ export class VcsService implements vscode.Disposable {
     return this.api;
   }
 
-  /** Repository of the active file, else the first one. */
+  /** Repository of the active file, else the first one with a branch loaded, else the first one. */
   get repository(): Repository | undefined {
     if (!this.api || this.api.repositories.length === 0) {
       return undefined;
     }
     const active = vscode.window.activeTextEditor?.document.uri;
-    return (active && this.api.getRepository(active)) || this.api.repositories[0];
+    return (active && this.api.getRepository(active)) || this.api.repositories.find((r) => r.state.HEAD) || this.api.repositories[0];
+  }
+
+  /** What the Git extension reports, for the log when no branch can be shown. */
+  describe(): string {
+    if (!this.api) {
+      return 'Git extension not available';
+    }
+    const repositories = this.api.repositories.map((r) => `${r.rootUri.fsPath} (HEAD ${r.state.HEAD ? (r.state.HEAD.name ?? r.state.HEAD.commit ?? '?') : 'not loaded'})`);
+    return `Git API state ${this.api.state}, ${repositories.length} repositories${repositories.length ? `: ${repositories.join(', ')}` : ''}`;
   }
 
   /** All changed files of the current repository, one entry per file. */
