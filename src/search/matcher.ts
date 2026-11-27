@@ -4,6 +4,8 @@
  * - Characters must appear in order (`usrsvc` matches `UserService`).
  * - Upper-case pattern letters and letters after separators anchor on word starts ("camel humps":
  *   `USvc` matches `UserService`, `u-c` matches `user-card.component.ts`).
+ * - A space stands for a separator: the next letter starts a word (`historique component` matches
+ *   `historique.component.ts`, IntelliJ).
  * - Exact, prefix and contiguous matches rank higher; shorter names rank higher on ties.
  * - `dir/name` patterns also match the parent path; a trailing `:line[:column]` is a position.
  */
@@ -60,7 +62,9 @@ export function parseQuery(raw: string): ParsedQuery {
  * Matches `pattern` against `candidate`, or returns undefined.
  * Upper-case letters in the pattern must land on word starts; lower-case letters may match anywhere.
  */
-export function matchName(pattern: string, candidate: string): Match | undefined {
+export function matchName(typed: string, candidate: string): Match | undefined {
+  // `a b` → `aB`: the letter after a space must start a word.
+  const pattern = typed.trim().replace(/\s+(\S)/g, (_, c: string) => c.toUpperCase());
   if (pattern.length === 0) {
     return { score: 0, positions: [] };
   }

@@ -26,6 +26,14 @@ describe('matchName', () => {
     expect(matchName('uc', 'user-card.component.ts')).toBeDefined();
   });
 
+  it('reads a space as a separator: the next letter starts a word', () => {
+    expect(matchName('historique component', 'historique.component.ts')?.positions).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+    expect(matchName('hist comp', 'historique.component.html')).toBeDefined();
+    expect(matchName('user  card', 'user-card.component.ts')).toBeDefined();
+    expect(matchName('histo ponent', 'historique.component.ts')).toBeUndefined();
+    expect(matchFile(parseQuery('historique component'), 'historique.component.ts', 'src/app')).toBeDefined();
+  });
+
   it('requires upper-case pattern letters on word starts', () => {
     expect(matchName('uS', 'userservice')).toBeUndefined();
     expect(matchName('uS', 'userService')).toBeDefined();
