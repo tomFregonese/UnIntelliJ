@@ -3,7 +3,8 @@ import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { INTEGRATIONS } from '../integrations';
-import { findWrapper, wrapperCommand } from '../maven/wrapper';
+import { findWrapper } from '../maven/wrapper';
+import { mavenExecution } from './shell';
 import { EclipseLaunch, eclipseProjectName, junitMavenArgs, m2eArgs, parseLaunch, resolveVariables, vmArgsWithProfile } from './eclipseLaunch';
 import { detectPackageManager, PackageManager, scriptCommandLine } from './packageManager';
 import { MavenRunData, NpmConfigData, npmCommandLine, parseEnv } from './runConfigLogic';
@@ -173,8 +174,9 @@ async function javaProjectOf(mainClass: string): Promise<string | undefined> {
   }
 }
 
-function mavenTask(name: string, folder: vscode.WorkspaceFolder | undefined, cwd: string, executable: string, args: string[]): Thenable<vscode.TaskExecution> {
-  const task = new vscode.Task({ type: 'unintellij-maven', args, cwd }, folder ?? vscode.TaskScope.Workspace, name, 'maven', new vscode.ShellExecution(executable, args, { cwd }));
+/** Runs Maven in `cwd` (where the wrapper is), written for the shell of the user's terminal profile. */
+function mavenTask(name: string, folder: vscode.WorkspaceFolder | undefined, cwd: string, args: string[]): Thenable<vscode.TaskExecution> {
+  const task = new vscode.Task({ type: 'unintellij-maven', args, cwd }, folder ?? vscode.TaskScope.Workspace, name, 'maven', mavenExecution(cwd, args));
   task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Dedicated, clear: true };
   return vscode.tasks.executeTask(task);
 }
@@ -244,7 +246,7 @@ async function startEclipse(configuration: Extract<RunConfiguration, { kind: 'ec
       const pom = path.relative(wrapper.cwd, path.join(base, 'pom.xml')).split(path.sep).join('/');
       const args = [...(launch.kind === 'maven' ? m2eArgs(launch) : junitMavenArgs(launch)), ...(pom !== 'pom.xml' ? ['-f', pom] : [])];
       warn();
-      return mavenTask(launch.name, folder, wrapper.cwd, wrapperCommand(wrapper.wrapper), args);
+      return mavenTask(launch.name, folder, wrapper.cwd, args);
     }
     default:
       void vscode.window.showWarningMessage(t('{0}: this Eclipse launch type is not supported ({1}).', launch.name, launch.type));
@@ -260,7 +262,7 @@ export async function startConfiguration(configuration: RunConfiguration, debug:
   }
   if (configuration.kind === 'maven') {
     // Debugging a Maven goal needs the Java debugger: goals run the same way in both cases.
-    return mavenTask(configuration.name, configuration.folder, configuration.cwd, configuration.executable, configuration.args);
+    return mavenTask(configuration.name, configuration.folder, configuration.cwd, configuration.args);
   }
   if (configuration.kind === 'eclipse') {
     return startEclipse(configuration, debug);

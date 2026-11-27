@@ -162,8 +162,7 @@ export function jsTestCommand(runner: JsRunner, relativeFile: string, names?: re
   }
 }
 
-/** Maven command for a test class or method, using the wrapper when present. */
-export function mavenTestCommand(wrapper: boolean, windows: boolean, className: string, method?: string): string {
-  const mvn = wrapper ? (windows ? '.\\mvnw.cmd' : './mvnw') : 'mvn';
-  return `${mvn} -q test -Dtest=${className}${method ? `#${method}` : ''} -Dsurefire.failIfNoSpecifiedTests=false`;
+/** Maven arguments running a test class or method. */
+export function mavenTestArgs(className: string, method?: string): string[] {
+  return ['-q', 'test', `-Dtest=${className}${method ? `#${method}` : ''}`, '-Dsurefire.failIfNoSpecifiedTests=false'];
 }

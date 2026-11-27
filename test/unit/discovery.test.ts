@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectJsRunner, javaRunnables, jsTestCommand, jsTests, mavenTestCommand, packageScripts } from '../../src/testing/discovery';
+import { detectJsRunner, javaRunnables, jsTestCommand, jsTests, mavenTestArgs, packageScripts } from '../../src/testing/discovery';
 
 describe('gutter discovery', () => {
   it('finds package.json scripts with their lines', () => {
@@ -63,6 +63,6 @@ describe('gutter discovery', () => {
     expect(jsTestCommand('vitest', 'src/a.spec.ts', ['A', 'b.c'])).toBe('npx vitest run "src/a.spec.ts" -t "^A > b\\\\.c"');
     expect(jsTestCommand('jest', 'src/a.spec.ts', ['A', 'b'])).toBe('npx jest "src/a.spec.ts" -t "^A b"');
     expect(jsTestCommand('karma', 'src/a.spec.ts', ['A'])).toBe('npx ng test --watch=false --include "src/a.spec.ts"');
-    expect(mavenTestCommand(true, false, 'com.acme.T', 'm')).toBe('./mvnw -q test -Dtest=com.acme.T#m -Dsurefire.failIfNoSpecifiedTests=false');
+    expect(mavenTestArgs('com.acme.T', 'm')).toEqual(['-q', 'test', '-Dtest=com.acme.T#m', '-Dsurefire.failIfNoSpecifiedTests=false']);
   });
 });

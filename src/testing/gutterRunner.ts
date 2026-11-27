@@ -2,7 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { findPackageScripts, startConfiguration } from '../run/configurations';
-import { detectJsRunner, javaRunnables, jsTestCommand, jsTests, mavenTestCommand, packageScripts, Runnable } from './discovery';
+import { mavenExecution } from '../run/shell';
+import { detectJsRunner, javaRunnables, jsTestCommand, jsTests, mavenTestArgs, packageScripts, Runnable } from './discovery';
 import { t } from '../i18n/i18n';
 
 /** What a gutter item runs. */
@@ -28,9 +29,11 @@ function findUp(file: vscode.Uri, marker: string): string | undefined {
   return undefined;
 }
 
-/** Runs a shell command as a task in the Run panel; resolves with its exit code. */
-function runTask(name: string, cwd: string, command: string, folder: vscode.WorkspaceFolder | undefined): Promise<number | undefined> {
-  const task = new vscode.Task({ type: 'unintellij-run', command }, folder ?? vscode.TaskScope.Workspace, name, t('UnIntelliJ'), new vscode.ShellExecution(command, { cwd }));
+/** Runs a shell command (or a prepared execution) as a task in the Run panel; resolves with its exit code. */
+function runTask(name: string, cwd: string, command: string | vscode.ShellExecution, folder: vscode.WorkspaceFolder | undefined): Promise<number | undefined> {
+  const execution = typeof command === 'string' ? new vscode.ShellExecution(command, { cwd }) : command;
+  const definition = { type: 'unintellij-run', command: typeof command === 'string' ? command : name };
+  const task = new vscode.Task(definition, folder ?? vscode.TaskScope.Workspace, name, t('UnIntelliJ'), execution);
   task.presentationOptions = { reveal: vscode.TaskRevealKind.Always, panel: vscode.TaskPanelKind.Dedicated, clear: true };
   return new Promise((resolve, reject) => {
     vscode.tasks.executeTask(task).then((execution) => {
@@ -187,7 +190,7 @@ export class GutterRunner implements vscode.Disposable {
         }
         const leaves = [...leavesOf(item)];
         leaves.forEach((l) => run.started(l));
-        const command = mavenTestCommand(existsSync(path.join(dir, 'mvnw')), process.platform === 'win32', action.className, action.method);
+        const command = mavenExecution(dir, mavenTestArgs(action.className, action.method));
         const code = await runTask(action.method ? `${action.className.split('.').pop()}.${action.method}` : action.className, dir, command, folder);
         leaves.forEach((l) => (code === 0 ? run.passed(l) : run.failed(l, new vscode.TestMessage(t('Maven exited with code {0}. See the Run panel for details.', code)))));
         return;
@@ -199,8 +202,7 @@ export class GutterRunner implements vscode.Disposable {
         }
         const dir = findUp(action.file, 'pom.xml');
         if (action.springBoot && dir) {
-          const mvn = existsSync(path.join(dir, 'mvnw')) ? (process.platform === 'win32' ? '.\\mvnw.cmd' : './mvnw') : 'mvn';
-          void runTask(action.className.split('.').pop()!, dir, `${mvn} spring-boot:run`, folder);
+          void runTask(action.className.split('.').pop()!, dir, mavenExecution(dir, ['spring-boot:run']), folder);
           return;
         }
         throw new Error(t('Running Java applications needs "Language Support for Java" and "Debugger for Java".'));
