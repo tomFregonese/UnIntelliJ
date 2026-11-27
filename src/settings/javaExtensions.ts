@@ -11,7 +11,7 @@ const asked = new Set<string>();
 const CHOICES = [
   { id: INTEGRATIONS.java.extensionId, label: 'Language Support for Java (Red Hat)', detail: 'Completion, navigation, errors, refactorings: the Java engine.', picked: true },
   { id: INTEGRATIONS.javaDebug.extensionId, label: 'Debugger for Java (Microsoft)', detail: 'Run and debug Java applications and Eclipse launch configurations.', picked: true },
-  { id: INTEGRATIONS.springBoot.extensionId, label: 'Spring Boot Tools (Spring)', detail: 'Optional: application.properties completion, beans and endpoints.', picked: false },
+  { id: INTEGRATIONS.springBoot.extensionId, label: 'Spring Boot Tools (Spring)', detail: 'Optional: beans, endpoints, validation of application.properties (UnIntelliJ already completes it).', picked: false },
 ];
 
 /**

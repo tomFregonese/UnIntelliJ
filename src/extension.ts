@@ -10,6 +10,7 @@ import { syncDisabledActions } from './keymap/disabledActions';
 import { UserKeybindings } from './keymap/userKeybindings';
 import { IslandsPlus } from './islandsPlus/islandsPlus';
 import { ProjectWidget } from './project/projectWidget';
+import { SpringProperties } from './spring/springProperties';
 import { registerNavigationCommands } from './navigation/commands';
 import { JavaServer } from './settings/javaServer';
 import type { TabId } from './search/searchEverywhere';
@@ -102,6 +103,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
     new ProjectView(context, vcs.service),
     new ProjectWidget(),
     new MavenView(context.workspaceState),
+    new SpringProperties(log),
   );
   const islandsPlus = IslandsPlus.create(context, log);
   context.subscriptions.push(islandsPlus);

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Spring Boot `application.properties` / `application.yml` without Spring Boot Tools (whose VMware publisher some companies block): completion of keys (nested keys in YAML) and of their values, documentation on hover, Ctrl+click to the field of the `@ConfigurationProperties` class. Keys come from the Spring metadata of the project's classpath (given by Language Support for Java); turned off when Spring Boot Tools is installed.
 - Publisher is now **TomFregonese**: the extension id becomes `TomFregonese.UnIntelliJ`. On first start it uninstalls the old `unintellij.unintellij` copy and asks to reload. Settings and keybindings are kept; database connections, saved passwords and "Don't Ask Again" choices belonged to the old id and must be set again; Islands+ must be enabled again.
 - Java extensions installer: an extension that fails to install no longer stops the others; VS Code's reason is shown, with **Download .vsix** (Open VSX page) and **Install from VSIX…** to install it by hand.
 - Windows keymap: Ctrl+W closes the tab everywhere, code editors included (it was IntelliJ's Extend Selection there). Extend / Shrink Selection move to Shift+Alt+→ / ← (VS Code's own shortcuts, so Ctrl+Shift+W closes the window again); Ctrl+F4 still closes the tab.
