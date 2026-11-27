@@ -3,8 +3,9 @@ import * as vscode from 'vscode';
 import { language, t } from '../i18n/i18n';
 import { Connections, QueryResult } from './connections';
 import { COLOR_VALUES, DataSource } from './dataSourceLogic';
-import type { FromResultsWebview, ResultTab, ToResultsWebview } from './resultsProtocol';
+import type { FromResultsWebview, ResultTab, RowChange, ToResultsWebview } from './resultsProtocol';
 import { formatValue, quoteIdent, toCsv } from './sqlLogic';
+import { changeStatements, ColumnRow, COLUMNS_SQL, TableInfo, tableInfo } from './tableEdit';
 
 /** Rows shown in a grid (IntelliJ also fetches the first 500 rows). */
 export const MAX_ROWS = 500;
@@ -19,6 +20,10 @@ interface TabState {
   table?: { schema: string; name: string };
   /** Table data opened in the editor area (IntelliJ's table editor), instead of a results tab. */
   panel?: vscode.WebviewPanel;
+  /** Table editor: columns and how rows are identified. */
+  info?: TableInfo;
+  /** Table editor without primary key: ctid of each shown row. */
+  ctids: string[];
 }
 
 /** Bottom panel with one tab per executed query, like IntelliJ's Services › Database results; table data opens as editor tabs. */
@@ -97,6 +102,12 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
     state.panel = panel;
     state.table = { schema, name };
     state.tab.table = { where: '', orderBy: '', page: 0, pageSize: MAX_ROWS };
+    try {
+      await this.loadColumns(state);
+    } catch (error) {
+      state.tab.edit = undefined;
+      state.tab.notices.push(t('Editing is off: the columns of {0} could not be read ({1}).', name, error instanceof Error ? error.message : String(error)));
+    }
     state.tab.sql = this.tableSql(state);
     this.tables.set(key, state);
     panel.webview.html = this.html(panel.webview);
@@ -105,10 +116,22 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
     await this.execute(state).catch(() => undefined);
   }
 
+  /** Column types, keys and editability of a table editor (IntelliJ reads them from its introspection). */
+  private async loadColumns(state: TabState): Promise<void> {
+    const result = await this.connections.query(state.source, COLUMNS_SQL, undefined, [state.table!.schema, state.table!.name]);
+    const rows = result.rows.map((r) => Object.fromEntries(result.columns.map((c, i) => [c, r[i]])) as unknown as ColumnRow);
+    const info = tableInfo(rows);
+    state.info = info;
+    const reason = state.source.readOnly ? t('The data source is read-only.') : info.readOnlyReason === 'view' ? t('Views cannot be edited.') : undefined;
+    state.tab.edit = { columns: info.columns, readOnlyReason: reason, version: 0, submitting: false };
+  }
+
   private tableSql(state: TabState): string {
     const table = state.tab.table!;
     const name = `${quoteIdent(state.table!.schema)}.${quoteIdent(state.table!.name)}`;
-    return `SELECT * FROM ${name}${table.where.trim() ? ` WHERE ${table.where}` : ''}${table.orderBy.trim() ? ` ORDER BY ${table.orderBy}` : ''} LIMIT ${table.pageSize + 1} OFFSET ${table.page * table.pageSize}`;
+    // Tables without a primary key: rows are found again by their physical address.
+    const ctid = state.info?.identity === 'ctid' && !state.tab.edit?.readOnlyReason ? 'ctid, ' : '';
+    return `SELECT ${ctid}* FROM ${name}${table.where.trim() ? ` WHERE ${table.where}` : ''}${table.orderBy.trim() ? ` ORDER BY ${table.orderBy}` : ''} LIMIT ${table.pageSize + 1} OFFSET ${table.page * table.pageSize}`;
   }
 
   private newTab(source: DataSource, sql: string, schema: string | undefined, title: string): TabState {
@@ -128,6 +151,7 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
       source,
       schema,
       raw: [],
+      ctids: [],
       tab: {
         id,
         title,
@@ -155,11 +179,18 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
       void this.reveal();
     }
     try {
-      const result = await this.connections.query(state.source, tab.sql, state.schema);
+      // Table editors read PostgreSQL's own text of each value: shown and written back unchanged.
+      const result = await this.connections.query(state.source, tab.sql, state.schema, undefined, Boolean(state.table));
       const limit = tab.table ? tab.table.pageSize : MAX_ROWS;
-      state.raw = result.rows.slice(0, limit);
-      tab.columns = result.columns;
-      tab.rows = state.raw.map((r) => r.map(formatValue));
+      const withCtid = Boolean(state.table) && tab.sql.startsWith('SELECT ctid, ');
+      const rows = result.rows.slice(0, limit);
+      state.ctids = withCtid ? rows.map((r) => String(r[0])) : [];
+      state.raw = withCtid ? rows.map((r) => r.slice(1)) : rows;
+      tab.columns = withCtid ? result.columns.slice(1) : result.columns;
+      tab.rows = state.raw.map((r) => r.map((v) => (v === null || v === undefined ? null : formatValue(v))));
+      if (tab.edit) {
+        tab.edit = { ...tab.edit, version: tab.edit.version + 1, submitError: undefined };
+      }
       tab.truncated = result.rows.length > limit;
       tab.rowCount = result.rowCount;
       tab.command = result.command;
@@ -214,12 +245,12 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
       case 'copy':
         if (state) {
           // Tab-separated, pasteable in a spreadsheet like IntelliJ's "Copy" of a selection.
-          await vscode.env.clipboard.writeText([state.tab.columns.join('\t'), ...state.tab.rows.map((r) => r.join('\t'))].join('\n'));
+          await vscode.env.clipboard.writeText([state.tab.columns.join('\t'), ...state.tab.rows.map((r) => r.map((v) => v ?? 'null').join('\t'))].join('\n'));
           vscode.window.setStatusBarMessage(t('{0} rows copied', state.tab.rows.length), 2000);
         }
         break;
       case 'rerun':
-        if (state) {
+        if (state && (await this.discardPending(message.pending))) {
           await this.execute(state).catch(() => undefined);
         }
         break;
@@ -229,12 +260,48 @@ export class ResultsView implements vscode.WebviewViewProvider, vscode.Disposabl
         }
         break;
       case 'table':
-        if (state?.tab.table) {
+        if (state?.tab.table && !(await this.discardPending(message.pending))) {
+          this.post(state); // Puts the filters and page back.
+        } else if (state?.tab.table) {
           state.tab.table = { ...state.tab.table, where: message.where, orderBy: message.orderBy, page: Math.max(0, message.page) };
           state.tab.sql = this.tableSql(state);
           await this.execute(state).catch(() => undefined);
         }
         break;
+      case 'submit':
+        if (state) {
+          await this.submit(state, message.changes);
+        }
+        break;
+    }
+  }
+
+  /** Reloading drops pending changes: asks first, like IntelliJ. */
+  private async discardPending(pending = 0): Promise<boolean> {
+    if (pending === 0) {
+      return true;
+    }
+    const discard = t('Discard');
+    return (await vscode.window.showWarningMessage(t('{0} pending changes have not been submitted. Discard them?', pending), { modal: true }, discard)) === discard;
+  }
+
+  /** Writes the table editor's pending changes in one transaction, then reloads the page. */
+  private async submit(state: TabState, changes: readonly RowChange[]): Promise<void> {
+    const edit = state.tab.edit;
+    if (!edit || !state.info || !state.table || edit.readOnlyReason) {
+      return;
+    }
+    state.tab.edit = { ...edit, submitting: true, submitError: undefined };
+    this.post(state);
+    try {
+      const statements = changeStatements(state.table.schema, state.table.name, state.info, state.tab.rows, state.ctids, changes);
+      const changed = await this.connections.transaction(state.source, statements);
+      vscode.window.setStatusBarMessage(t('{0} rows changed in {1}', changed, state.table.name), 4000);
+      state.tab.edit = { ...state.tab.edit!, submitting: false };
+      await this.execute(state).catch(() => undefined);
+    } catch (error) {
+      state.tab.edit = { ...state.tab.edit!, submitting: false, submitError: error instanceof Error ? error.message : String(error) };
+      this.post(state);
     }
   }
 

@@ -4,6 +4,8 @@
  */
 import type { FromResultsWebview, ResultsModel, ResultTab, ToResultsWebview } from '../database/resultsProtocol';
 import { setLanguage, t, type Language } from '../i18n/i18n';
+import { h } from './results/dom';
+import { afterRender, grid, onKey, pendingBar, pendingCount, toolbarItems } from './results/tableEditor';
 
 setLanguage((document.body.dataset.lang as Language | undefined) ?? 'en');
 
@@ -12,32 +14,6 @@ const vscode = acquireVsCodeApi();
 
 let model: ResultsModel = { tabs: [] };
 let active: string | undefined;
-
-type Child = Node | string | false | null | undefined;
-function h<K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, unknown> = {}, ...children: Child[]): HTMLElementTagNameMap[K] {
-  const el = document.createElement(tag);
-  for (const [name, value] of Object.entries(props)) {
-    if (name.startsWith('on') && typeof value === 'function') {
-      el.addEventListener(name.slice(2).toLowerCase(), value as EventListener);
-    } else if (name === 'className') {
-      el.className = String(value);
-    } else if (name === 'value') {
-      (el as HTMLInputElement).value = String(value);
-    } else if (typeof value === 'boolean') {
-      if (value) {
-        el.setAttribute(name, '');
-      }
-    } else if (value !== undefined && value !== null) {
-      el.setAttribute(name, String(value));
-    }
-  }
-  for (const child of children) {
-    if (child !== false && child !== null && child !== undefined) {
-      el.append(child);
-    }
-  }
-  return el;
-}
 
 const tool = (icon: string, title: string, onClick: () => void, disabled = false): HTMLElement =>
   h('button', { className: 'tool', title, disabled, onClick }, h('span', { className: `icon icon-${icon}` }));
@@ -61,7 +37,7 @@ function renderTableFilters(tab: ResultTab): HTMLElement {
   const table = tab.table!;
   const where = h('input', { type: 'text', className: 'filter', value: table.where, placeholder: 'WHERE' });
   const orderBy = h('input', { type: 'text', className: 'filter', value: table.orderBy, placeholder: 'ORDER BY' });
-  const apply = (page: number) => vscode.postMessage({ type: 'table', id: tab.id, where: where.value, orderBy: orderBy.value, page });
+  const apply = (page: number) => vscode.postMessage({ type: 'table', id: tab.id, where: where.value, orderBy: orderBy.value, page, pending: pendingCount(tab) });
   for (const input of [where, orderBy]) {
     input.addEventListener('keydown', (e) => e.key === 'Enter' && apply(0));
   }
@@ -74,6 +50,12 @@ function renderTableFilters(tab: ResultTab): HTMLElement {
     h('span', { className: 'muted' }, t('Page {0}', table.page + 1)),
     tool('arrow-right', t('Next Page'), () => apply(table.page + 1), !tab.truncated),
   );
+}
+
+const post = (message: FromResultsWebview): void => vscode.postMessage(message);
+
+function currentTab(): ResultTab | undefined {
+  return model.tabs.find((x) => x.id === active) ?? model.tabs[model.tabs.length - 1];
 }
 
 function render(): void {
@@ -100,10 +82,11 @@ function render(): void {
   const toolbar = h(
     'div',
     { className: 'toolbar' },
-    tool('refresh', t('Rerun'), () => vscode.postMessage({ type: 'rerun', id: tab.id }), tab.running),
+    tool('refresh', t('Rerun'), () => vscode.postMessage({ type: 'rerun', id: tab.id, pending: pendingCount(tab) }), tab.running),
     tool('debug-stop', t('Cancel Running Statements'), () => vscode.postMessage({ type: 'cancel', id: tab.id }), !tab.running),
     tool('copy', t('Copy'), () => vscode.postMessage({ type: 'copy', id: tab.id }), tab.rows.length === 0),
     tool('export', t('Export to CSV…'), () => vscode.postMessage({ type: 'exportCsv', id: tab.id }), tab.rows.length === 0),
+    ...toolbarItems(tab, tool, render),
     h('span', { className: `status${tab.error ? ' error-text' : ''}` }, status(tab)),
   );
   const body: HTMLElement[] = [];
@@ -112,6 +95,12 @@ function render(): void {
   }
   if (tab.error) {
     body.push(h('pre', { className: 'error' }, tab.error));
+  } else if (tab.edit && tab.columns.length > 0) {
+    const bar = pendingBar(tab, post, render);
+    if (bar) {
+      body.push(bar);
+    }
+    body.push(grid(tab, tab.table ? tab.table.page * tab.table.pageSize : 0, render));
   } else if (tab.columns.length > 0) {
     body.push(
       h(
@@ -121,7 +110,7 @@ function render(): void {
           'table',
           { className: 'grid' },
           h('thead', {}, h('tr', {}, h('th', { className: 'num' }), ...tab.columns.map((c) => h('th', {}, c)))),
-          h('tbody', {}, ...tab.rows.map((r, i) => h('tr', {}, h('td', { className: 'num' }, String(i + 1 + (tab.table ? tab.table.page * tab.table.pageSize : 0))), ...r.map((v) => h('td', { className: v === 'null' ? 'null' : '' }, v))))),
+          h('tbody', {}, ...tab.rows.map((r, i) => h('tr', {}, h('td', { className: 'num' }, String(i + 1 + (tab.table ? tab.table.page * tab.table.pageSize : 0))), ...r.map((v) => h('td', { className: v === null ? 'null' : '' }, v ?? 'null'))))),
         ),
       ),
     );
@@ -130,7 +119,18 @@ function render(): void {
     body.push(h('pre', { className: 'notices' }, tab.notices.join('\n')));
   }
   app.replaceChildren(...(model.single ? [] : [tabs]), toolbar, ...body);
+  if (tab.edit) {
+    afterRender(tab, render);
+  }
 }
+
+document.addEventListener('keydown', (e) => {
+  const tab = currentTab();
+  if (tab && onKey(e, tab, post, render)) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+});
 
 window.addEventListener('message', (event: MessageEvent<ToResultsWebview>) => {
   if (event.data.type === 'model') {

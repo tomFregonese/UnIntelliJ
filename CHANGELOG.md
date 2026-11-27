@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Table editor: table data can be edited in place, like IntelliJ. Click a cell, then double-click, Enter, F2 or just type to edit it; the editor fits the column type: text and JSON (Shift+Enter for a new line, invalid JSON / numbers outlined), true / false and enum values in a list, dates, timestamps and times with a date picker (month navigation, hours / minutes / seconds, Today / Now). Delete sets NULL. Add Row (⌘N / Alt+Insert) and Delete Row (⌘⌫ / Ctrl+Y) from the toolbar or the row header; Revert Selected (⌥⌘Z / Ctrl+Alt+Z).
+- Nothing is written until **Submit** (⌘↩ / Ctrl+Enter): modified cells, added and deleted rows stay highlighted, then everything is written in one transaction (all or nothing; a row changed meanwhile by someone else cancels it). Errors keep the changes pending. Reloading, filtering or changing page with pending changes asks first. Views and read-only data sources are not editable; tables without a primary key are updated by `ctid`.
+- Table data shows PostgreSQL's own text of each value (time stamps are no longer shifted to UTC).
+
 ## 0.6.0
 
 - Spring Boot `application.properties` / `application.yml` without Spring Boot Tools (whose VMware publisher some companies block): completion of keys (nested keys in YAML) and of their values, documentation on hover, Ctrl+click to the field of the `@ConfigurationProperties` class. Keys come from the Spring metadata of the project's classpath (given by Language Support for Java); turned off when Spring Boot Tools is installed.

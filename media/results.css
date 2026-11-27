@@ -173,3 +173,389 @@ pre.notices {
   color: var(--vscode-descriptionForeground);
   padding: 0 6px;
 }
+
+/* ---- Table editor (IntelliJ's table data editing) ---- */
+
+.separator {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.read-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.read-only .icon {
+  font-size: 13px;
+}
+
+.grid-wrap:focus {
+  outline: none;
+}
+
+.grid.editable td {
+  position: relative;
+  cursor: default;
+}
+
+.grid.editable td.num {
+  cursor: pointer;
+  user-select: none;
+}
+
+.grid th .key {
+  font-size: 12px;
+  margin-right: 4px;
+  color: var(--vscode-symbolIcon-keyForeground, var(--vscode-charts-yellow));
+}
+
+.grid td.number {
+  text-align: right;
+}
+
+.grid td.default {
+  color: var(--vscode-descriptionForeground);
+}
+
+.grid td.cursor {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: -2px;
+}
+
+.grid-wrap:not(:focus-within) td.cursor {
+  outline-color: var(--vscode-editorIndentGuide-activeBackground, var(--vscode-focusBorder));
+}
+
+.grid tr.row-selected td {
+  background: var(--vscode-list-inactiveSelectionBackground);
+}
+
+.grid-wrap:focus tr.row-selected td {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+/* Pending changes: modified cells, added and deleted rows (IntelliJ's blue / green / grey). */
+.grid td.modified {
+  background: color-mix(in srgb, #3574f0 32%, transparent);
+}
+
+.grid tr.added td:not(.num) {
+  background: color-mix(in srgb, #5fb865 24%, transparent);
+}
+
+.grid tr.added td.num {
+  color: #5fb865;
+  font-weight: 600;
+}
+
+.grid tr.deleted td:not(.num) {
+  background: color-mix(in srgb, #e55765 20%, transparent);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.grid td.editing {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: -2px;
+}
+
+/* In-place editor, over its cell. */
+.cell-editor {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 1px 7px;
+  border: 2px solid var(--vscode-focusBorder);
+  border-radius: 0;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font: inherit;
+  white-space: pre;
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow);
+}
+
+textarea.cell-editor {
+  bottom: auto;
+  width: max(100%, 240px);
+  line-height: inherit;
+}
+
+.cell-editor.number {
+  text-align: right;
+}
+
+.cell-editor.invalid {
+  border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));
+}
+
+/* Popups (date picker, value list, hints). */
+.popup {
+  position: fixed;
+  z-index: 20;
+  background: var(--vscode-editorWidget-background);
+  color: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+  border: 1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border));
+  border-radius: 8px;
+  box-shadow: 0 4px 16px var(--vscode-widget-shadow);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+}
+
+.popup button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.popup button.primary,
+.pending-bar button.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  border-radius: 4px;
+  padding: 3px 12px;
+}
+
+.popup button.primary:hover,
+.pending-bar button.primary:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground);
+}
+
+.popup button.secondary,
+.pending-bar button.secondary {
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: none;
+  border-radius: 4px;
+  padding: 3px 10px;
+}
+
+.popup button.secondary:hover,
+.pending-bar button.secondary:hover:not(:disabled) {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.popup button.link {
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  color: var(--vscode-textLink-foreground);
+}
+
+.popup button.link:hover {
+  text-decoration: underline;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.date-picker {
+  width: 252px;
+  padding: 8px;
+  user-select: none;
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.picker-title {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.picker-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.picker-days .weekday {
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--vscode-descriptionForeground);
+  padding: 2px 0 4px;
+  text-transform: uppercase;
+}
+
+.picker-days .day {
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.picker-days .day:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.picker-days .day.outside {
+  color: var(--vscode-disabledForeground, var(--vscode-descriptionForeground));
+}
+
+.picker-days .day.today {
+  box-shadow: inset 0 0 0 1px var(--vscode-focusBorder);
+}
+
+.picker-days .day.selected {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  font-weight: 600;
+}
+
+.picker-time {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border));
+}
+
+.picker-time .icon {
+  font-size: 14px;
+  margin-right: 4px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.time-field {
+  width: 30px;
+  text-align: center;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
+  border-radius: 4px;
+  padding: 3px 0;
+  font-family: var(--vscode-editor-font-family);
+  font-variant-numeric: tabular-nums;
+}
+
+.time-field:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  border-color: var(--vscode-focusBorder);
+}
+
+.picker-footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border));
+}
+
+.choice {
+  padding: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  outline: none;
+}
+
+.choice .option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--vscode-editor-font-family);
+  white-space: nowrap;
+}
+
+.choice .option .icon {
+  width: 16px;
+  font-size: 13px;
+}
+
+.choice .option.active {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.choice .option.null {
+  font-style: italic;
+  color: var(--vscode-descriptionForeground);
+}
+
+.choice .option.null.active {
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.editor-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* Pending changes bar, above the grid. */
+.pending {
+  flex: none;
+}
+
+.pending-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: color-mix(in srgb, #3574f0 14%, var(--vscode-editor-background));
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.pending-bar .icon {
+  font-size: 14px;
+}
+
+.pending-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pending-bar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pending-bar .shortcut {
+  margin-left: 6px;
+  opacity: 0.75;
+  font-size: 0.9em;
+}
+
+.pending pre.error {
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.picker-header .nav {
+  min-width: 24px;
+  font-size: 15px;
+  line-height: 16px;
+  color: var(--vscode-foreground);
+}

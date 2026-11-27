@@ -4,6 +4,9 @@ import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { DataSource, normalizeSource, sessionKey } from './dataSourceLogic';
 
+/** Type parsers returning PostgreSQL's text output unchanged. */
+const RAW_TEXT = { getTypeParser: () => (value: string) => value } as const;
+
 const SECRET_PREFIX = 'unintellij.database.password.';
 const STORE_KEY = 'database.dataSources';
 
@@ -102,14 +105,17 @@ export class Connections implements vscode.Disposable {
     return session;
   }
 
-  /** Runs one statement; `schema` becomes the search path first (the file's schema selector). */
-  async query(source: DataSource, sql: string, schema?: string, values?: unknown[]): Promise<QueryResult> {
+  /**
+   * Runs one statement; `schema` becomes the search path first (the file's schema selector).
+   * `rawText` returns every value as PostgreSQL's text output (the table editor writes it back).
+   */
+  async query(source: DataSource, sql: string, schema?: string, values?: unknown[], rawText = false): Promise<QueryResult> {
     const client = await this.client(source);
     if (schema) {
       await client.query(`SET search_path TO ${schema.split(',').map((s) => `"${s.trim().replace(/"/g, '""')}"`).join(', ')}, public`);
     }
     const started = Date.now();
-    const result = (await client.query({ text: sql, values, rowMode: 'array' })) as QueryArrayResult | QueryArrayResult[];
+    const result = (await client.query({ text: sql, values, rowMode: 'array', ...(rawText && { types: RAW_TEXT }) })) as QueryArrayResult | QueryArrayResult[];
     // A simple-protocol multi-statement query returns one result per statement: show the last one.
     const last = Array.isArray(result) ? result[result.length - 1] : result;
     return {
@@ -119,6 +125,30 @@ export class Connections implements vscode.Disposable {
       command: last.command ?? '',
       durationMs: Date.now() - started,
     };
+  }
+
+  /**
+   * Runs statements in one transaction: all or nothing. A statement marked `expectOneRow` that
+   * changes another number of rows rolls everything back.
+   */
+  async transaction(source: DataSource, statements: readonly { text: string; values: unknown[]; expectOneRow: boolean }[]): Promise<number> {
+    const client = await this.client(source);
+    await client.query('BEGIN');
+    try {
+      let changed = 0;
+      for (const statement of statements) {
+        const result = await client.query(statement.text, statement.values);
+        if (statement.expectOneRow && result.rowCount !== 1) {
+          throw new Error(`${t('{0} rows matched instead of 1: the row was changed or deleted meanwhile. Nothing was saved.', result.rowCount ?? 0)}\n${statement.text}`);
+        }
+        changed += result.rowCount ?? 0;
+      }
+      await client.query('COMMIT');
+      return changed;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
+    }
   }
 
   /** Cancels the running statement of a source from a second connection (pg_cancel_backend). */
