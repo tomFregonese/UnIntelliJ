@@ -6,6 +6,7 @@
 import { DateKind } from '../../database/dateValue';
 import type { EditColumn, FromResultsWebview, ResultTab, RowChange } from '../../database/resultsProtocol';
 import { t } from '../../i18n/i18n';
+import { matchRanges, pickMatch, speedSearchMatch, step } from '../../search/speedSearch';
 import { mountDateEditor, MountedEditor } from './datePicker';
 import { h } from './dom';
 import { isolate, keepFocus, place } from './popup';
@@ -45,6 +46,38 @@ let selectedRows = new Set<number>();
 let anchorRow: number | undefined;
 let editing: { tab: string; row: number; col: number; draft?: string } | undefined;
 let mounted: MountedEditor | undefined;
+/** Speed search over the column names: typing jumps to the matching column (IntelliJ). */
+let search: { tab: string; query: string } | undefined;
+
+const searchQuery = (tab: ResultTab): string | undefined => (search?.tab === tab.id ? search.query : undefined);
+
+/** Column name with the letters matched by speed search highlighted. */
+function columnTitle(tab: ResultTab, name: string): (string | HTMLElement)[] {
+  const query = searchQuery(tab);
+  const positions = query ? speedSearchMatch(query, name) : undefined;
+  if (!positions) {
+    return [name];
+  }
+  const parts: (string | HTMLElement)[] = [];
+  let at = 0;
+  for (const [start, end] of matchRanges(positions)) {
+    parts.push(name.slice(at, start), h('mark', { className: 'speed-match' }, name.slice(start, end)));
+    at = end;
+  }
+  parts.push(name.slice(at));
+  return parts;
+}
+
+/** Updates the speed search: moves the cursor to the current, next or previous matching column. */
+function searchColumns(tab: ResultTab, query: string, direction?: 1 | -1): void {
+  search = { tab: tab.id, query };
+  const matches = tab.columns.map((name) => !!speedSearchMatch(query, name));
+  const current = cursor?.tab === tab.id ? cursor.col : -1;
+  const col = direction ? step(matches, current, direction) : pickMatch(matches, current);
+  if (col >= 0) {
+    cursor = { tab: tab.id, row: cursor?.tab === tab.id ? cursor.row : 0, col };
+  }
+}
 
 function pending(tab: ResultTab): Pending {
   const version = tab.edit?.version ?? 0;
@@ -207,7 +240,13 @@ export function grid(tab: ResultTab, startRow: number, rerender: () => void): HT
         h('th', { className: 'num' }),
         ...columns.map((name, c) => {
           const column = columnOf(tab, c);
-          return h('th', { title: column ? `${column.type}${column.nullable ? '' : ' NOT NULL'}${column.hasDefault ? ' DEFAULT' : ''}` : undefined }, column?.key ? h('span', { className: 'icon icon-symbol-key key' }) : null, name);
+          const matched = !!searchQuery(tab) && !!speedSearchMatch(searchQuery(tab)!, name);
+          return h(
+            'th',
+            { className: matched ? 'speed-matched' : '', title: column ? `${column.type}${column.nullable ? '' : ' NOT NULL'}${column.hasDefault ? ' DEFAULT' : ''}` : undefined },
+            column?.key ? h('span', { className: 'icon icon-symbol-key key' }) : null,
+            ...columnTitle(tab, name),
+          );
         }),
       ),
     ),
@@ -219,6 +258,7 @@ export function grid(tab: ResultTab, startRow: number, rerender: () => void): HT
     if (!target || mounted?.contains(e.target as Node)) {
       return;
     }
+    search = undefined;
     if (editing) {
       // Clicking another cell applies the edit in progress (what was typed), like IntelliJ.
       const { draft, col } = editing;
@@ -353,9 +393,20 @@ function finishEdit(tab: ResultTab, value: string | null | undefined, rerender: 
 export function afterRender(tab: ResultTab, rerender: () => void): void {
   mounted?.dispose();
   mounted = undefined;
+  document.querySelector('.speed-search')?.remove();
   const wrap = document.querySelector<HTMLElement>('.grid-wrap');
   if (!wrap || !tab.edit) {
     return;
+  }
+  const query = searchQuery(tab);
+  if (query) {
+    // IntelliJ's "Search for:" popup over the top left corner of the table.
+    const found = tab.columns.some((name) => speedSearchMatch(query, name));
+    const popup = h('div', { className: `speed-search${found ? '' : ' no-match'}` }, h('span', { className: 'icon icon-search' }), query);
+    const rect = wrap.getBoundingClientRect();
+    popup.style.left = `${rect.left + 2}px`;
+    popup.style.top = `${rect.top + 2}px`;
+    document.body.append(popup);
   }
   const target = (r: number, c: number) => wrap.querySelector<HTMLElement>(`td[data-r="${r}"][data-c="${c}"]`);
   if (editing?.tab === tab.id) {
@@ -578,6 +629,37 @@ export function onKey(e: KeyboardEvent, tab: ResultTab, post: Post, rerender: ()
     rerender();
   };
   const { row, col } = cursor;
+  const plain = !e.ctrlKey && !e.metaKey && !e.altKey;
+  const query = searchQuery(tab);
+  if (query !== undefined) {
+    if (e.key === 'Backspace') {
+      if (query.length > 1) {
+        searchColumns(tab, query.slice(0, -1));
+      } else {
+        search = undefined;
+      }
+      rerender();
+      return true;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      searchColumns(tab, query, e.key === 'ArrowDown' ? 1 : -1);
+      rerender();
+      return true;
+    }
+    if (e.key.length === 1 && plain) {
+      searchColumns(tab, query + e.key);
+      rerender();
+      return true;
+    }
+    if (e.key !== 'Shift') {
+      // Any other key ends the search; Escape and Enter only that.
+      search = undefined;
+      if (e.key === 'Escape' || e.key === 'Enter') {
+        rerender();
+        return true;
+      }
+    }
+  }
   switch (e.key) {
     case 'ArrowUp':
       move(row - 1, col);
@@ -618,10 +700,10 @@ export function onKey(e: KeyboardEvent, tab: ResultTab, post: Post, rerender: ()
       return true;
     }
   }
-  // Typing starts editing text-like cells with that character, like a spreadsheet.
-  const kind = columnOf(tab, col)?.kind;
-  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && kind !== 'boolean' && kind !== 'enum') {
-    startEdit(tab, row, col, rerender, kind === 'date' || kind === 'timestamp' || kind === 'time' ? undefined : e.key);
+  // Typing searches the columns by name (IntelliJ's speed search); Enter, F2 or a double-click edit.
+  if (e.key.length === 1 && e.key !== ' ' && plain) {
+    searchColumns(tab, e.key);
+    rerender();
     return true;
   }
   return false;

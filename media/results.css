@@ -559,3 +559,34 @@ textarea.cell-editor {
   line-height: 16px;
   color: var(--vscode-foreground);
 }
+
+/* Speed search over the column names (IntelliJ's "Search for:" popup). */
+.speed-search {
+  position: fixed;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  white-space: pre;
+  color: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+  background: var(--vscode-editorWidget-background);
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, rgba(0, 0, 0, 0.3));
+}
+
+.speed-search.no-match {
+  color: var(--vscode-errorForeground);
+  border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));
+}
+
+.grid mark.speed-match {
+  color: inherit;
+  background: var(--vscode-editor-findMatchHighlightBackground, rgba(234, 92, 0, 0.33));
+  border-radius: 2px;
+}
+
+.grid th.speed-matched {
+  color: var(--vscode-list-highlightForeground, var(--vscode-foreground));
+}
