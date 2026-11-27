@@ -89,6 +89,27 @@ function remove(): void {
   render();
 }
 
+/** Moves the selected source up or down (its place in the Database tool window). */
+function move(delta: number): void {
+  const index = sources.findIndex((s) => s.id === selected);
+  const target = index + delta;
+  if (index < 0 || target < 0 || target >= sources.length) {
+    return;
+  }
+  moveTo(index, target);
+}
+
+function moveTo(from: number, to: number): void {
+  const next = [...sources];
+  const [source] = next.splice(from, 1);
+  next.splice(to, 0, source);
+  sources = next;
+  render();
+}
+
+/** Source being dragged in the list. */
+let dragged: string | undefined;
+
 function save(close: boolean): void {
   if (problems().length > 0) {
     refreshFooter();
@@ -109,14 +130,52 @@ function renderList(): void {
   }
   list.replaceChildren(
     h('li', { className: 'group-label' }, h('span', { className: 'icon icon-chevron-down' }), ` ${t('Data Sources')}`),
-    ...sources.map((s) =>
-      h(
+    ...sources.map((s, index) => {
+      const item = h(
         'li',
-        { className: `child${s.id === selected ? ' selected' : ''}`, title: describeSource(s), onClick: () => ((selected = s.id), (testStatus = undefined), render()) },
+        { className: `child${s.id === selected ? ' selected' : ''}`, title: describeSource(s), draggable: 'true', onClick: () => ((selected = s.id), (testStatus = undefined), render()) },
+        h('span', { className: 'grip', title: t('Drag to reorder') }, '⋮⋮'),
         s.name || t('Unnamed'),
         s.color !== 'none' && h('span', { className: 'color-dot', style: `background:${COLOR_VALUES[s.color]}` }),
-      ),
-    ),
+      );
+      // Drag and drop to reorder, like IntelliJ's data source list.
+      const after = (e: DragEvent) => {
+        const box = item.getBoundingClientRect();
+        return e.clientY > box.top + box.height / 2;
+      };
+      item.addEventListener('dragstart', (e) => {
+        dragged = s.id;
+        e.dataTransfer?.setData('text/plain', s.id);
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+        }
+        item.classList.add('dragging');
+      });
+      item.addEventListener('dragend', () => {
+        dragged = undefined;
+        list.querySelectorAll('.drop-before, .drop-after, .dragging').forEach((el) => el.classList.remove('drop-before', 'drop-after', 'dragging'));
+      });
+      item.addEventListener('dragover', (e) => {
+        if (!dragged || dragged === s.id) {
+          return;
+        }
+        e.preventDefault();
+        item.classList.toggle('drop-after', after(e));
+        item.classList.toggle('drop-before', !after(e));
+      });
+      item.addEventListener('dragleave', () => item.classList.remove('drop-before', 'drop-after'));
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const from = sources.findIndex((x) => x.id === dragged);
+        if (from < 0 || dragged === s.id) {
+          return;
+        }
+        const to = index + (after(e) ? 1 : 0);
+        selected = dragged;
+        moveTo(from, from < to ? to - 1 : to);
+      });
+      return item;
+    }),
   );
 }
 
@@ -208,6 +267,8 @@ function render(): void {
     h('button', { className: 'tool', title: t('Add PostgreSQL Data Source'), onClick: add }, h('span', { className: 'icon icon-add' })),
     h('button', { className: 'tool', title: t('Remove'), disabled: !current(), onClick: remove }, h('span', { className: 'icon icon-remove' })),
     h('button', { className: 'tool', title: t('Duplicate'), disabled: !current(), onClick: duplicate }, h('span', { className: 'icon icon-copy' })),
+    h('button', { className: 'tool', title: t('Move Up (Alt+↑)'), disabled: !current() || sources[0]?.id === selected, onClick: () => move(-1) }, h('span', { className: 'icon icon-arrow-up' })),
+    h('button', { className: 'tool', title: t('Move Down (Alt+↓)'), disabled: !current() || sources[sources.length - 1]?.id === selected, onClick: () => move(1) }, h('span', { className: 'icon icon-arrow-down' })),
   );
   app.replaceChildren(
     h('nav', { className: 'sidebar' }, toolbar, h('ul', { className: 'tree' })),
@@ -244,3 +305,12 @@ window.addEventListener('message', (event: MessageEvent<ToDataSourcesWebview>) =
 });
 
 vscode.postMessage({ type: 'ready' });
+
+// Alt+↑ / Alt+↓ move the selected data source (outside text fields).
+document.addEventListener('keydown', (e) => {
+  const field = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement;
+  if (e.altKey && !field && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    e.preventDefault();
+    move(e.key === 'ArrowUp' ? -1 : 1);
+  }
+});

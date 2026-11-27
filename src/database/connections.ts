@@ -1,3 +1,6 @@
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import { Client, QueryArrayResult } from 'pg';
 import { openClient } from './pgClient';
 import * as vscode from 'vscode';
@@ -8,7 +11,13 @@ import { DataSource, normalizeSource, sessionKey } from './dataSourceLogic';
 const RAW_TEXT = { getTypeParser: () => (value: string) => value } as const;
 
 const SECRET_PREFIX = 'unintellij.database.password.';
+/** Before 0.6.3 the data sources were in the extension's global state, lost when its id changed. */
 const STORE_KEY = 'database.dataSources';
+/**
+ * Data sources (without passwords), in the user's home: shared by every VS Code window and
+ * profile, kept when UnIntelliJ is reinstalled. UNINTELLIJ_DATA_DIR moves it (test instances).
+ */
+export const DATA_SOURCES_FILE = path.join(process.env.UNINTELLIJ_DATA_DIR ?? path.join(os.homedir(), '.unintellij'), 'data-sources.json');
 
 export interface QueryResult {
   columns: string[];
@@ -19,18 +28,44 @@ export interface QueryResult {
   durationMs: number;
 }
 
-/** Data sources (global, like IntelliJ's global data sources) and their passwords. */
+/**
+ * Data sources (global, like IntelliJ's global data sources), in their order in the Database
+ * tool window, and their passwords (in VS Code's secret storage: the system keychain).
+ */
 export class DataSourceStore implements vscode.Disposable {
   private readonly changed = new vscode.EventEmitter<void>();
   readonly onDidChange = this.changed.event;
+  private readonly watcher: vscode.FileSystemWatcher;
 
   constructor(
-    private readonly state: vscode.Memento,
+    state: vscode.Memento,
     private readonly secrets: vscode.SecretStorage,
-  ) {}
+    private readonly file = DATA_SOURCES_FILE,
+  ) {
+    const previous = state.get<DataSource[]>(STORE_KEY, []);
+    if (!existsSync(file) && previous.length > 0) {
+      this.write(previous);
+    }
+    // Another window changed them: refresh the tree here too.
+    this.watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(vscode.Uri.file(path.dirname(file)), path.basename(file)));
+    this.watcher.onDidChange(() => this.changed.fire());
+    this.watcher.onDidCreate(() => this.changed.fire());
+  }
 
   get all(): DataSource[] {
-    return this.state.get<DataSource[]>(STORE_KEY, []).map(normalizeSource);
+    try {
+      const data: unknown = JSON.parse(readFileSync(this.file, 'utf8'));
+      return Array.isArray(data) ? (data as DataSource[]).filter((s) => typeof s?.id === 'string').map(normalizeSource) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private write(sources: readonly DataSource[]): void {
+    mkdirSync(path.dirname(this.file), { recursive: true });
+    const temp = `${this.file}.${process.pid}.tmp`;
+    writeFileSync(temp, `${JSON.stringify(sources, null, 2)}\n`, { mode: 0o600 });
+    renameSync(temp, this.file);
   }
 
   get(id: string): DataSource | undefined {
@@ -49,7 +84,7 @@ export class DataSourceStore implements vscode.Disposable {
         await this.secrets.store(SECRET_PREFIX + id, password);
       }
     }
-    await this.state.update(STORE_KEY, sources);
+    this.write(sources);
     this.changed.fire();
   }
 
@@ -58,6 +93,7 @@ export class DataSourceStore implements vscode.Disposable {
   }
 
   dispose(): void {
+    this.watcher.dispose();
     this.changed.dispose();
   }
 }

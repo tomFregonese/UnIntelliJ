@@ -79,3 +79,32 @@ footer .errors {
 .content .row.checkbox-row .help {
   padding-left: 24px;
 }
+
+/* Data Sources list: drag to reorder. */
+.tree li .grip {
+  display: inline-block;
+  width: 10px;
+  margin-right: 4px;
+  font-size: 10px;
+  letter-spacing: -2px;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0;
+  cursor: grab;
+}
+
+.tree li:hover .grip,
+.tree li.selected .grip {
+  opacity: 0.8;
+}
+
+.tree li.dragging {
+  opacity: 0.5;
+}
+
+.tree li.drop-before {
+  box-shadow: inset 0 2px 0 var(--vscode-focusBorder);
+}
+
+.tree li.drop-after {
+  box-shadow: inset 0 -2px 0 var(--vscode-focusBorder);
+}
