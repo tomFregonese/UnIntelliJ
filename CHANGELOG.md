@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Windows keymap: Ctrl+W closes the tab everywhere, code editors included (it was IntelliJ's Extend Selection there). Extend / Shrink Selection move to Shift+Alt+→ / ← (VS Code's own shortcuts, so Ctrl+Shift+W closes the window again); Ctrl+F4 still closes the tab.
+
 ## 0.5.2
 
 - Search Everywhere finds Java methods (with their class; opening goes to the declaration): `java.symbols.includeSourceMethodDeclarations` is on by default.

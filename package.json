@@ -1509,12 +1509,12 @@
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.OptimizeImports && (editorTextFocus && !editorReadonly)"
       },
       {
-        "key": "ctrl+w",
+        "key": "shift+alt+right",
         "command": "editor.action.smartSelect.expand",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorSelectWord && (editorFocus)"
       },
       {
-        "key": "ctrl+shift+w",
+        "key": "shift+alt+left",
         "command": "editor.action.smartSelect.shrink",
         "when": "(config.unintellij.keymap.layout == 'windows' || config.unintellij.keymap.layout == 'auto' && !isMac) && !unintellij.keymap.disabled.EditorUnSelectWord && (editorFocus)"
       },

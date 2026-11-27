@@ -65,7 +65,7 @@ describe('keymap', () => {
     expect(byId.SearchEverywhere).toMatchObject({ windows: 'shift shift', macos: 'shift shift' });
     expect(byId.GotoClass).toMatchObject({ windows: 'ctrl+n', macos: 'cmd+o' });
     expect(byId.ShowIntentionActions).toMatchObject({ windows: 'alt+enter' });
-    expect(byId.EditorSelectWord).toMatchObject({ windows: 'ctrl+w', macos: 'alt+up' });
+    expect(byId.EditorSelectWord).toMatchObject({ windows: 'shift+alt+right', macos: 'alt+up' });
   });
 });
 

@@ -57,8 +57,8 @@ UnIntelliJ reproduces IntelliJ's default **Windows** and **macOS** keymaps. The 
 | Reformat Code | `Ctrl+Alt+L` | `⌘⌥L` | `ReformatCode` |
 | Reformat Code (Selection) | `Ctrl+Alt+L` | `⌘⌥L` | `ReformatCodeSelection` |
 | Optimize Imports | `Ctrl+Alt+O` | `⌃⌥O` | `OptimizeImports` |
-| Extend Selection | `Ctrl+W` | `⌥↑` | `EditorSelectWord` |
-| Shrink Selection | `Ctrl+Shift+W` | `⌥↓` | `EditorUnSelectWord` |
+| Extend Selection | `Shift+Alt+→` | `⌥↑` | `EditorSelectWord` |
+| Shrink Selection | `Shift+Alt+←` | `⌥↓` | `EditorUnSelectWord` |
 | Duplicate Line or Selection | `Ctrl+D` | `⌘D` | `EditorDuplicate` |
 | Delete Line | `Ctrl+Y` | `⌘⌫` | `EditorDeleteLine` |
 | Move Line Up | `Alt+Shift+↑` | `⌥⇧↑` | `MoveLineUp` |
