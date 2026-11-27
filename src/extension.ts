@@ -16,7 +16,7 @@ import { JavaServer } from './settings/javaServer';
 import type { TabId } from './search/searchEverywhere';
 import { registerSettingsCommands } from './settings/commands';
 import { SetupPrompt } from './settings/setupPrompt';
-import { JavaExtensions } from './settings/javaExtensions';
+import { JavaExtensions, setExtensionsFolder } from './settings/javaExtensions';
 import { MavenView } from './maven/mavenView';
 import { revertPreset } from './settings/preset';
 import { applyChanges } from './settings/settingsPanel';
@@ -83,6 +83,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<UnInte
   // Commands first: a keybinding may be what activated the extension.
   const userKeybindings = new UserKeybindings(context, log);
   void userKeybindings.sync();
+  setExtensionsFolder(context.extensionPath);
   const javaServer = new JavaServer(context.workspaceState);
   const navigation = registerNavigationCommands(context, log, javaServer);
   const vcs = registerVcsCommands(context, log);

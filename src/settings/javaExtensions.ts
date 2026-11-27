@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { INTEGRATIONS } from '../integrations';
@@ -22,7 +24,8 @@ export class JavaExtensions {
   constructor(private readonly state: vscode.Memento) {}
 
   async onStartup(): Promise<void> {
-    if (this.state.get(DISMISSED_KEY) || CHOICES.filter((c) => c.picked).every((c) => vscode.extensions.getExtension(c.id))) {
+    // Installed but disabled is not offered again: installing would not change anything.
+    if (this.state.get(DISMISSED_KEY) || CHOICES.filter((c) => c.picked).every((c) => extensionState(c.id) !== 'missing')) {
       return;
     }
     const key = vscode.workspace.workspaceFolders?.map((f) => f.uri.toString()).join('|') ?? '';
@@ -47,8 +50,15 @@ export class JavaExtensions {
 
   /** Checkbox list of the missing extensions; installs the checked ones. */
   async choose(): Promise<void> {
-    const missing = CHOICES.filter((c) => !vscode.extensions.getExtension(c.id));
+    const disabled = CHOICES.filter((c) => extensionState(c.id) === 'disabled');
+    if (disabled.length > 0) {
+      void showDisabled(disabled.map((c) => t(c.label)));
+    }
+    const missing = CHOICES.filter((c) => extensionState(c.id) === 'missing');
     if (missing.length === 0) {
+      if (disabled.length > 0) {
+        return;
+      }
       void vscode.window.showInformationMessage(t('The Java extensions are already installed.'));
       return;
     }
@@ -88,6 +98,42 @@ export class JavaExtensions {
     } else if (answer === vsix) {
       await vscode.commands.executeCommand('workbench.extensions.action.installVSIX');
     }
+  }
+}
+
+/** Folder of the installed extensions (UnIntelliJ's own parent folder), set at activation. */
+let extensionsFolder: string | undefined;
+
+export function setExtensionsFolder(ownPath: string): void {
+  extensionsFolder = dirname(ownPath);
+}
+
+/**
+ * `enabled`, `disabled` (installed but turned off in this window: disabled by hand, by the
+ * organization's extension policy, or not supported here) or `missing`. VS Code's API only sees
+ * enabled extensions, so installed ones are read from the extensions folder's list.
+ */
+export function extensionState(id: string): 'enabled' | 'disabled' | 'missing' {
+  if (vscode.extensions.getExtension(id)) {
+    return 'enabled';
+  }
+  try {
+    const installed = JSON.parse(readFileSync(join(extensionsFolder ?? '', 'extensions.json'), 'utf8')) as { identifier?: { id?: string } }[];
+    return installed.some((e) => e.identifier?.id?.toLowerCase() === id.toLowerCase()) ? 'disabled' : 'missing';
+  } catch {
+    return 'missing';
+  }
+}
+
+/** Says which extensions are installed but disabled, with the way to turn them back on. */
+export async function showDisabled(names: readonly string[]): Promise<void> {
+  const show = t('Show Disabled Extensions');
+  const answer = await vscode.window.showWarningMessage(
+    t('{0}: installed but disabled in this window (turned off in the Extensions view, in this VS Code profile, or by your organization). Enable it there, then reload the window.', names.join(', ')),
+    show,
+  );
+  if (answer === show) {
+    await vscode.commands.executeCommand('workbench.extensions.action.showDisabledExtensions');
   }
 }
 

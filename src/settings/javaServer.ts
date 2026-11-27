@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
 import { INTEGRATIONS } from '../integrations';
-import { isJavaProject } from './javaExtensions';
+import { extensionState, isJavaProject, showDisabled } from './javaExtensions';
 
 /**
  * State of the Java language server (Red Hat). Searching classes and methods and Ctrl+click to
  * another class need its Standard mode; in Lightweight mode (syntax only) VS Code just says "No
  * definition found", so UnIntelliJ says why and offers the switch.
  */
-export type JavaState = 'notJava' | 'missing' | 'starting' | 'lightweight' | 'standard';
+export type JavaState = 'notJava' | 'missing' | 'disabled' | 'starting' | 'lightweight' | 'standard';
 
 interface JavaApi {
   serverMode?: 'Standard' | 'LightWeight' | 'Hybrid';
@@ -32,7 +32,7 @@ export class JavaServer implements vscode.Disposable {
     }
     const extension = vscode.extensions.getExtension<JavaApi>(INTEGRATIONS.java.extensionId);
     if (!extension) {
-      return 'missing';
+      return extensionState(INTEGRATIONS.java.extensionId) === 'disabled' ? 'disabled' : 'missing';
     }
     if (!extension.isActive) {
       return 'starting';
@@ -51,6 +51,8 @@ export class JavaServer implements vscode.Disposable {
     switch (await this.current()) {
       case 'missing':
         return { label: `$(warning) ${t('Java support is not installed')}`, detail: t('Classes, methods and Ctrl+click in Java need the Language Support for Java extension (Red Hat).'), run: () => vscode.commands.executeCommand('unintellij.installJavaExtensions') };
+      case 'disabled':
+        return { label: `$(warning) ${t('Java support is disabled')}`, detail: t('Language Support for Java (Red Hat) is installed but disabled in this window. Click to see why.'), run: () => showDisabled([t('Language Support for Java (Red Hat)')]) };
       case 'lightweight':
         return { label: `$(warning) ${t('Java is in Lightweight mode')}`, detail: t('Classes and methods are not indexed and Ctrl+click does not reach other classes. Click to switch to Standard mode.'), run: () => switchToStandard() };
       case 'starting':

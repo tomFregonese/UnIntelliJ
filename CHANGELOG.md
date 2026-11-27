@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Java extensions: an extension that is installed but disabled in the window (in the Extensions view, in another VS Code profile, or by the organization's policy) is no longer offered for installation again: UnIntelliJ says it is disabled and opens the list of disabled extensions. Search Everywhere says the same instead of "Java support is not installed".
+
 ## 0.6.1
 
 - Table editor: table data can be edited in place, like IntelliJ. Click a cell, then double-click, Enter, F2 or just type to edit it; the editor fits the column type: text and JSON (Shift+Enter for a new line, invalid JSON / numbers outlined), true / false and enum values in a list, dates, timestamps and times with a date picker (month navigation, hours / minutes / seconds, Today / Now). Delete sets NULL. Add Row (⌘N / Alt+Insert) and Delete Row (⌘⌫ / Ctrl+Y) from the toolbar or the row header; Revert Selected (⌥⌘Z / Ctrl+Alt+Z).
