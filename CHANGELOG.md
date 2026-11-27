@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Java extensions installer: an extension that fails to install no longer stops the others; VS Code's reason is shown, with **Download .vsix** (Open VSX page) and **Install from VSIX…** to install it by hand.
 - Windows keymap: Ctrl+W closes the tab everywhere, code editors included (it was IntelliJ's Extend Selection there). Extend / Shrink Selection move to Shift+Alt+→ / ← (VS Code's own shortcuts, so Ctrl+Shift+W closes the window again); Ctrl+F4 still closes the tab.
 
 ## 0.5.2

@@ -59,12 +59,35 @@ export class JavaExtensions {
     if (!picked || picked.length === 0) {
       return;
     }
+    const failed: { label: string; id: string; error: string }[] = [];
     await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t('Installing Java extensions…') }, async () => {
       for (const extension of picked) {
-        await vscode.commands.executeCommand('workbench.extensions.installExtension', extension.id);
+        try {
+          await vscode.commands.executeCommand('workbench.extensions.installExtension', extension.id);
+        } catch (error) {
+          failed.push({ label: extension.label, id: extension.id, error: error instanceof Error ? error.message : String(error) });
+        }
       }
     });
-    void vscode.window.showInformationMessage(t('{0} installed.', picked.map((p) => p.label).join(', ')));
+    const installed = picked.filter((p) => !failed.some((f) => f.id === p.id));
+    if (installed.length > 0) {
+      void vscode.window.showInformationMessage(t('{0} installed.', installed.map((p) => p.label).join(', ')));
+    }
+    for (const failure of failed) {
+      void this.reportFailure(failure);
+    }
+  }
+
+  /** Says why VS Code refused the install, with the manual way out: a .vsix downloaded by hand. */
+  private async reportFailure(failure: { label: string; id: string; error: string }): Promise<void> {
+    const marketplace = t('Download .vsix');
+    const vsix = t('Install from VSIX…');
+    const answer = await vscode.window.showErrorMessage(t('{0} could not be installed: {1}', failure.label, failure.error), marketplace, vsix);
+    if (answer === marketplace) {
+      await vscode.env.openExternal(vscode.Uri.parse(`https://open-vsx.org/extension/${failure.id.replace('.', '/')}`));
+    } else if (answer === vsix) {
+      await vscode.commands.executeCommand('workbench.extensions.action.installVSIX');
+    }
   }
 }
 
