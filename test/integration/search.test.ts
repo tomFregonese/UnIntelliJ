@@ -2,7 +2,7 @@ import * as assert from 'node:assert';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 const labels = (items: vscode.QuickPickItem[]) => items.filter((i) => i.kind !== vscode.QuickPickItemKind.Separator).map((i) => i.label);
 
 async function eventually<T>(produce: () => Promise<T>, accept: (value: T) => boolean, timeoutMs = 15000): Promise<T> {

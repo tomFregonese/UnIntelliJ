@@ -44,11 +44,24 @@ export interface UnIntelliJApi {
   };
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi> {
-  const log = vscode.window.createOutputChannel('UnIntelliJ', { log: true });
-  context.subscriptions.push(log);
+/** Extension id before the publisher became TomFregonese (≤ 0.5.2). */
+const OLD_EXTENSION_ID = 'unintellij.unintellij';
+
+export async function activate(context: vscode.ExtensionContext): Promise<UnIntelliJApi | undefined> {
   // Before anything shows text: every UI string goes through t().
   setLanguage(getSetting('appearance.language'));
+  // Both copies would register the same commands: remove the old one and wait for the reload.
+  // TODO: remove once nobody runs ≤ 0.5.2 any more.
+  if (vscode.extensions.getExtension(OLD_EXTENSION_ID)) {
+    await vscode.commands.executeCommand('workbench.extensions.uninstallExtension', OLD_EXTENSION_ID);
+    const reload = t('Reload Window');
+    if ((await vscode.window.showInformationMessage(t('UnIntelliJ now comes from the publisher TomFregonese: the previous copy was uninstalled. Reload the window to finish.'), reload)) === reload) {
+      await vscode.commands.executeCommand('workbench.action.reloadWindow');
+    }
+    return undefined;
+  }
+  const log = vscode.window.createOutputChannel('UnIntelliJ', { log: true });
+  context.subscriptions.push(log);
   context.subscriptions.push(
     onSettingsChanged(['appearance.language'], async () => {
       setLanguage(getSetting('appearance.language'));

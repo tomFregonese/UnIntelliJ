@@ -2,7 +2,7 @@ import * as assert from 'node:assert';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 
 suite('Extension', () => {
   test('activates and exposes its API', async () => {

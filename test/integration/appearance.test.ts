@@ -2,7 +2,7 @@ import * as assert from 'node:assert';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 const Global = vscode.ConfigurationTarget.Global;
 
 const unintellij = () => vscode.workspace.getConfiguration('unintellij');

@@ -801,6 +801,7 @@ export const FR: Record<string, string> = {
   "{0} installed.": "{0} : installé.",
   "{0} could not be installed: {1}": "{0} n'a pas pu être installé : {1}",
   "Download .vsix": "Télécharger le .vsix",
+  "UnIntelliJ now comes from the publisher TomFregonese: the previous copy was uninstalled. Reload the window to finish.": "UnIntelliJ est désormais publié par TomFregonese : l'ancienne copie a été désinstallée. Rechargez la fenêtre pour terminer.",
   "Install from VSIX…": "Installer depuis un VSIX…",
   "Language Support for Java (Red Hat)": "Language Support for Java (Red Hat)",
   "Completion, navigation, errors, refactorings: the Java engine.": "Complétion, navigation, erreurs, refactorings : le moteur Java.",

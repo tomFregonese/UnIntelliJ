@@ -2,7 +2,7 @@ import * as assert from 'node:assert';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 
 suite('Tool windows and Run', () => {
   const workspace = () => vscode.workspace.workspaceFolders![0].uri;

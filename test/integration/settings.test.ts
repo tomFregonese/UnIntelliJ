@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 import { fieldKeys } from '../../src/settings/pages';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 
 suite('Settings window', () => {
   let api: UnIntelliJApi;

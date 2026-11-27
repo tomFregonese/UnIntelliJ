@@ -10,7 +10,7 @@ suite('Islands+ patcher', () => {
   // Work on a copy of this VS Code's real files: never on the running installation.
   const appRoot = mkdtempSync(join(tmpdir(), 'unintellij-islands-'));
   const relative = WORKBENCH_CANDIDATES.find((c) => existsSync(join(vscode.env.appRoot, c)));
-  const assets = join(vscode.extensions.getExtension('unintellij.unintellij')!.extensionPath, 'media', 'islands-plus');
+  const assets = join(vscode.extensions.getExtension('TomFregonese.UnIntelliJ')!.extensionPath, 'media', 'islands-plus');
 
   suiteSetup(function () {
     if (!relative) {

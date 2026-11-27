@@ -5,7 +5,7 @@ Cocher et dater quand c'est réglé.
 
 ## Lot 1 — Socle
 
-- [ ] **Identifiant d'éditeur** (`publisher`) provisoire : `unintellij`. À remplacer par un vrai publisher avant toute publication Marketplace.
+- [x] **Identifiant d’éditeur** : `TomFregonese` (id `TomFregonese.UnIntelliJ`, depuis 0.5.3). La migration qui désinstalle l’ancien `unintellij.unintellij` (`src/extension.ts`) est à retirer plus tard.
 - [ ] **Licence** MIT choisie par défaut — à confirmer.
 - [ ] **Nom public** : « IntelliJ » est une marque JetBrains ; trouver un display name pour le Marketplace (plus tard).
 - [ ] **Réglages déclarés mais encore inactifs** : `keymap.*`, `searchEverywhere.*`, `vcs.*`, `appearance.islandsPlus.enabled` — chacun prend effet avec son lot ; vérifier qu'aucun ne reste inerte à la fin.

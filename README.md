@@ -19,9 +19,9 @@ No other extension is required. Java (Red Hat), Debugger for Java and Angular La
 
 ## Install
 
-1. Download `unintellij-<version>.vsix` from the [latest release](https://github.com/tomFregonese/UnIntelliJ/releases/latest).
+1. Download `UnIntelliJ-<version>.vsix` from the [latest release](https://github.com/tomFregonese/UnIntelliJ/releases/latest).
 2. In VS Code: **Extensions** view › `…` menu › **Install from VSIX…** and pick the file
-   (or `code --install-extension unintellij-<version>.vsix`).
+   (or `code --install-extension UnIntelliJ-<version>.vsix`).
 
 Requires VS Code 1.100 or later.
 

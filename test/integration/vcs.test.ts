@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 
 async function eventually(description: string, check: () => boolean | Promise<boolean>, timeoutMs = 15000): Promise<void> {
   const start = Date.now();

@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import * as vscode from 'vscode';
 import type { UnIntelliJApi } from '../../src/extension';
 
-const EXTENSION_ID = 'unintellij.unintellij';
+const EXTENSION_ID = 'TomFregonese.UnIntelliJ';
 
 suite('Keymap and commands', () => {
   suiteSetup(async () => {
