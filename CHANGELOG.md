@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.2
 
 - Java extensions: an extension that is installed but disabled in the window (in the Extensions view, in another VS Code profile, or by the organization's policy) is no longer offered for installation again: UnIntelliJ says it is disabled and opens the list of disabled extensions. Search Everywhere says the same instead of "Java support is not installed".
 
