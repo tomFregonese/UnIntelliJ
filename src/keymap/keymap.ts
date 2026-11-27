@@ -202,10 +202,29 @@ export function disabledContextKey(actionId: string): string {
   return `unintellij.keymap.disabled.${actionId}`;
 }
 
+const DATABASE_TREE = "focusedView == 'unintellij.database'";
+const SPEED_SEARCH = `${DATABASE_TREE} && unintellij.database.speedSearch`;
+/** Characters starting / extending a speed search in the Database tool window (trees give extensions no key events). */
+const SPEED_SEARCH_KEYS: readonly [string, string][] = [
+  ...[...'abcdefghijklmnopqrstuvwxyz'].flatMap((c): [string, string][] => [
+    [c, c],
+    [`shift+${c}`, c],
+  ]),
+  ...[...'0123456789'].map((c): [string, string] => [c, c]),
+  ['shift+-', '_'],
+  ['-', '-'],
+  ['.', '.'],
+];
+
 /** Keybindings of UnIntelliJ's own UI (not IntelliJ actions): active whatever the keymap. */
 export const INTERNAL_KEYBINDINGS: readonly Keybinding[] = [
   { key: 'tab', command: 'unintellij.searchEverywhere.nextTab', when: 'inQuickOpen && unintellij.searchEverywhereVisible' },
   { key: 'shift+tab', command: 'unintellij.searchEverywhere.previousTab', when: 'inQuickOpen && unintellij.searchEverywhereVisible' },
+  ...SPEED_SEARCH_KEYS.map(([key, type]): Keybinding => ({ key, command: 'unintellij.database.speedSearch', when: DATABASE_TREE, args: { type } })),
+  { key: 'backspace', command: 'unintellij.database.speedSearch', when: SPEED_SEARCH, args: { action: 'backspace' } },
+  { key: 'escape', command: 'unintellij.database.speedSearch', when: SPEED_SEARCH, args: { action: 'clear' } },
+  { key: 'down', command: 'unintellij.database.speedSearch', when: SPEED_SEARCH, args: { action: 'next' } },
+  { key: 'up', command: 'unintellij.database.speedSearch', when: SPEED_SEARCH, args: { action: 'previous' } },
 ];
 
 /** Every `contributes.keybindings` entry: both keymaps, then internal bindings. */

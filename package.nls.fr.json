@@ -11,6 +11,7 @@
   "command.unintellij.searchEverywhere.text": "Rechercher partout : texte",
   "command.unintellij.searchEverywhere.nextTab": "Rechercher partout : onglet suivant",
   "command.unintellij.searchEverywhere.previousTab": "Rechercher partout : onglet précédent",
+  "command.unintellij.database.speedSearch": "Base de données : recherche rapide",
   "command.unintellij.nextMethod": "Méthode suivante",
   "command.unintellij.previousMethod": "Méthode précédente",
   "command.unintellij.toggleCase": "Changer la casse",

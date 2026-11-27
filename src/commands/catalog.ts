@@ -27,6 +27,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
   { command: 'unintellij.searchEverywhere.text', title: 'Search Everywhere: Text' },
   { command: 'unintellij.searchEverywhere.nextTab', title: 'Search Everywhere: Next Tab', hidden: true },
   { command: 'unintellij.searchEverywhere.previousTab', title: 'Search Everywhere: Previous Tab', hidden: true },
+  { command: 'unintellij.database.speedSearch', title: 'Database: Speed Search', hidden: true },
   // Editing
   { command: 'unintellij.nextMethod', title: 'Next Method' },
   { command: 'unintellij.previousMethod', title: 'Previous Method' },

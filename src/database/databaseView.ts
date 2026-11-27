@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { t } from '../i18n/i18n';
+import { matchRanges, pickMatch, speedSearchMatch, step } from '../search/speedSearch';
 import { Connections, DataSourceStore } from './connections';
 import { COLOR_VALUES, DataSource, describeSource, inDatabase, shownDatabases, visibleSchemas } from './dataSourceLogic';
 
@@ -17,12 +18,67 @@ export type DbNode =
 
 const FOLDER_LABELS: Record<Folder, string> = { tables: 'tables', views: 'views', functions: 'routines', sequences: 'sequences', keys: 'keys', indexes: 'indexes' };
 
+/** Context key set while a speed search is typed in the Database tool window. */
+export const SPEED_SEARCH_CONTEXT = 'unintellij.database.speedSearch';
+
+/** Stable identity of a node: also its tree item id (columns and routines: under their parent's). */
+function ownKey(node: DbNode, parentKey: string): string {
+  switch (node.kind) {
+    case 'source':
+      return `source:${node.source.id}`;
+    case 'database':
+      return `database:${node.source.id}:${node.source.database}`;
+    case 'schema':
+      return `schema:${node.source.id}:${node.source.database}:${node.schema}`;
+    case 'folder':
+      return `folder:${node.source.id}:${node.source.database}:${node.schema}:${node.table ?? ''}:${node.folder}`;
+    case 'table':
+      return `table:${node.source.id}:${node.source.database}:${node.schema}:${node.name}`;
+    case 'leaf':
+      return `${parentKey}/${node.label}`;
+    case 'error':
+      return `${parentKey}/!error`;
+  }
+}
+
+/** Text shown for a node, which speed search matches. */
+function labelOf(node: DbNode): string | undefined {
+  switch (node.kind) {
+    case 'source':
+      return node.source.name;
+    case 'database':
+      return node.source.database;
+    case 'schema':
+      return node.schema;
+    case 'folder':
+      return t(FOLDER_LABELS[node.folder]);
+    case 'table':
+      return node.name;
+    case 'leaf':
+      return node.label;
+    default:
+      return undefined;
+  }
+}
+
 /** IntelliJ's Database tool window: data source › database › schema › tables / views / routines / sequences › columns, keys, indexes. */
 export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Disposable {
   private readonly changed = new vscode.EventEmitter<DbNode | undefined>();
   readonly onDidChangeTreeData = this.changed.event;
   readonly view: vscode.TreeView<DbNode>;
   private readonly disposables: vscode.Disposable[] = [];
+  /** Children loaded per parent key ('' for the data sources), until the next refresh. */
+  private readonly cache = new Map<string, DbNode[]>();
+  private readonly meta = new WeakMap<DbNode, { key: string; parent?: DbNode }>();
+  private readonly expanded = new Set<string>();
+  /** Speed search: typed text and the matched letters of each visible node. */
+  private query = '';
+  private readonly highlights = new Map<string, number[]>();
+  /** Selection made by speed search itself (any other selection change ends the search). */
+  private searchSelection: string | undefined;
+  private lastClick: { key: string; time: number } | undefined;
+  private doubleClick: { key: string; time: number } | undefined;
+  private lastToggle: { key: string; time: number; expanded: boolean } | undefined;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -30,11 +86,150 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
     private readonly connections: Connections,
   ) {
     this.view = vscode.window.createTreeView('unintellij.database', { treeDataProvider: this, showCollapseAll: true, canSelectMany: false });
-    this.disposables.push(this.view, this.changed, store.onDidChange(() => this.refresh()), connections.onDidChangeState(() => this.refresh()));
+    this.disposables.push(
+      this.view,
+      this.changed,
+      store.onDidChange(() => this.refresh()),
+      connections.onDidChangeState(() => this.refresh()),
+      this.view.onDidExpandElement((e) => this.toggled(e.element, true)),
+      this.view.onDidCollapseElement((e) => this.toggled(e.element, false)),
+      this.view.onDidChangeSelection((e) => {
+        if (this.query && (e.selection.length !== 1 || this.keyOf(e.selection[0]) !== this.searchSelection)) {
+          this.clearSearch();
+        }
+      }),
+      this.view.onDidChangeVisibility((e) => !e.visible && this.clearSearch()),
+    );
   }
 
+  /** Reloads everything from the databases. */
   refresh(): void {
+    this.cache.clear();
     this.changed.fire(undefined);
+  }
+
+  private keyOf(node: DbNode): string {
+    return this.meta.get(node)?.key ?? ownKey(node, '');
+  }
+
+  getParent(node: DbNode): DbNode | undefined {
+    return this.meta.get(node)?.parent;
+  }
+
+  /** Label with the letters matched by speed search highlighted. */
+  private label(node: DbNode, text: string): string | vscode.TreeItemLabel {
+    const positions = this.highlights.get(this.keyOf(node));
+    return positions ? { label: text, highlights: matchRanges(positions) } : text;
+  }
+
+  /** Nodes shown in the tree, top to bottom (children of expanded nodes only). */
+  private visibleNodes(): DbNode[] {
+    const nodes: DbNode[] = [];
+    const walk = (parentKey: string) => {
+      for (const child of this.cache.get(parentKey) ?? []) {
+        nodes.push(child);
+        const key = this.keyOf(child);
+        if (this.expanded.has(key)) {
+          walk(key);
+        }
+      }
+    };
+    walk('');
+    return nodes;
+  }
+
+  /** Speed search: `type` adds a character; backspace, next, previous, clear. */
+  async speedSearch(action: { type?: string; action?: 'backspace' | 'next' | 'previous' | 'clear' }): Promise<void> {
+    if (action.type) {
+      this.query += action.type;
+    } else if (action.action === 'backspace') {
+      this.query = this.query.slice(0, -1);
+    } else if (action.action === 'clear' || !this.query) {
+      this.clearSearch();
+      return;
+    }
+    if (!this.query) {
+      this.clearSearch();
+      return;
+    }
+    const nodes = this.visibleNodes();
+    this.highlights.clear();
+    const matches = nodes.map((node) => {
+      const text = labelOf(node);
+      const positions = text === undefined ? undefined : speedSearchMatch(this.query, text);
+      if (positions) {
+        this.highlights.set(this.keyOf(node), positions);
+      }
+      return !!positions;
+    });
+    const selected = this.view.selection[0];
+    const current = selected ? nodes.findIndex((n) => this.keyOf(n) === this.keyOf(selected)) : -1;
+    const index = action.action === 'next' || action.action === 'previous' ? step(matches, current, action.action === 'next' ? 1 : -1) : pickMatch(matches, current);
+    await vscode.commands.executeCommand('setContext', SPEED_SEARCH_CONTEXT, true);
+    this.view.message = index < 0 ? t('Search for: {0} (no matches)', this.query) : t('Search for: {0}', this.query);
+    this.changed.fire(undefined);
+    if (index >= 0 && index !== current) {
+      this.searchSelection = this.keyOf(nodes[index]);
+      await this.view.reveal(nodes[index], { select: true, focus: true });
+    }
+  }
+
+  private clearSearch(): void {
+    if (!this.query && this.highlights.size === 0) {
+      return;
+    }
+    this.query = '';
+    this.searchSelection = undefined;
+    this.highlights.clear();
+    this.view.message = undefined;
+    void vscode.commands.executeCommand('setContext', SPEED_SEARCH_CONTEXT, false);
+    this.changed.fire(undefined);
+  }
+
+  /**
+   * A click on a table: true on the second click of a double-click (open the table). VS Code also
+   * expands or collapses a node on double-click: that is undone, only the arrow does it (IntelliJ).
+   */
+  async click(node: DbNode): Promise<boolean> {
+    const key = this.keyOf(node);
+    const now = Date.now();
+    if (this.lastClick?.key !== key || now - this.lastClick.time >= 500) {
+      this.lastClick = { key, time: now };
+      return false;
+    }
+    this.lastClick = undefined;
+    this.doubleClick = { key, time: now };
+    // The expansion may be reported just before or just after the click.
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    await this.undoToggle(key);
+    return true;
+  }
+
+  private toggled(node: DbNode, expanded: boolean): void {
+    const key = this.keyOf(node);
+    if (expanded) {
+      this.expanded.add(key);
+    } else {
+      this.expanded.delete(key);
+    }
+    if (node.kind !== 'table') {
+      return;
+    }
+    this.lastToggle = { key, time: Date.now(), expanded };
+    if (this.doubleClick?.key === key && Date.now() - this.doubleClick.time < 500) {
+      void this.undoToggle(key);
+    }
+  }
+
+  private async undoToggle(key: string): Promise<void> {
+    const toggle = this.lastToggle;
+    if (!toggle || toggle.key !== key || Date.now() - toggle.time > 700) {
+      return;
+    }
+    this.lastToggle = undefined;
+    this.doubleClick = undefined;
+    // The double-clicked table has the focus in the tree.
+    await vscode.commands.executeCommand(toggle.expanded ? 'list.collapse' : 'list.expand');
   }
 
   icon(name: string): { light: vscode.Uri; dark: vscode.Uri } {
@@ -46,7 +241,7 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
     const collapsed = vscode.TreeItemCollapsibleState.Collapsed;
     switch (node.kind) {
       case 'source': {
-        const item = new vscode.TreeItem(node.source.name, collapsed);
+        const item = new vscode.TreeItem(this.label(node, node.source.name), collapsed);
         item.description = describeSource(node.source) + (node.source.readOnly ? ` · ${t('read-only')}` : '');
         item.iconPath = this.icon('database');
         item.contextValue = this.connections.isConnected(node.source.id) ? 'source connected' : 'source';
@@ -56,7 +251,7 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
         return item;
       }
       case 'database': {
-        const item = new vscode.TreeItem(node.source.database, collapsed);
+        const item = new vscode.TreeItem(this.label(node, node.source.database), collapsed);
         item.iconPath = this.icon('database');
         const filter = visibleSchemas(node.source);
         item.description = filter ? (filter.length === 1 ? t('1 schema') : t('{0} schemas', filter.length)) : undefined;
@@ -66,21 +261,21 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
         return item;
       }
       case 'schema': {
-        const item = new vscode.TreeItem(node.schema, collapsed);
+        const item = new vscode.TreeItem(this.label(node, node.schema), collapsed);
         item.iconPath = this.icon('dataSchema');
         item.contextValue = 'schema';
         item.id = `schema:${node.source.id}:${node.source.database}:${node.schema}`;
         return item;
       }
       case 'folder': {
-        const item = new vscode.TreeItem(t(FOLDER_LABELS[node.folder]), collapsed);
+        const item = new vscode.TreeItem(this.label(node, t(FOLDER_LABELS[node.folder])), collapsed);
         item.iconPath = this.icon(node.folder === 'functions' ? 'function' : node.folder === 'sequences' ? 'sequence' : node.folder === 'keys' ? 'key' : node.folder === 'indexes' ? 'index' : 'dataTables');
         item.contextValue = 'folder';
         item.id = `folder:${node.source.id}:${node.source.database}:${node.schema}:${node.table ?? ''}:${node.folder}`;
         return item;
       }
       case 'table': {
-        const item = new vscode.TreeItem(node.name, collapsed);
+        const item = new vscode.TreeItem(this.label(node, node.name), collapsed);
         item.iconPath = this.icon(node.view ? 'view' : 'table');
         item.contextValue = 'table';
         // Double-click opens the table data (see unintellij.database.click).
@@ -89,7 +284,7 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
         return item;
       }
       case 'leaf': {
-        const item = new vscode.TreeItem(node.label);
+        const item = new vscode.TreeItem(this.label(node, node.label));
         item.description = node.description;
         item.iconPath = this.icon(node.icon);
         item.tooltip = node.tooltip;
@@ -105,14 +300,30 @@ export class DatabaseView implements vscode.TreeDataProvider<DbNode>, vscode.Dis
   }
 
   async getChildren(node?: DbNode): Promise<DbNode[]> {
-    if (!node) {
-      return this.store.all.map((source) => ({ kind: 'source', source }));
+    const parentKey = node ? this.keyOf(node) : '';
+    if (node) {
+      // VS Code only asks for the children of expanded nodes (also those restored at startup).
+      this.expanded.add(parentKey);
     }
+    const cached = this.cache.get(parentKey);
+    if (cached) {
+      return cached;
+    }
+    let children: DbNode[];
+    let failed = false;
     try {
-      return await this.children(node);
+      children = node ? await this.children(node) : this.store.all.map((source): DbNode => ({ kind: 'source', source }));
     } catch (error) {
-      return [{ kind: 'error', message: error instanceof Error ? error.message : String(error) }];
+      children = [{ kind: 'error', message: error instanceof Error ? error.message : String(error) }];
+      failed = true;
     }
+    for (const child of children) {
+      this.meta.set(child, { key: ownKey(child, parentKey), parent: node });
+    }
+    if (!failed) {
+      this.cache.set(parentKey, children);
+    }
+    return children;
   }
 
   private async rows(source: DataSource, sql: string, values: unknown[] = []): Promise<unknown[][]> {

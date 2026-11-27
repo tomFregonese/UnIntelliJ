@@ -24,7 +24,6 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
   };
   const failed = (source: DataSource, error: unknown) =>
     void vscode.window.showErrorMessage(t('Cannot connect to {0}: {1}', source.name, error instanceof Error ? error.message : String(error)));
-  let lastClick: { key: string; time: number } | undefined;
   const selectedSource = (node?: DbNode) => (node && 'source' in node ? node.source : view.view.selection.find((n): n is Extract<DbNode, { source: unknown }> => 'source' in n)?.source);
   return [
     store,
@@ -117,15 +116,11 @@ export function registerDatabase(context: vscode.ExtensionContext): vscode.Dispo
       if (node?.kind !== 'table') {
         return;
       }
-      const key = `${node.source.id}/${node.source.database}/${node.schema}.${node.name}`;
-      const now = Date.now();
-      if (lastClick?.key === key && now - lastClick.time < 500) {
-        lastClick = undefined;
+      if (await view.click(node)) {
         await vscode.commands.executeCommand('unintellij.database.openTable', node);
-      } else {
-        lastClick = { key, time: now };
       }
     }),
+    vscode.commands.registerCommand('unintellij.database.speedSearch', (action: Parameters<DatabaseView['speedSearch']>[0]) => view.speedSearch(action ?? {})),
     vscode.commands.registerCommand('unintellij.database.copyName', async (node?: DbNode) => {
       const name = node?.kind === 'table' ? `${quoteIdent(node.schema)}.${quoteIdent(node.name)}` : node?.kind === 'schema' ? quoteIdent(node.schema) : node?.kind === 'leaf' ? node.label : undefined;
       if (name) {

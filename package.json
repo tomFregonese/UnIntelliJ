@@ -302,6 +302,11 @@
         "category": "%command.category%"
       },
       {
+        "command": "unintellij.database.speedSearch",
+        "title": "%command.unintellij.database.speedSearch%",
+        "category": "%command.category%"
+      },
+      {
         "command": "unintellij.nextMethod",
         "title": "%command.unintellij.nextMethod%",
         "category": "%command.category%"
@@ -790,6 +795,10 @@
         },
         {
           "command": "unintellij.searchEverywhere.previousTab",
+          "when": "false"
+        },
+        {
+          "command": "unintellij.database.speedSearch",
           "when": "false"
         },
         {
@@ -2614,6 +2623,558 @@
         "key": "shift+tab",
         "command": "unintellij.searchEverywhere.previousTab",
         "when": "inQuickOpen && unintellij.searchEverywhereVisible"
+      },
+      {
+        "key": "a",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "a"
+        }
+      },
+      {
+        "key": "shift+a",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "a"
+        }
+      },
+      {
+        "key": "b",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "b"
+        }
+      },
+      {
+        "key": "shift+b",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "b"
+        }
+      },
+      {
+        "key": "c",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "c"
+        }
+      },
+      {
+        "key": "shift+c",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "c"
+        }
+      },
+      {
+        "key": "d",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "d"
+        }
+      },
+      {
+        "key": "shift+d",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "d"
+        }
+      },
+      {
+        "key": "e",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "e"
+        }
+      },
+      {
+        "key": "shift+e",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "e"
+        }
+      },
+      {
+        "key": "f",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "f"
+        }
+      },
+      {
+        "key": "shift+f",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "f"
+        }
+      },
+      {
+        "key": "g",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "g"
+        }
+      },
+      {
+        "key": "shift+g",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "g"
+        }
+      },
+      {
+        "key": "h",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "h"
+        }
+      },
+      {
+        "key": "shift+h",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "h"
+        }
+      },
+      {
+        "key": "i",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "i"
+        }
+      },
+      {
+        "key": "shift+i",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "i"
+        }
+      },
+      {
+        "key": "j",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "j"
+        }
+      },
+      {
+        "key": "shift+j",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "j"
+        }
+      },
+      {
+        "key": "k",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "k"
+        }
+      },
+      {
+        "key": "shift+k",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "k"
+        }
+      },
+      {
+        "key": "l",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "l"
+        }
+      },
+      {
+        "key": "shift+l",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "l"
+        }
+      },
+      {
+        "key": "m",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "m"
+        }
+      },
+      {
+        "key": "shift+m",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "m"
+        }
+      },
+      {
+        "key": "n",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "n"
+        }
+      },
+      {
+        "key": "shift+n",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "n"
+        }
+      },
+      {
+        "key": "o",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "o"
+        }
+      },
+      {
+        "key": "shift+o",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "o"
+        }
+      },
+      {
+        "key": "p",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "p"
+        }
+      },
+      {
+        "key": "shift+p",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "p"
+        }
+      },
+      {
+        "key": "q",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "q"
+        }
+      },
+      {
+        "key": "shift+q",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "q"
+        }
+      },
+      {
+        "key": "r",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "r"
+        }
+      },
+      {
+        "key": "shift+r",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "r"
+        }
+      },
+      {
+        "key": "s",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "s"
+        }
+      },
+      {
+        "key": "shift+s",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "s"
+        }
+      },
+      {
+        "key": "t",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "t"
+        }
+      },
+      {
+        "key": "shift+t",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "t"
+        }
+      },
+      {
+        "key": "u",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "u"
+        }
+      },
+      {
+        "key": "shift+u",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "u"
+        }
+      },
+      {
+        "key": "v",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "v"
+        }
+      },
+      {
+        "key": "shift+v",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "v"
+        }
+      },
+      {
+        "key": "w",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "w"
+        }
+      },
+      {
+        "key": "shift+w",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "w"
+        }
+      },
+      {
+        "key": "x",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "x"
+        }
+      },
+      {
+        "key": "shift+x",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "x"
+        }
+      },
+      {
+        "key": "y",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "y"
+        }
+      },
+      {
+        "key": "shift+y",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "y"
+        }
+      },
+      {
+        "key": "z",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "z"
+        }
+      },
+      {
+        "key": "shift+z",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "z"
+        }
+      },
+      {
+        "key": "0",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "0"
+        }
+      },
+      {
+        "key": "1",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "1"
+        }
+      },
+      {
+        "key": "2",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "2"
+        }
+      },
+      {
+        "key": "3",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "3"
+        }
+      },
+      {
+        "key": "4",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "4"
+        }
+      },
+      {
+        "key": "5",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "5"
+        }
+      },
+      {
+        "key": "6",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "6"
+        }
+      },
+      {
+        "key": "7",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "7"
+        }
+      },
+      {
+        "key": "8",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "8"
+        }
+      },
+      {
+        "key": "9",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "9"
+        }
+      },
+      {
+        "key": "shift+-",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "_"
+        }
+      },
+      {
+        "key": "-",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "-"
+        }
+      },
+      {
+        "key": ".",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database'",
+        "args": {
+          "type": "."
+        }
+      },
+      {
+        "key": "backspace",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database' && unintellij.database.speedSearch",
+        "args": {
+          "action": "backspace"
+        }
+      },
+      {
+        "key": "escape",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database' && unintellij.database.speedSearch",
+        "args": {
+          "action": "clear"
+        }
+      },
+      {
+        "key": "down",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database' && unintellij.database.speedSearch",
+        "args": {
+          "action": "next"
+        }
+      },
+      {
+        "key": "up",
+        "command": "unintellij.database.speedSearch",
+        "when": "focusedView == 'unintellij.database' && unintellij.database.speedSearch",
+        "args": {
+          "action": "previous"
+        }
       }
     ],
     "viewsContainers": {

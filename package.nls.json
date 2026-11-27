@@ -11,6 +11,7 @@
   "command.unintellij.searchEverywhere.text": "Search Everywhere: Text",
   "command.unintellij.searchEverywhere.nextTab": "Search Everywhere: Next Tab",
   "command.unintellij.searchEverywhere.previousTab": "Search Everywhere: Previous Tab",
+  "command.unintellij.database.speedSearch": "Database: Speed Search",
   "command.unintellij.nextMethod": "Next Method",
   "command.unintellij.previousMethod": "Previous Method",
   "command.unintellij.toggleCase": "Toggle Case",
