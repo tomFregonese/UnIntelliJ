@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4
+
+- Maven goals, Eclipse Maven / JUnit launches, gutter ▶ for Java tests and `spring-boot:run` now write their command for the shell of the terminal profile: PowerShell and Command Prompt use `.\mvnw.cmd` / `mvn`, Git Bash on Windows uses `./mvnw.cmd` / `mvn.cmd` (it used to get PowerShell's `.\mvnw.cmd`). Arguments PowerShell would split (`-Drevision=1.2`, `-Pdev,local`) are quoted.
+
 ## 0.6.3
 
 - Data Sources window: data sources can be reordered — drag them in the list, or use Move Up / Move Down (Alt+↑ / Alt+↓). The Database tool window follows that order.
