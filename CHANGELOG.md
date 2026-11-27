@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.5
+
+- Database tool window: speed search like IntelliJ — with a node selected, type letters: the matching letters of the visible nodes are highlighted and the first match is selected (`gtsbi` or `truc` find `t_gts_bitrucmuche`). Up / Down go to the previous / next match, Backspace removes a letter, Escape or a click ends the search.
+- Database tool window: a double-click on a table opens its data without expanding it; only the arrow (or Right) expands it. Loaded nodes are kept until Refresh.
+- Table editor: typing searches the columns by name — the cursor jumps to the matching column and its letters are highlighted in the header (Up / Down: previous / next match, Escape ends). Editing a cell starts with Enter, F2 or a double-click.
+- Search Everywhere: a space stands for a separator, so `historique component` finds `historique.component.ts`.
+
 ## 0.6.4
 
 - Maven goals, Eclipse Maven / JUnit launches, gutter ▶ for Java tests and `spring-boot:run` now write their command for the shell of the terminal profile: PowerShell and Command Prompt use `.\mvnw.cmd` / `mvn`, Git Bash on Windows uses `./mvnw.cmd` / `mvn.cmd` (it used to get PowerShell's `.\mvnw.cmd`). Arguments PowerShell would split (`-Drevision=1.2`, `-Pdev,local`) are quoted.
